@@ -1,5 +1,5 @@
 export const siteConfig = {
-  questionRecipientEmail: "your-gmail@example.com",
+  questionRecipientEmail: "cyzsport0502@gmail.com",
   adsensePublisherId: "",
   adSlots: {
     inContent: "",
