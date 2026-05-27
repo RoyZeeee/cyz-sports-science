@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
 import { localizedEvidence } from "../../../data/content";
 
 export function getStaticPaths() {
@@ -25,7 +25,7 @@ const lang = "zh-cn";
         <h2>实务用途</h2>
         <ul>{item.practicalUse.map((use) => <li>{use}</li>)}</ul>
       </section>
-      <NewsletterSignup lang={lang} />
+      <QuestionForm lang={lang} />
     </article>
     <aside class="side-panel">
       <h3>证据等级</h3>

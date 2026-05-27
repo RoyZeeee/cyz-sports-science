@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
 import { byLang, evidenceBySlug, faqs, getTopic, topicTitle, localizeText } from "../../../data/content";
 import { t } from "../../../utils/i18n";
 import { href } from "../../../utils/paths";
@@ -32,7 +32,7 @@ const copy = t(lang);
         <h2>安全边界</h2>
         <p>{copy.medical}</p>
       </section>
-      <NewsletterSignup lang={lang} />
+      <QuestionForm lang={lang} />
     </article>
     <aside class="side-panel">
       <h3>{copy.audience}</h3>

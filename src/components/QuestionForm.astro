@@ -1,0 +1,86 @@
+---
+import type { Lang } from "../data/content";
+import { siteConfig } from "../site.config";
+
+const { lang } = Astro.props as { lang: Lang };
+
+const siteEmail = siteConfig.questionRecipientEmail;
+
+const copy =
+  lang === "zh"
+    ? {
+        title: "有健身問題想問？",
+        body: "留下你的問題和 Gmail。送出後會打開你的郵件 app，信件內容會自動整理好；之後可以回覆到你提供的 Gmail。",
+        question: "想問什麼？例如：減脂期要不要吃肌酸？",
+        email: "你的 Gmail",
+        button: "送出問題",
+        note: "目前使用 email 寄送，不會在網站上保存資料。",
+        alert: "請先填寫問題，並提供有效的 Gmail。",
+        subject: "運動科學筆記讀者提問",
+      }
+    : lang === "zh-cn"
+      ? {
+          title: "有健身问题想问？",
+          body: "留下你的问题和 Gmail。送出后会打开你的邮件 app，信件内容会自动整理好；之后可以回复到你提供的 Gmail。",
+          question: "想问什么？例如：减脂期要不要吃肌酸？",
+          email: "你的 Gmail",
+          button: "送出问题",
+          note: "目前使用 email 寄送，不会在网站上保存资料。",
+          alert: "请先填写问题，并提供有效的 Gmail。",
+          subject: "运动科学笔记读者提问",
+        }
+      : {
+          title: "Ask a fitness question",
+          body: "Leave your question and Gmail. Submitting opens your email app with the message prepared, so replies can go back to the Gmail you provide.",
+          question: "What do you want to ask? Example: Should I take creatine while cutting?",
+          email: "Your Gmail",
+          button: "Send question",
+          note: "This uses email for now. The site does not store your data.",
+          alert: "Please enter a question and a valid Gmail address.",
+          subject: "Sports Science Notes reader question",
+        };
+---
+
+<section class="question-form" aria-labelledby="question-form-title" data-recipient={siteEmail} data-subject={copy.subject} data-alert={copy.alert}>
+  <div>
+    <h2 id="question-form-title">{copy.title}</h2>
+    <p>{copy.body}</p>
+  </div>
+  <form class="ask-form">
+    <label>
+      <span>{copy.question}</span>
+      <textarea name="question" rows="4" placeholder={copy.question} required></textarea>
+    </label>
+    <label>
+      <span>{copy.email}</span>
+      <input type="email" name="email" placeholder="name@gmail.com" pattern="^[^@\s]+@gmail\.com$" required />
+    </label>
+    <button type="submit">{copy.button}</button>
+    <span class="form-note">{copy.note}</span>
+  </form>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".question-form").forEach((section) => {
+    const form = section.querySelector<HTMLFormElement>(".ask-form");
+    if (!form) return;
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const question = String(formData.get("question") || "").trim();
+      const email = String(formData.get("email") || "").trim();
+      const gmailPattern = /^[^@\s]+@gmail\.com$/i;
+
+      if (!question || !gmailPattern.test(email)) {
+        window.alert(section.dataset.alert || "Please enter a question and Gmail.");
+        return;
+      }
+
+      const recipient = section.dataset.recipient || "";
+      const subject = section.dataset.subject || "Reader question";
+      const body = [`Gmail: ${email}`, "", "Question:", question].join("\n");
+      window.location.href = `mailto:${encodeURIComponent(recipient)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    });
+  });
+</script>

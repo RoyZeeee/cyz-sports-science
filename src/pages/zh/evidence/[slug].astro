@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
 import { evidence } from "../../../data/content";
 
 export function getStaticPaths() {
@@ -24,7 +24,7 @@ const { item } = Astro.props;
         <h2>實務用途</h2>
         <ul>{item.practicalUse.map((use) => <li>{use}</li>)}</ul>
       </section>
-      <NewsletterSignup lang="zh" />
+      <QuestionForm lang="zh" />
     </article>
     <aside class="side-panel">
       <h3>證據等級</h3>

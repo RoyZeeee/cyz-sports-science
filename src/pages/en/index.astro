@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import NewsletterSignup from "../../components/NewsletterSignup.astro";
+import QuestionForm from "../../components/QuestionForm.astro";
 import TopicGrid from "../../components/TopicGrid.astro";
 import { articles, byLang, faqs } from "../../data/content";
 import { href } from "../../utils/paths";
@@ -70,6 +70,6 @@ const featuredArticles = byLang(articles, lang).slice(0, 3);
     </div>
   </section>
   <div class="container">
-    <NewsletterSignup lang={lang} />
+    <QuestionForm lang={lang} />
   </div>
 </BaseLayout>

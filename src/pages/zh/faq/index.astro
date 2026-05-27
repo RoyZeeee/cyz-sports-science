@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
 import { byLang, faqs, getTopic } from "../../../data/content";
 import { href } from "../../../utils/paths";
 
@@ -32,6 +32,6 @@ const items = byLang(faqs, lang);
         </a>
       ))}
     </div>
-    <NewsletterSignup lang={lang} />
+    <QuestionForm lang={lang} />
   </section>
 </BaseLayout>

@@ -364,47 +364,60 @@ h3 {
   line-height: 1.5;
 }
 
-.newsletter {
+.question-form {
   margin: 44px 0 20px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: #eee7dc;
   padding: clamp(20px, 4vw, 32px);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+  grid-template-columns: minmax(0, 0.82fr) minmax(300px, 1fr);
   gap: 20px;
-  align-items: center;
+  align-items: start;
 }
 
-.newsletter p {
+.question-form p {
   color: var(--muted);
   line-height: 1.65;
   margin-bottom: 0;
 }
 
-.form-row {
-  display: flex;
-  gap: 10px;
+.ask-form {
+  display: grid;
+  gap: 12px;
 }
 
-.form-row input {
+.ask-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.ask-form input,
+.ask-form textarea {
   width: 100%;
-  min-height: 46px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 0 12px;
+  padding: 12px;
   background: var(--paper);
+  color: var(--ink);
 }
 
-.form-row button {
+.ask-form textarea {
+  resize: vertical;
+  min-height: 118px;
+}
+
+.ask-form button {
   min-height: 46px;
   border: 0;
   border-radius: 8px;
   padding: 0 16px;
   background: var(--teal);
   color: white;
-  cursor: not-allowed;
-  white-space: nowrap;
+  cursor: pointer;
+  justify-self: start;
 }
 
 .form-note {
@@ -454,7 +467,7 @@ h3 {
 
   .hero,
   .content-layout,
-  .newsletter {
+  .question-form {
     grid-template-columns: 1fr;
   }
 
@@ -471,7 +484,4 @@ h3 {
     position: static;
   }
 
-  .form-row {
-    flex-direction: column;
-  }
 }

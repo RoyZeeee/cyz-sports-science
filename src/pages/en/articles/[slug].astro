@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
 import { articles, evidenceBySlug, getTopic } from "../../../data/content";
 import { href } from "../../../utils/paths";
 
@@ -24,7 +24,7 @@ const topic = getTopic(article.topic);
           {section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
         </section>
       ))}
-      <NewsletterSignup lang="en" />
+      <QuestionForm lang="en" />
     </article>
     <aside class="side-panel">
       <h3>Related evidence</h3>

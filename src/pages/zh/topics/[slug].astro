@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
 import { articles, faqs, topics } from "../../../data/content";
 import { href } from "../../../utils/paths";
 
@@ -42,6 +42,6 @@ const topicArticles = articles.filter((article) => article.lang === "zh" && arti
         </a>
       ))}
     </div>
-    <NewsletterSignup lang="zh" />
+    <QuestionForm lang="zh" />
   </section>
 </BaseLayout>
