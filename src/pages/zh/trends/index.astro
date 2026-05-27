@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import AdSlot from "../../../components/AdSlot.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
+import { evidenceBySlug, popularDirections } from "../../../data/content";
+import { href } from "../../../utils/paths";
+---
+
+<BaseLayout lang="zh" title="熱門方向" description="整理大眾健身搜尋與社群常問問題，對應權威證據與內容選題。" path="/zh/trends/">
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Market Questions</p>
+        <h1>大眾在意的健身方向</h1>
+        <p>根據公開 FAQ、搜尋問題和社群常見討論整理，並對應到網站內的權威證據摘要。</p>
+      </div>
+    </div>
+    <AdSlot variant="banner" label="Content ad" />
+    <div class="direction-list">
+      {popularDirections.map((direction) => (
+        <article class="direction-card">
+          <div>
+            <span class="tag">{direction.topic}</span>
+            <h2>{direction.zhTitle}</h2>
+            <p>{direction.zhSummary}</p>
+          </div>
+          <div>
+            <h3>常見問題</h3>
+            <ul>{direction.questions.map((q) => <li>{q.zh}</li>)}</ul>
+          </div>
+          <div>
+            <h3>權威證據</h3>
+            <div class="tag-row">
+              {direction.authority.map((slug) => {
+                const item = evidenceBySlug(slug);
+                return item ? <a class="tag" href={href(`/zh/evidence/${item.slug}/`)}>{item.title}</a> : null;
+              })}
+            </div>
+          </div>
+          <div>
+            <h3>可做內容</h3>
+            <ul>{direction.contentAngles.map((angle) => <li>{angle.zh}</li>)}</ul>
+          </div>
+        </article>
+      ))}
+    </div>
+    <QuestionForm lang="zh" />
+  </section>
+</BaseLayout>

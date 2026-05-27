@@ -4,6 +4,7 @@ import LanguageSwitcher from "../components/LanguageSwitcher.astro";
 import { t } from "../utils/i18n";
 import type { Lang } from "../data/content";
 import { href } from "../utils/paths";
+import { siteConfig } from "../site.config";
 
 type Props = {
   lang: Lang;
@@ -17,6 +18,7 @@ const { lang, title, description, path, alternatePath } = Astro.props;
 const copy = t(lang);
 const siteName = copy.brand;
 const canonical = new URL(href(path), Astro.site ?? "https://example.github.io/").toString();
+const adsenseEnabled = Boolean(siteConfig.adsensePublisherId);
 ---
 
 <!doctype html>
@@ -32,6 +34,15 @@ const canonical = new URL(href(path), Astro.site ?? "https://example.github.io/"
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary_large_image" />
+    {
+      adsenseEnabled && (
+        <script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${siteConfig.adsensePublisherId}`}
+          crossorigin="anonymous"
+        />
+      )
+    }
   </head>
   <body>
     <div class="site-shell">
@@ -45,6 +56,7 @@ const canonical = new URL(href(path), Astro.site ?? "https://example.github.io/"
             <a href={href(`/${lang}/topics/`)}>{copy.topics}</a>
             <a href={href(`/${lang}/faq/`)}>{copy.faq}</a>
             <a href={href(`/${lang}/articles/`)}>{copy.articles}</a>
+            <a href={href(`/${lang}/trends/`)}>{copy.trends}</a>
             <a href={href(`/${lang}/evidence/`)}>{copy.evidence}</a>
             <LanguageSwitcher lang={lang} alternatePath={alternatePath} />
           </div>

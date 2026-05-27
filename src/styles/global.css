@@ -513,6 +513,60 @@ h3 {
   color: var(--muted);
 }
 
+.ad-slot {
+  border: 1px dashed rgba(105, 100, 92, 0.45);
+  border-radius: 8px;
+  background: rgba(255, 253, 248, 0.62);
+  color: var(--muted);
+  min-height: 96px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 14px;
+}
+
+.ad-slot.banner {
+  margin: 18px 0 8px;
+}
+
+.ad-slot span {
+  color: var(--teal);
+  font-weight: 800;
+  font-size: 0.82rem;
+}
+
+.ad-slot p {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+}
+
+.direction-list {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.direction-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: clamp(18px, 3vw, 28px);
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(220px, 0.9fr);
+  gap: 18px 24px;
+}
+
+.direction-card p,
+.direction-card li {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.direction-card ul {
+  padding-left: 20px;
+  margin-bottom: 0;
+}
+
 .footer-row {
   display: flex;
   justify-content: space-between;
@@ -543,6 +597,10 @@ h3 {
   }
 
   .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .direction-card {
     grid-template-columns: 1fr;
   }
 

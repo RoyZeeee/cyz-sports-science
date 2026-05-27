@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import AdSlot from "../../components/AdSlot.astro";
 import QuestionForm from "../../components/QuestionForm.astro";
 import TopicGrid from "../../components/TopicGrid.astro";
 import { articles, byLang, faqs } from "../../data/content";
@@ -39,6 +40,7 @@ const featuredArticles = byLang(articles, lang).slice(0, 3);
     </aside>
   </section>
   <section class="container section">
+    <AdSlot variant="banner" label="Content ad" />
     <div class="section-head">
       <div>
         <h2>Start with the goal</h2>

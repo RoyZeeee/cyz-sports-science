@@ -1,0 +1,35 @@
+---
+import { siteConfig } from "../site.config";
+
+type Props = {
+  variant?: "banner" | "inline";
+  label?: string;
+};
+
+const { variant = "inline", label = "Ad" } = Astro.props as Props;
+const client = siteConfig.adsensePublisherId;
+const slot = siteConfig.adSlots.inContent;
+const enabled = Boolean(client && slot);
+---
+
+<aside class={`ad-slot ${variant}`} aria-label={label}>
+  {
+    enabled ? (
+      <ins
+        class="adsbygoogle"
+        style="display:block"
+        data-ad-client={client}
+        data-ad-slot={slot}
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
+    ) : (
+      <div>
+        <span>{label}</span>
+        <p>AdSense placeholder</p>
+      </div>
+    )
+  }
+</aside>
+
+{enabled && <script is:inline>{`(adsbygoogle = window.adsbygoogle || []).push({});`}</script>}

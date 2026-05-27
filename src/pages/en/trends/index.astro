@@ -1,0 +1,49 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import AdSlot from "../../../components/AdSlot.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
+import { evidenceBySlug, popularDirections } from "../../../data/content";
+import { href } from "../../../utils/paths";
+---
+
+<BaseLayout lang="en" title="Trends" description="Popular fitness questions mapped to evidence and content opportunities." path="/en/trends/">
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Market Questions</p>
+        <h1>What fitness audiences care about</h1>
+        <p>Common public FAQ, search, and community questions mapped to evidence-backed content opportunities.</p>
+      </div>
+    </div>
+    <AdSlot variant="banner" label="Content ad" />
+    <div class="direction-list">
+      {popularDirections.map((direction) => (
+        <article class="direction-card">
+          <div>
+            <span class="tag">{direction.topic}</span>
+            <h2>{direction.enTitle}</h2>
+            <p>{direction.enSummary}</p>
+          </div>
+          <div>
+            <h3>Common questions</h3>
+            <ul>{direction.questions.map((q) => <li>{q.en}</li>)}</ul>
+          </div>
+          <div>
+            <h3>Authority</h3>
+            <div class="tag-row">
+              {direction.authority.map((slug) => {
+                const item = evidenceBySlug(slug);
+                return item ? <a class="tag" href={href(`/en/evidence/${item.slug}/`)}>{item.title}</a> : null;
+              })}
+            </div>
+          </div>
+          <div>
+            <h3>Content angles</h3>
+            <ul>{direction.contentAngles.map((angle) => <li>{angle.en}</li>)}</ul>
+          </div>
+        </article>
+      ))}
+    </div>
+    <QuestionForm lang="en" />
+  </section>
+</BaseLayout>

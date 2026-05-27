@@ -75,6 +75,24 @@ export type TopicDeepDive = {
   }[];
 };
 
+export type PopularDirection = {
+  slug: string;
+  zhTitle: string;
+  enTitle: string;
+  zhSummary: string;
+  enSummary: string;
+  topic: string;
+  questions: {
+    zh: string;
+    en: string;
+  }[];
+  authority: string[];
+  contentAngles: {
+    zh: string;
+    en: string;
+  }[];
+};
+
 export const topics: Topic[] = [
   {
     slug: "muscle-gain",
@@ -209,6 +227,127 @@ export const evidence: Evidence[] = [
       "Prioritize rapid refueling for two-a-day training, tournaments, and endurance blocks.",
       "Do not overstate the urgency for casual lifters with 24-48 hours between sessions.",
       "Add protein when total carbohydrate or energy intake is constrained.",
+    ],
+  },
+  {
+    slug: "creatine-safety",
+    title: "Creatine Safety and Performance",
+    description: "Creatine monohydrate is one of the strongest evidence supplements for high-intensity training and lean mass.",
+    strength: "A",
+    sourceType: "ISSN position stand",
+    summary:
+      "ISSN identifies creatine monohydrate as an effective ergogenic supplement for high-intensity exercise capacity and lean mass during training, with a favorable safety profile in appropriate users.",
+    practicalUse: [
+      "Use plain creatine monohydrate before expensive blends.",
+      "Explain water-weight changes separately from fat gain.",
+      "Separate healthy-user guidance from kidney disease or medication contexts.",
+    ],
+  },
+  {
+    slug: "caffeine-performance",
+    title: "Caffeine and Exercise Performance",
+    description: "Caffeine can support endurance, high-intensity effort, alertness, and perceived effort, but timing and sleep matter.",
+    strength: "A",
+    sourceType: "ISSN position stand",
+    summary:
+      "Caffeine is one of the better-supported acute performance aids. Benefits depend on dose, timing, individual tolerance, and whether it disrupts sleep or anxiety.",
+    practicalUse: [
+      "Discuss caffeine as a tool, not a daily obligation.",
+      "Flag sleep tradeoffs for evening lifters and students.",
+      "Compare coffee, caffeine pills, and pre-workout blends.",
+    ],
+  },
+  {
+    slug: "older-adult-activity-guidelines",
+    title: "Older Adult Physical Activity Guidelines",
+    description: "Older adults benefit from aerobic, strengthening, and balance-oriented activity matched to ability.",
+    strength: "A",
+    sourceType: "WHO guidelines and ACSM position stands",
+    summary:
+      "Public health guidelines emphasize regular physical activity for older adults, including muscle-strengthening and multicomponent balance/functional activity to support health, function, and fall prevention.",
+    practicalUse: [
+      "Frame older-adult lifting around function and independence.",
+      "Add medical boundaries for pain, osteoporosis, cardiovascular disease, surgery, and medications.",
+      "Create beginner progressions instead of maximal-lifting content.",
+    ],
+  },
+];
+
+export const popularDirections: PopularDirection[] = [
+  {
+    slug: "beginner-overthinking-basics",
+    zhTitle: "新手最在意：到底先做什麼才不會白練？",
+    enTitle: "Beginners: what should I do first so I do not waste time?",
+    zhSummary: "公開 FAQ、社群討論和搜尋問題反覆出現同一件事：新手容易被補劑、課表、體脂率和打卡焦慮帶走。內容應先給一套最小可行系統。",
+    enSummary:
+      "Public FAQs and beginner discussions repeatedly show the same pattern: beginners overthink supplements, programs, body-fat tracking, and perfect routines. Content should start with a minimum viable system.",
+    topic: "training",
+    questions: [
+      { zh: "新手要不要先買蛋白粉、肌酸或 pre-workout？", en: "Do beginners need protein powder, creatine, or pre-workout?" },
+      { zh: "一週練幾天才有效？", en: "How many days per week should I train?" },
+      { zh: "徒手、器械、自由重量哪個先開始？", en: "Should I start with bodyweight, machines, or free weights?" },
+    ],
+    authority: ["protein-supplementation", "creatine-safety", "concurrent-training"],
+    contentAngles: [
+      { zh: "新手健身 30 天最低配方案", en: "A 30-day minimum viable beginner fitness plan" },
+      { zh: "補劑先別急：先把這 4 件事做好", en: "Do these four things before buying supplements" },
+    ],
+  },
+  {
+    slug: "fat-loss-calorie-deficit",
+    zhTitle: "減脂核心：熱量赤字、肚子脂肪和肌肉保留",
+    enTitle: "Fat loss: calorie deficit, belly fat, and muscle retention",
+    zhSummary: "大眾常把減脂問題問成「做什麼運動瘦肚子」或「能不能不吃碳水」。網站應把熱量赤字、蛋白質、重訓和步數拆開講。",
+    enSummary:
+      "Popular fat-loss questions often become 'how do I lose belly fat' or 'do I need to cut carbs'. The site should separate deficit, protein, lifting, steps, and cardio.",
+    topic: "fat-loss",
+    questions: [
+      { zh: "怎麼瘦肚子？可以局部減脂嗎？", en: "How do I lose belly fat? Is spot reduction real?" },
+      { zh: "減脂要不要戒碳水？", en: "Do I need to cut carbs to lose fat?" },
+      { zh: "減脂期怎麼不掉肌肉？", en: "How do I avoid losing muscle while cutting?" },
+    ],
+    authority: ["protein-supplementation", "concurrent-training"],
+    contentAngles: [
+      { zh: "熱量赤字不是挨餓：三種可持續做法", en: "A calorie deficit is not starvation: three sustainable ways" },
+      { zh: "瘦肚子為什麼不能只練腹肌？", en: "Why ab exercises alone do not remove belly fat" },
+    ],
+  },
+  {
+    slug: "supplement-roi",
+    zhTitle: "補劑投資報酬率：肌酸、蛋白粉、咖啡因、魚油",
+    enTitle: "Supplement ROI: creatine, protein powder, caffeine, fish oil",
+    zhSummary: "補劑是最容易變現也最容易失去信任的方向。內容要把證據、價格、適用族群和不該買的情境放在同一張表。",
+    enSummary:
+      "Supplements are monetizable but trust-sensitive. Content should rank evidence, cost, target users, and situations where people should not buy.",
+    topic: "supplements",
+    questions: [
+      { zh: "肌酸安全嗎？會傷腎或掉髮嗎？", en: "Is creatine safe? Does it hurt kidneys or cause hair loss?" },
+      { zh: "pre-workout 和咖啡差在哪？", en: "What is the difference between pre-workout and coffee?" },
+      { zh: "魚油、BCAA、GABA 值不值得買？", en: "Are fish oil, BCAA, or GABA worth buying?" },
+    ],
+    authority: ["creatine-safety", "protein-supplementation", "caffeine-performance", "omega-3-athletes"],
+    contentAngles: [
+      { zh: "學生黨補劑購買順序", en: "Supplement buying order for students on a budget" },
+      { zh: "補劑紅綠燈：先買、可買、先別買", en: "Supplement traffic light: buy first, maybe, skip for now" },
+    ],
+  },
+  {
+    slug: "older-adult-strength",
+    zhTitle: "中老年健康：肌力、關節安全、跌倒風險",
+    enTitle: "Older adults: strength, joint safety, and fall risk",
+    zhSummary: "中老年內容搜尋意圖很強，但責任也更高。應把醫療邊界、安全進階、肌力和蛋白質講清楚。",
+    enSummary:
+      "Older-adult content has strong search intent and higher responsibility. It needs medical boundaries, safe progressions, strength, and protein clarity.",
+    topic: "older-adults",
+    questions: [
+      { zh: "60 歲以上還能重訓嗎？", en: "Can people over 60 lift weights?" },
+      { zh: "膝蓋痛能不能深蹲？", en: "Can I squat if my knees hurt?" },
+      { zh: "中老年一天要吃多少蛋白質？", en: "How much protein do older adults need?" },
+    ],
+    authority: ["older-adult-activity-guidelines", "protein-supplementation"],
+    contentAngles: [
+      { zh: "給爸媽看的安全重訓入門", en: "A safe strength-training starter for parents" },
+      { zh: "中老年增肌不是健美，是保功能", en: "Older-adult muscle is about function, not bodybuilding" },
     ],
   },
 ];
@@ -662,6 +801,91 @@ export const faqs: Faq[] = [
     relatedArticle: "supplement-priority-map",
   },
   {
+    slug: "can-i-build-muscle-and-lose-fat",
+    lang: "zh",
+    title: "可以同時增肌減脂嗎？",
+    description: "新手、體脂較高、回訓者更有機會；進階者通常要分階段。",
+    topic: "fat-loss",
+    audience: "新手、減脂、體態重組",
+    evidence: "moderate",
+    answer: [
+      "可以，但不是所有人都一樣容易。新手、體脂較高者、停練後回訓者，通常更有機會同時增加肌肉並減少脂肪。",
+      "核心條件是阻力訓練要穩定進步、蛋白質足夠、熱量赤字不要太激進、睡眠能支撐恢復。",
+      "越進階、越瘦、越接近上限的人，同時增肌減脂越難，通常更適合分成增肌期和減脂期。",
+    ],
+    takeaways: ["新手更容易體態重組。", "赤字太大會拖累訓練和肌肉保留。", "看腰圍、力量和照片，不只看體重。"],
+    relatedEvidence: ["protein-supplementation", "concurrent-training"],
+    relatedArticle: "calorie-deficit-basics",
+  },
+  {
+    slug: "how-to-lose-belly-fat",
+    lang: "zh",
+    title: "怎麼瘦肚子？可以局部減脂嗎？",
+    description: "腹肌訓練能練肌肉，但脂肪下降主要看整體熱量赤字。",
+    topic: "fat-loss",
+    audience: "減脂新手、上班族",
+    evidence: "strong",
+    answer: [
+      "大多數情況下，不能指定只讓肚子脂肪先下降。腹肌訓練可以讓腹肌更有力量，但不會單獨把腹部脂肪融掉。",
+      "要讓腰圍下降，仍然要靠長期熱量赤字、蛋白質、阻力訓練、活動量和睡眠。",
+      "肚子脂肪常常是最後才明顯變少的部位之一，所以應該看 4-8 週趨勢，而不是每天照鏡子焦慮。",
+    ],
+    takeaways: ["局部減脂不是主要策略。", "腰圍趨勢比單日體重更有用。", "腹肌訓練是肌肉訓練，不是脂肪定位器。"],
+    relatedEvidence: ["concurrent-training"],
+    relatedArticle: "calorie-deficit-basics",
+  },
+  {
+    slug: "is-creatine-safe",
+    lang: "zh",
+    title: "肌酸安全嗎？會傷腎嗎？",
+    description: "健康族群和腎臟疾病或用藥族群要分開討論。",
+    topic: "supplements",
+    audience: "學生黨、增肌、力量訓練",
+    evidence: "strong",
+    answer: [
+      "對健康成人來說，肌酸一水合物是研究很多、證據很強的補劑。它的主要用途是高強度輸出、力量訓練表現和瘦體重增加。",
+      "體重上升常和肌肉內水分儲存有關，不等於脂肪增加。",
+      "如果已有腎臟疾病、用藥、未成年競技或醫療限制，應先問醫師或合格專業人員，不要直接套用網路建議。",
+    ],
+    takeaways: ["優先選 creatine monohydrate。", "不要把水重誤認成脂肪。", "疾病和用藥情境要醫療評估。"],
+    relatedEvidence: ["creatine-safety"],
+    relatedArticle: "supplement-priority-map",
+  },
+  {
+    slug: "preworkout-or-coffee",
+    lang: "zh",
+    title: "Pre-workout 和咖啡差在哪？",
+    description: "很多 pre-workout 的主要體感來自咖啡因，但複方產品要看成分和劑量。",
+    topic: "supplements",
+    audience: "學生黨、上班族、訓練前容易累的人",
+    evidence: "strong",
+    answer: [
+      "很多 pre-workout 的核心體感來自咖啡因。咖啡、咖啡因錠和 pre-workout 的差別在於劑量穩定性、其他成分、價格和腸胃耐受。",
+      "咖啡因可能幫助警覺、耐力和主觀疲勞，但太晚使用會破壞睡眠，反過來影響恢復和增肌減脂。",
+      "如果只是想提神，先確認自己對咖啡因的反應，再決定是否需要複方產品。",
+    ],
+    takeaways: ["先看咖啡因毫克數。", "晚上訓練要小心睡眠代價。", "複方不一定比咖啡更划算。"],
+    relatedEvidence: ["caffeine-performance"],
+    relatedArticle: "supplement-priority-map",
+  },
+  {
+    slug: "older-adults-how-often-strength",
+    lang: "zh",
+    title: "中老年人一週要做幾次肌力訓練？",
+    description: "重點是安全、規律、全身肌群和功能，而不是一開始追最大重量。",
+    topic: "older-adults",
+    audience: "中老年、家人照護、健康促進",
+    evidence: "strong",
+    answer: [
+      "多數中老年人可以先從每週 2-3 次肌力訓練開始，涵蓋推、拉、蹲、髖鉸鏈、核心和簡單平衡。",
+      "如果有疼痛、骨質疏鬆、心血管疾病、近期手術或用藥，應先做專業評估。",
+      "訓練目標應先放在站起來更穩、走路更有力、日常活動更安全，而不是一開始追求健美式訓練量。",
+    ],
+    takeaways: ["每週 2-3 次是實務起點。", "功能和平衡很重要。", "高風險族群先評估。"],
+    relatedEvidence: ["older-adult-activity-guidelines", "protein-supplementation"],
+    relatedArticle: "older-adults-strength",
+  },
+  {
     slug: "does-protein-powder-damage-kidneys",
     lang: "en",
     title: "Does protein powder damage your kidneys?",
@@ -795,6 +1019,91 @@ export const faqs: Faq[] = [
     ],
     takeaways: ["Strength training is not only maximal lifting.", "Function matters.", "Medical context changes the plan."],
     relatedEvidence: ["supplement-evidence-map"],
+    relatedArticle: "older-adults-strength",
+  },
+  {
+    slug: "can-i-build-muscle-and-lose-fat",
+    lang: "en",
+    title: "Can I build muscle and lose fat at the same time?",
+    description: "Beginners, higher-body-fat lifters, and returners have the best shot; advanced lifters often need phases.",
+    topic: "fat-loss",
+    audience: "Beginners, recomposition, fat loss",
+    evidence: "moderate",
+    answer: [
+      "Yes, but not everyone has the same odds. Beginners, people with more body fat, and people returning after detraining usually have the best chance.",
+      "The conditions are progressive resistance training, enough protein, a non-aggressive deficit, and sleep that supports recovery.",
+      "The leaner and more advanced you are, the more likely it is that dedicated muscle-gain and fat-loss phases will work better.",
+    ],
+    takeaways: ["Beginners have the best recomposition odds.", "A harsh deficit can hurt training.", "Track waist, strength, and photos, not only scale weight."],
+    relatedEvidence: ["protein-supplementation", "concurrent-training"],
+    relatedArticle: "calorie-deficit-basics",
+  },
+  {
+    slug: "how-to-lose-belly-fat",
+    lang: "en",
+    title: "How do I lose belly fat?",
+    description: "Ab training trains abs, but fat loss mainly follows overall calorie deficit.",
+    topic: "fat-loss",
+    audience: "Fat-loss beginners, office workers",
+    evidence: "strong",
+    answer: [
+      "In most cases, you cannot choose the exact body area that loses fat first. Ab training can strengthen abs, but it does not locally melt abdominal fat.",
+      "Waist reduction still comes from sustained calorie deficit, protein, resistance training, activity, and sleep.",
+      "Belly fat is often one of the slower areas to visibly change, so use 4-8 week trends instead of daily mirror panic.",
+    ],
+    takeaways: ["Spot reduction is not the main strategy.", "Waist trend matters.", "Ab training is muscle training, not fat targeting."],
+    relatedEvidence: ["concurrent-training"],
+    relatedArticle: "calorie-deficit-basics",
+  },
+  {
+    slug: "is-creatine-safe",
+    lang: "en",
+    title: "Is creatine safe?",
+    description: "Healthy users and people with kidney disease, medication, or clinical restrictions need different advice.",
+    topic: "supplements",
+    audience: "Students, muscle gain, strength training",
+    evidence: "strong",
+    answer: [
+      "For healthy adults, creatine monohydrate is one of the more researched and better-supported supplements for high-intensity output, resistance training, and lean mass.",
+      "Early scale weight increases are often related to water storage, not automatic fat gain.",
+      "Kidney disease, medication, youth sport, or medical restrictions change the context and should involve qualified guidance.",
+    ],
+    takeaways: ["Use creatine monohydrate first.", "Do not confuse water weight with fat gain.", "Clinical contexts need clinical advice."],
+    relatedEvidence: ["creatine-safety"],
+    relatedArticle: "supplement-priority-map",
+  },
+  {
+    slug: "preworkout-or-coffee",
+    lang: "en",
+    title: "Pre-workout or coffee?",
+    description: "Many pre-workouts feel effective because of caffeine; blends need ingredient and dose checks.",
+    topic: "supplements",
+    audience: "Students, professionals, tired lifters",
+    evidence: "strong",
+    answer: [
+      "Many pre-workout products get their main effect from caffeine. Coffee, caffeine pills, and pre-workout differ in dose control, extra ingredients, price, and tolerance.",
+      "Caffeine may help alertness, endurance, and perceived effort, but late-day use can hurt sleep and then recovery.",
+      "If you mainly want alertness, check your caffeine response before paying for a complex blend.",
+    ],
+    takeaways: ["Check caffeine milligrams.", "Evening training has sleep tradeoffs.", "Blends are not always better value than coffee."],
+    relatedEvidence: ["caffeine-performance"],
+    relatedArticle: "supplement-priority-map",
+  },
+  {
+    slug: "older-adults-how-often-strength",
+    lang: "en",
+    title: "How often should older adults strength train?",
+    description: "The starting point is safe, regular, whole-body training, not maximal lifting.",
+    topic: "older-adults",
+    audience: "Older adults, families, health-focused beginners",
+    evidence: "strong",
+    answer: [
+      "A practical start is 2-3 strength sessions per week, covering push, pull, squat, hinge, core, and simple balance patterns.",
+      "Pain, osteoporosis, cardiovascular disease, recent surgery, or medication considerations should be assessed professionally.",
+      "The first goal is often standing up more confidently, walking stronger, and keeping daily function, not bodybuilding volume.",
+    ],
+    takeaways: ["2-3 sessions per week is a practical start.", "Function and balance matter.", "Higher-risk cases need assessment."],
+    relatedEvidence: ["older-adult-activity-guidelines", "protein-supplementation"],
     relatedArticle: "older-adults-strength",
   },
 ];

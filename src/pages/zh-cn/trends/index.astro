@@ -1,0 +1,51 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import AdSlot from "../../../components/AdSlot.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
+import { evidenceBySlug, localizeText, popularDirections } from "../../../data/content";
+import { href } from "../../../utils/paths";
+
+const lang = "zh-cn";
+---
+
+<BaseLayout lang={lang} title="热门方向" description="整理大众健身搜索与社群常问问题，对应权威证据与内容选题。" path="/zh-cn/trends/">
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Market Questions</p>
+        <h1>大众在意的健身方向</h1>
+        <p>根据公开 FAQ、搜索问题和社群常见讨论整理，并对应到网站内的权威证据摘要。</p>
+      </div>
+    </div>
+    <AdSlot variant="banner" label="Content ad" />
+    <div class="direction-list">
+      {popularDirections.map((direction) => (
+        <article class="direction-card">
+          <div>
+            <span class="tag">{direction.topic}</span>
+            <h2>{localizeText(direction.zhTitle, lang)}</h2>
+            <p>{localizeText(direction.zhSummary, lang)}</p>
+          </div>
+          <div>
+            <h3>常见问题</h3>
+            <ul>{direction.questions.map((q) => <li>{localizeText(q.zh, lang)}</li>)}</ul>
+          </div>
+          <div>
+            <h3>权威证据</h3>
+            <div class="tag-row">
+              {direction.authority.map((slug) => {
+                const item = evidenceBySlug(slug);
+                return item ? <a class="tag" href={href(`/zh-cn/evidence/${item.slug}/`)}>{localizeText(item.title, lang)}</a> : null;
+              })}
+            </div>
+          </div>
+          <div>
+            <h3>可做内容</h3>
+            <ul>{direction.contentAngles.map((angle) => <li>{localizeText(angle.zh, lang)}</li>)}</ul>
+          </div>
+        </article>
+      ))}
+    </div>
+    <QuestionForm lang={lang} />
+  </section>
+</BaseLayout>
