@@ -3,7 +3,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import QuestionForm from "../../../components/QuestionForm.astro";
 import ExerciseVisual from "../../../components/ExerciseVisual.astro";
 import Rating from "../../../components/Rating.astro";
-import { exercises, getExercise, getMuscleGroup, difficultyLabel, listText, text, toolCopy } from "../../../data/tools";
+import { exercises, getExercise, getMuscleGroup, difficultyLabel, listText, subMuscleLabels, text, toolCopy } from "../../../data/tools";
 import type { Lang } from "../../../data/content";
 import { href } from "../../../utils/paths";
 
@@ -17,6 +17,7 @@ if (!exercise) throw new Error("Exercise not found");
 const copy = toolCopy(lang);
 const muscle = getMuscleGroup(exercise.muscleGroup);
 const related = exercises.filter((item) => item.muscleGroup === exercise.muscleGroup && item.slug !== exercise.slug).slice(0, 4);
+const subLabels = subMuscleLabels(exercise.subMuscles, lang);
 ---
 
 <BaseLayout lang={lang} title={text(exercise.name, lang)} description={text(exercise.summary, lang)} path={`/${lang}/exercises/${exercise.slug}/`}>
@@ -35,6 +36,14 @@ const related = exercises.filter((item) => item.muscleGroup === exercise.muscleG
         <h2>{copy.primary}</h2>
         <div class="tag-row">{listText(exercise.primary, lang).map((item) => <span class="tag strong-tag">{item}</span>)}</div>
       </section>
+      {
+        subLabels.length > 0 && (
+          <section>
+            <h2>{lang === "en" ? "Target region" : lang === "zh-cn" ? "细分目标" : "細分目標"}</h2>
+            <div class="tag-row">{subLabels.map((item) => <span class="tag strong-tag">{item}</span>)}</div>
+          </section>
+        )
+      }
       <section>
         <h2>{copy.secondary}</h2>
         <div class="tag-row">{listText(exercise.secondary, lang).map((item) => <span class="tag">{item}</span>)}</div>

@@ -3,11 +3,12 @@ import ExerciseVisual from "./ExerciseVisual.astro";
 import Rating from "./Rating.astro";
 import type { Lang } from "../data/content";
 import type { Exercise } from "../data/tools";
-import { difficultyLabel, listText, text, toolCopy } from "../data/tools";
+import { difficultyLabel, listText, subMuscleLabels, text, toolCopy } from "../data/tools";
 import { href } from "../utils/paths";
 
 const { exercise, lang } = Astro.props as { exercise: Exercise; lang: Lang };
 const copy = toolCopy(lang);
+const subLabels = subMuscleLabels(exercise.subMuscles, lang);
 const searchText = [
   exercise.slug,
   text(exercise.name, lang),
@@ -16,6 +17,7 @@ const searchText = [
   text(exercise.summary, lang),
   ...listText(exercise.primary, lang),
   ...listText(exercise.secondary, lang),
+  ...subLabels,
   text(exercise.equipment, lang),
 ].join(" ");
 ---
@@ -25,6 +27,7 @@ const searchText = [
   href={href(`/${lang}/exercises/${exercise.slug}/`)}
   data-exercise-card
   data-muscle={exercise.muscleGroup}
+  data-submuscles={(exercise.subMuscles ?? []).join(" ")}
   data-difficulty={exercise.difficulty}
   data-rating={exercise.rating}
   data-equipment={text(exercise.equipment, lang)}
@@ -38,6 +41,7 @@ const searchText = [
       <Rating value={exercise.rating} label={copy.rating} />
       <span class="tag">{difficultyLabel(exercise.difficulty, lang)}</span>
     </div>
+    {subLabels.length > 0 && <div class="tag-row mini-tags">{subLabels.map((label) => <span class="tag strong-tag">{label}</span>)}</div>}
     <p class="mini-meta">{copy.primary}: {listText(exercise.primary, lang).join("、")}</p>
   </div>
   <span class="pill-link">{copy.read}</span>

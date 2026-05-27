@@ -2,7 +2,7 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import QuestionForm from "../../../components/QuestionForm.astro";
 import ExerciseCard from "../../../components/ExerciseCard.astro";
-import { exercisesForMuscle, getMuscleGroup, muscleGroups, text, toolCopy } from "../../../data/tools";
+import { exercisesForMuscle, getMuscleGroup, muscleGroups, subMuscleGroupsForParent, text, toolCopy } from "../../../data/tools";
 import type { Lang } from "../../../data/content";
 import { href } from "../../../utils/paths";
 
@@ -15,6 +15,7 @@ const group = getMuscleGroup(Astro.params.slug ?? "");
 if (!group) throw new Error("Muscle group not found");
 const copy = toolCopy(lang);
 const ranked = exercisesForMuscle(group.slug);
+const subGroups = subMuscleGroupsForParent(group.slug);
 ---
 
 <BaseLayout lang={lang} title={text(group.name, lang)} description={text(group.description, lang)} path={`/${lang}/muscles/${group.slug}/`}>
@@ -27,6 +28,26 @@ const ranked = exercisesForMuscle(group.slug);
       </div>
       <a class="pill-link" href={href(`/${lang}/exercises/`)}>{copy.exercises}</a>
     </div>
+    {
+      subGroups.length > 0 && (
+        <div class="sub-muscle-grid">
+          {subGroups.map((subGroup) => {
+            const subExercises = ranked.filter((exercise) => exercise.subMuscles?.includes(subGroup.slug));
+            return (
+              <section class="sub-muscle-card">
+                <div>
+                  <h2>{text(subGroup.name, lang)}</h2>
+                  <p>{text(subGroup.description, lang)}</p>
+                </div>
+                <div class="tag-row">
+                  {subExercises.slice(0, 6).map((exercise) => <a class="tag" href={href(`/${lang}/exercises/${exercise.slug}/`)}>{text(exercise.name, lang)}</a>)}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+      )
+    }
     <div class="rank-list">
       {ranked.map((exercise, index) => (
         <div class="rank-row">

@@ -6,6 +6,8 @@ type LText = {
   en: string;
 };
 
+const lt = (zh: string, en: string): LText => ({ zh, en });
+
 export type MuscleGroup = {
   slug: string;
   name: LText;
@@ -13,11 +15,19 @@ export type MuscleGroup = {
   trainingNote: LText;
 };
 
+export type SubMuscleGroup = {
+  slug: string;
+  parent: "chest" | "back";
+  name: LText;
+  description: LText;
+};
+
 export type Exercise = {
   slug: string;
   name: LText;
   summary: LText;
   muscleGroup: string;
+  subMuscles?: string[];
   primary: LText[];
   secondary: LText[];
   equipment: LText;
@@ -86,11 +96,63 @@ export const muscleGroups: MuscleGroup[] = [
   },
 ];
 
+export const subMuscleGroups: SubMuscleGroup[] = [
+  {
+    slug: "upper-chest",
+    parent: "chest",
+    name: lt("上胸", "Upper chest"),
+    description: lt("鎖骨束為主，常用上斜推、上斜器械和低到高夾胸補強。", "Clavicular fibers, usually trained with incline presses and low-to-high fly work."),
+  },
+  {
+    slug: "mid-chest",
+    parent: "chest",
+    name: lt("中胸", "Mid chest"),
+    description: lt("胸大肌主體，平板推、胸推器械和水平夾胸最常用。", "The main sternal region, commonly trained by flat presses, machine presses, and horizontal flys."),
+  },
+  {
+    slug: "lower-chest",
+    parent: "chest",
+    name: lt("下胸", "Lower chest"),
+    description: lt("偏下束與胸肋區，雙槓臂屈伸和高到低夾胸較常用。", "Lower sternal fibers, often trained with dips and high-to-low cable flys."),
+  },
+  {
+    slug: "lats",
+    parent: "back",
+    name: lt("背闊肌", "Lats"),
+    description: lt("影響背部寬度，垂直下拉、引體和直臂下壓是主力。", "The width muscle of the back, trained well by pulldowns, pull-ups, and straight-arm pulldowns."),
+  },
+  {
+    slug: "upper-back",
+    parent: "back",
+    name: lt("上背/斜方菱形", "Upper back, traps, rhomboids"),
+    description: lt("影響背部厚度和肩胛控制，寬握划船、面拉和後束類動作很常用。", "Important for back thickness and scapular control, trained by wide rows, face pulls, and rear-delt patterns."),
+  },
+  {
+    slug: "mid-back",
+    parent: "back",
+    name: lt("中背", "Mid back"),
+    description: lt("划船類主力區域，坐姿划船、胸托划船和槓鈴划船都會用到。", "The main rowing region, trained by cable rows, chest-supported rows, and barbell rows."),
+  },
+  {
+    slug: "rear-delts",
+    parent: "back",
+    name: lt("後三角", "Rear delts"),
+    description: lt("嚴格說屬肩部，但常和背日一起安排，影響背面視覺寬度。", "Technically shoulder muscle, but often trained on back days and important for rear-view width."),
+  },
+  {
+    slug: "lower-back",
+    parent: "back",
+    name: lt("下背/豎脊肌", "Lower back, spinal erectors"),
+    description: lt("負責髖鉸鏈和軀幹伸展穩定，硬拉和槓鈴划船會大量參與。", "Supports hip hinges and trunk extension, heavily involved in deadlifts and unsupported rows."),
+  },
+];
+
 type QuickExerciseInput = {
   slug: string;
   zh: string;
   en: string;
   group: Exercise["muscleGroup"];
+  subMuscles?: string[];
   primary: LText[];
   secondary?: LText[];
   equipment: LText;
@@ -99,8 +161,6 @@ type QuickExerciseInput = {
   focus: Exercise["visualFocus"];
   summary?: LText;
 };
-
-const lt = (zh: string, en: string): LText => ({ zh, en });
 
 function quickExercise(input: QuickExerciseInput): Exercise {
   const difficulty = input.difficulty ?? "intermediate";
@@ -113,6 +173,7 @@ function quickExercise(input: QuickExerciseInput): Exercise {
       input.summary ??
       lt(`以${primaryName.zh}為主的常見訓練動作，適合放進對應肌群課表。`, `A common exercise for ${primaryName.en}, useful in a targeted program.`),
     muscleGroup: input.group,
+    subMuscles: input.subMuscles,
     primary: input.primary,
     secondary: input.secondary ?? [],
     equipment: input.equipment,
@@ -126,6 +187,41 @@ function quickExercise(input: QuickExerciseInput): Exercise {
     ],
     cautions: [lt("若出現尖銳疼痛或代償明顯，先降低重量或換更穩定的變式。", "If sharp pain or obvious compensation appears, lower the load or use a more stable variation.")],
   };
+}
+
+function withInferredSubMuscles(exercise: Exercise): Exercise {
+  if (exercise.subMuscles?.length) return exercise;
+  const textBlob = [
+    exercise.slug,
+    exercise.name.zh,
+    exercise.name.en,
+    exercise.summary.zh,
+    exercise.summary.en,
+    ...exercise.primary.flatMap((item) => [item.zh, item.en]),
+    ...exercise.secondary.flatMap((item) => [item.zh, item.en]),
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  if (exercise.muscleGroup === "chest") {
+    const chestBlob = [exercise.slug, exercise.name.zh, exercise.name.en, ...exercise.primary.flatMap((item) => [item.zh, item.en])].join(" ").toLowerCase();
+    if (/上胸|upper chest|incline/.test(chestBlob)) return { ...exercise, subMuscles: ["upper-chest"] };
+    if (/下胸|lower|dip|high-to-low|下斜/.test(textBlob)) return { ...exercise, subMuscles: ["lower-chest"] };
+    return { ...exercise, subMuscles: ["mid-chest"] };
+  }
+
+  if (exercise.muscleGroup === "back") {
+    const subMuscles = new Set<string>();
+    if (/背闊|lats|lat|pulldown|pull-up|引體|下拉|直臂/.test(textBlob)) subMuscles.add("lats");
+    if (/上背|upper back|trap|rhomboid|寬握|wide|face|後束|rear/.test(textBlob)) subMuscles.add("upper-back");
+    if (/中背|mid back|row|划船/.test(textBlob)) subMuscles.add("mid-back");
+    if (/後三角|rear delt/.test(textBlob)) subMuscles.add("rear-delts");
+    if (/豎脊|spinal|lower back|deadlift|硬拉|barbell-row/.test(textBlob)) subMuscles.add("lower-back");
+    if (!subMuscles.size) subMuscles.add("lats");
+    return { ...exercise, subMuscles: Array.from(subMuscles) };
+  }
+
+  return exercise;
 }
 
 export const exercises: Exercise[] = [
@@ -494,7 +590,7 @@ export const exercises: Exercise[] = [
   quickExercise({ slug: "smith-calf-raise", zh: "史密斯提踵", en: "Smith Machine Calf Raise", group: "legs", primary: [lt("腓腸肌", "Gastrocnemius")], secondary: [lt("比目魚肌", "Soleus")], equipment: lt("史密斯機", "Smith machine"), difficulty: "beginner", rating: 4, focus: "calves" }),
   quickExercise({ slug: "barbell-glute-bridge", zh: "槓鈴臀橋", en: "Barbell Glute Bridge", group: "glutes", primary: [lt("臀大肌", "Glutes")], secondary: [lt("腿後側", "Hamstrings"), lt("核心", "Core")], equipment: lt("槓鈴、地墊", "Barbell and mat"), rating: 4, focus: "glutes" }),
   quickExercise({ slug: "smith-hip-thrust", zh: "史密斯臀推", en: "Smith Machine Hip Thrust", group: "glutes", primary: [lt("臀大肌", "Glutes")], secondary: [lt("腿後側", "Hamstrings")], equipment: lt("史密斯機、椅子", "Smith machine and bench"), rating: 4, focus: "glutes" }),
-];
+].map(withInferredSubMuscles);
 
 export const foods: Food[] = [
   { slug: "egg", name: { zh: "雞蛋", en: "Egg" }, unit: { zh: "1 顆", en: "1 egg" }, kcal: "70", protein: "6 g", carbs: "0.5 g", fat: "5 g", bestUse: { zh: "便宜、方便的蛋白和脂肪來源", en: "Cheap, convenient protein and fat" }, note: { zh: "大小不同會影響數字。", en: "Egg size changes the numbers." } },
@@ -535,6 +631,18 @@ export function getExercise(slug: string) {
 
 export function getMuscleGroup(slug: string) {
   return muscleGroups.find((group) => group.slug === slug);
+}
+
+export function getSubMuscleGroup(slug: string) {
+  return subMuscleGroups.find((group) => group.slug === slug);
+}
+
+export function subMuscleGroupsForParent(parent: string) {
+  return subMuscleGroups.filter((group) => group.parent === parent);
+}
+
+export function subMuscleLabels(slugs: string[] | undefined, lang: Lang) {
+  return (slugs ?? []).map((slug) => getSubMuscleGroup(slug)).filter((group): group is SubMuscleGroup => Boolean(group)).map((group) => text(group.name, lang));
 }
 
 export function exercisesForMuscle(slug: string) {

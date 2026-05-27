@@ -2,7 +2,7 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import QuestionForm from "../../../components/QuestionForm.astro";
 import ExerciseCard from "../../../components/ExerciseCard.astro";
-import { difficultyLabel, exercises, muscleGroups, text, toolCopy } from "../../../data/tools";
+import { difficultyLabel, exercises, muscleGroups, subMuscleGroups, text, toolCopy } from "../../../data/tools";
 import type { Lang } from "../../../data/content";
 import { href } from "../../../utils/paths";
 
@@ -25,6 +25,8 @@ const filterCopy =
     ? {
         search: "Search exercises, muscles, or equipment",
         allMuscles: "All muscles",
+        allSubMuscles: "All chest/back regions",
+        subMuscle: "Chest/back region",
         allEquipment: "All equipment",
         allDifficulty: "All difficulty",
         minRating: "Minimum rating",
@@ -37,6 +39,8 @@ const filterCopy =
       ? {
           search: "搜动作、肌群或器材",
           allMuscles: "全部肌群",
+          allSubMuscles: "全部胸背小肌群",
+          subMuscle: "胸背小肌群",
           allEquipment: "全部器材",
           allDifficulty: "全部难度",
           minRating: "最低推荐",
@@ -48,6 +52,8 @@ const filterCopy =
       : {
           search: "搜動作、肌群或器材",
           allMuscles: "全部肌群",
+          allSubMuscles: "全部胸背小肌群",
+          subMuscle: "胸背小肌群",
           allEquipment: "全部器材",
           allDifficulty: "全部難度",
           minRating: "最低推薦",
@@ -79,6 +85,13 @@ const filterCopy =
           <select data-filter-muscle>
             <option value="">{filterCopy.allMuscles}</option>
             {muscleGroups.map((group) => <option value={group.slug}>{text(group.name, lang)}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>{filterCopy.subMuscle}</span>
+          <select data-filter-submuscle>
+            <option value="">{filterCopy.allSubMuscles}</option>
+            {subMuscleGroups.map((group) => <option value={group.slug}>{text(group.name, lang)}</option>)}
           </select>
         </label>
         <label>
@@ -116,6 +129,9 @@ const filterCopy =
       <button class="tag strong-tag" type="button" data-muscle-chip value="">{filterCopy.allMuscles}</button>
       {muscleGroups.map((group) => <button class="tag" type="button" data-muscle-chip value={group.slug}>{text(group.name, lang)}</button>)}
     </div>
+    <div class="tool-filter-row" aria-label={filterCopy.subMuscle}>
+      {subMuscleGroups.map((group) => <button class="tag" type="button" data-submuscle-chip value={group.slug}>{text(group.name, lang)}</button>)}
+    </div>
     <div class="exercise-grid" data-exercise-grid>
       {exercises.map((exercise) => <ExerciseCard exercise={exercise} lang={lang} />)}
     </div>
@@ -127,6 +143,7 @@ const filterCopy =
     const cards = Array.from(document.querySelectorAll("[data-exercise-card]"));
     const search = panel?.querySelector("[data-filter-search]");
     const muscle = panel?.querySelector("[data-filter-muscle]");
+    const submuscle = panel?.querySelector("[data-filter-submuscle]");
     const equipment = panel?.querySelector("[data-filter-equipment]");
     const difficulty = panel?.querySelector("[data-filter-difficulty]");
     const rating = panel?.querySelector("[data-filter-rating]");
@@ -134,10 +151,12 @@ const filterCopy =
     const count = panel?.querySelector("[data-filter-count]");
     const empty = document.querySelector("[data-filter-empty]");
     const chips = Array.from(document.querySelectorAll("[data-muscle-chip]"));
+    const subChips = Array.from(document.querySelectorAll("[data-submuscle-chip]"));
 
     function applyFilters() {
       const query = String(search?.value || "").trim().toLowerCase();
       const selectedMuscle = String(muscle?.value || "");
+      const selectedSubMuscle = String(submuscle?.value || "");
       const selectedEquipment = String(equipment?.value || "");
       const selectedDifficulty = String(difficulty?.value || "");
       const minRating = Number(rating?.value || 0);
@@ -146,10 +165,11 @@ const filterCopy =
       cards.forEach((card) => {
         const matchesQuery = !query || String(card.dataset.search || "").includes(query);
         const matchesMuscle = !selectedMuscle || card.dataset.muscle === selectedMuscle;
+        const matchesSubMuscle = !selectedSubMuscle || String(card.dataset.submuscles || "").split(" ").includes(selectedSubMuscle);
         const matchesEquipment = !selectedEquipment || card.dataset.equipment === selectedEquipment;
         const matchesDifficulty = !selectedDifficulty || card.dataset.difficulty === selectedDifficulty;
         const matchesRating = !minRating || Number(card.dataset.rating || 0) >= minRating;
-        const show = matchesQuery && matchesMuscle && matchesEquipment && matchesDifficulty && matchesRating;
+        const show = matchesQuery && matchesMuscle && matchesSubMuscle && matchesEquipment && matchesDifficulty && matchesRating;
         card.hidden = !show;
         if (show) visible += 1;
       });
@@ -157,18 +177,26 @@ const filterCopy =
       if (count) count.textContent = `${visible} ${count.dataset.countLabel || ""}`;
       if (empty) empty.hidden = visible !== 0;
       chips.forEach((chip) => chip.classList.toggle("strong-tag", chip.value === selectedMuscle));
+      subChips.forEach((chip) => chip.classList.toggle("strong-tag", chip.value === selectedSubMuscle));
     }
 
-    [search, muscle, equipment, difficulty, rating].forEach((control) => control?.addEventListener("input", applyFilters));
+    [search, muscle, submuscle, equipment, difficulty, rating].forEach((control) => control?.addEventListener("input", applyFilters));
     chips.forEach((chip) => {
       chip.addEventListener("click", () => {
         if (muscle) muscle.value = chip.value;
         applyFilters();
       });
     });
+    subChips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        if (submuscle) submuscle.value = chip.value;
+        applyFilters();
+      });
+    });
     reset?.addEventListener("click", () => {
       if (search) search.value = "";
       if (muscle) muscle.value = "";
+      if (submuscle) submuscle.value = "";
       if (equipment) equipment.value = "";
       if (difficulty) difficulty.value = "";
       if (rating) rating.value = "";
