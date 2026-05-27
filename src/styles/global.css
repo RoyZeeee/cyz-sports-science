@@ -455,10 +455,6 @@ h3 {
   opacity: 1;
 }
 
-.anatomy-view:not(.preferred) .heat-zone {
-  opacity: 0;
-}
-
 .anatomy-silhouette {
   fill: transparent;
   stroke: transparent;
@@ -476,27 +472,6 @@ h3 {
 
 .anatomy-view.preferred .muscle-map-lines {
   display: none;
-}
-
-.heat-zone {
-  fill: transparent;
-  stroke: transparent;
-  stroke-width: 0;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-  vector-effect: non-scaling-stroke;
-  mix-blend-mode: normal;
-}
-
-.heat-zone.secondary {
-  fill: rgba(238, 139, 68, 0.34);
-  opacity: 1;
-}
-
-.heat-zone.primary {
-  fill: rgba(0, 150, 143, 0.56);
-  opacity: 1;
-  filter: none;
 }
 
 .callout-line {
@@ -591,14 +566,6 @@ h3 {
 
 .exercise-visual.compact .anatomy-photo {
   opacity: 0.96;
-}
-
-.exercise-visual.compact .heat-zone.secondary {
-  opacity: 0;
-}
-
-.exercise-visual.compact .heat-zone.primary {
-  opacity: 0;
 }
 
 .compact-muscle-labels {
