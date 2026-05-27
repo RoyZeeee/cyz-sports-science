@@ -598,7 +598,41 @@ h3 {
 }
 
 .exercise-visual.compact .heat-zone.primary {
-  opacity: 1;
+  opacity: 0;
+}
+
+.compact-muscle-labels {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px 12px;
+  background: color-mix(in srgb, #f6efe5, white 20%);
+  border-top: 1px solid var(--line);
+}
+
+.compact-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.compact-label::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  flex: 0 0 auto;
+}
+
+.compact-label.primary-label::before {
+  background: #0b8f89;
+}
+
+.compact-label.secondary-label::before {
+  background: #e58a47;
 }
 
 .meta-row {

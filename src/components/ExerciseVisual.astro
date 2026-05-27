@@ -42,6 +42,8 @@ const lowerBody = any(["quads", "adductors", "glute-max", "glute-med", "hamstrin
 const primaryLabels = subMuscleLabels(primarySlugs, lang);
 const assistantLabels = listText(exercise.secondary, lang);
 const calloutLabel = primaryLabels.length > 1 ? `${primaryLabels[0]} +${primaryLabels.length - 1}` : primaryLabels[0] ?? text(exercise.primary[0], lang);
+const compactPrimaryLabel = primaryLabels.join(" / ") || listText(exercise.primary, lang).join(" / ");
+const compactAssistantLabel = assistantLabels.slice(0, 2).join(" / ");
 const copy = {
   front: lang === "en" ? "Front" : lang === "zh-cn" ? "前侧" : "前側",
   back: lang === "en" ? "Back" : lang === "zh-cn" ? "后侧" : "後側",
@@ -179,6 +181,14 @@ const showBack = posterior;
       </g>
     )}
   </svg>
+  {
+    compact && (
+      <div class="compact-muscle-labels">
+        <span class="compact-label primary-label">{copy.main}: {compactPrimaryLabel}</span>
+        {compactAssistantLabel && <span class="compact-label secondary-label">{copy.assist}: {compactAssistantLabel}</span>}
+      </div>
+    )
+  }
   {
     !compact && (
       <div class="visual-key" aria-label={copy.target}>
