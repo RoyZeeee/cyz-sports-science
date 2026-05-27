@@ -7,27 +7,50 @@ const { exercise, lang, compact = false } = Astro.props as { exercise: Exercise;
 const focus = exercise.visualFocus;
 const active = (part: Exercise["visualFocus"] | "legs") =>
   focus === part || (part === "legs" && (focus === "quads" || focus === "hamstrings" || focus === "calves"));
+const posterior = focus === "back" || focus === "glutes" || focus === "hamstrings" || focus === "calves";
 ---
 
 <figure class:list={["exercise-visual", compact && "compact"]} aria-label={text(exercise.name, lang)}>
-  <svg viewBox="0 0 260 220" role="img">
-    <rect class="visual-bg" x="0" y="0" width="260" height="220" rx="8"></rect>
-    <circle class="body-part" cx="130" cy="34" r="17"></circle>
-    <path class:list={["body-part", active("chest") && "active"]} d="M104 58h52l15 56h-82z"></path>
-    <path class:list={["body-part", active("back") && "active"]} d="M93 73c-24 10-35 31-35 57h22c3-17 11-31 25-39z"></path>
-    <path class:list={["body-part", active("back") && "active"]} d="M167 73c24 10 35 31 35 57h-22c-3-17-11-31-25-39z"></path>
-    <path class:list={["body-part", active("shoulders") && "active"]} d="M83 63c10-12 24-13 33-5l-15 24c-9-1-16-7-18-19z"></path>
-    <path class:list={["body-part", active("shoulders") && "active"]} d="M177 63c-10-12-24-13-33-5l15 24c9-1 16-7 18-19z"></path>
-    <path class:list={["body-part", active("arms") && "active"]} d="M81 83c-14 18-19 40-18 63h18c2-18 7-34 17-49z"></path>
-    <path class:list={["body-part", active("arms") && "active"]} d="M179 83c14 18 19 40 18 63h-18c-2-18-7-34-17-49z"></path>
-    <path class:list={["body-part", active("core") && "active"]} d="M101 113h58l-8 39h-42z"></path>
-    <path class:list={["body-part", active("glutes") && "active"]} d="M105 150h50l10 24h-70z"></path>
-    <path class:list={["body-part", active("legs") && "active"]} d="M99 172h27l-8 40h-25z"></path>
-    <path class:list={["body-part", active("legs") && "active"]} d="M134 172h27l6 40h-25z"></path>
-    <path class:list={["body-part", active("calves") && "active"]} d="M91 205h28l-4 13h-28z"></path>
-    <path class:list={["body-part", active("calves") && "active"]} d="M141 205h28l5 13h-28z"></path>
-    <path class="motion-line" d="M41 45c30-25 65-35 104-29"></path>
-    <path class="motion-line" d="M219 174c-33 22-70 29-112 20"></path>
+  <svg viewBox="0 0 320 230" role="img">
+    <rect class="visual-bg" x="0" y="0" width="320" height="230" rx="8"></rect>
+    <text class="view-label" x="82" y="22">{lang === "en" ? "Front" : "前側"}</text>
+    <text class="view-label" x="226" y="22">{lang === "en" ? "Back" : "後側"}</text>
+
+    <g class:list={["anatomy-view", !posterior && "preferred"]} transform="translate(26 26)">
+      <circle class="body-part neutral" cx="62" cy="16" r="12"></circle>
+      <path class="body-outline" d="M49 31h26l13 21 21 8 10 43-15 3-10-31-8 39 10 76h-21l-13-58-13 58h-21l10-76-8-39-10 31-15-3 10-43 21-8z"></path>
+      <path class:list={["muscle", "deltoid", active("shoulders") && "active"]} d="M35 46c10-14 21-15 30-5l-12 21c-9 0-16-5-18-16z"></path>
+      <path class:list={["muscle", "deltoid", active("shoulders") && "active"]} d="M89 46c-10-14-21-15-30-5l12 21c9 0 16-5 18-16z"></path>
+      <path class:list={["muscle", active("chest") && "active"]} d="M43 53c10-8 24-9 33 0-4 14-12 21-28 22z"></path>
+      <path class:list={["muscle", active("chest") && "active"]} d="M81 53c-10-8-24-9-33 0 4 14 12 21 28 22z"></path>
+      <path class:list={["muscle", active("core") && "active"]} d="M49 77h26l5 40-18 8-18-8z"></path>
+      <path class="separation" d="M62 78v44M51 91h22M50 105h24"></path>
+      <path class:list={["muscle", active("arms") && "active"]} d="M23 68c-10 17-13 36-12 57h15c1-19 5-35 14-48z"></path>
+      <path class:list={["muscle", active("arms") && "active"]} d="M101 68c10 17 13 36 12 57h-15c-1-19-5-35-14-48z"></path>
+      <path class:list={["muscle", active("quads") && "active"]} d="M39 122h21l-8 67h-22z"></path>
+      <path class:list={["muscle", active("quads") && "active"]} d="M64 122h21l9 67h-22z"></path>
+      <path class:list={["muscle", active("calves") && "active"]} d="M29 184h23l-5 24h-22z"></path>
+      <path class:list={["muscle", active("calves") && "active"]} d="M72 184h23l5 24h-22z"></path>
+    </g>
+
+    <g class:list={["anatomy-view", posterior && "preferred"]} transform="translate(170 26)">
+      <circle class="body-part neutral" cx="62" cy="16" r="12"></circle>
+      <path class="body-outline" d="M49 31h26l13 21 21 8 10 43-15 3-10-31-8 39 10 76h-21l-13-58-13 58h-21l10-76-8-39-10 31-15-3 10-43 21-8z"></path>
+      <path class:list={["muscle", active("back") && "active"]} d="M49 34h26l13 34-26 31-26-31z"></path>
+      <path class:list={["muscle", active("back") && "active"]} d="M38 62c-18 14-25 32-26 55h17c4-19 12-34 25-45z"></path>
+      <path class:list={["muscle", active("back") && "active"]} d="M86 62c18 14 25 32 26 55h-17c-4-19-12-34-25-45z"></path>
+      <path class:list={["muscle", active("shoulders") && "active"]} d="M35 44c10-11 20-12 29-4l-13 22c-8-1-14-7-16-18z"></path>
+      <path class:list={["muscle", active("shoulders") && "active"]} d="M89 44c-10-11-20-12-29-4l13 22c8-1 14-7 16-18z"></path>
+      <path class:list={["muscle", active("arms") && "active"]} d="M23 68c-10 17-13 36-12 57h15c1-19 5-35 14-48z"></path>
+      <path class:list={["muscle", active("arms") && "active"]} d="M101 68c10 17 13 36 12 57h-15c-1-19-5-35-14-48z"></path>
+      <path class:list={["muscle", active("glutes") && "active"]} d="M38 116c10-10 19-9 24 3-4 17-14 25-27 22z"></path>
+      <path class:list={["muscle", active("glutes") && "active"]} d="M86 116c-10-10-19-9-24 3 4 17 14 25 27 22z"></path>
+      <path class:list={["muscle", active("hamstrings") && "active"]} d="M38 139h22l-7 50h-23z"></path>
+      <path class:list={["muscle", active("hamstrings") && "active"]} d="M64 139h22l8 50h-23z"></path>
+      <path class:list={["muscle", active("calves") && "active"]} d="M29 184h23l-5 24h-22z"></path>
+      <path class:list={["muscle", active("calves") && "active"]} d="M72 184h23l5 24h-22z"></path>
+      <path class="separation" d="M62 35v78M42 78h40M62 119v23"></path>
+    </g>
   </svg>
   <figcaption>
     <strong>{text(exercise.name, lang)}</strong>

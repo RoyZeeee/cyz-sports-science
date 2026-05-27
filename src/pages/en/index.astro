@@ -4,6 +4,7 @@ import AdSlot from "../../components/AdSlot.astro";
 import QuestionForm from "../../components/QuestionForm.astro";
 import TopicGrid from "../../components/TopicGrid.astro";
 import { articles, byLang, faqs } from "../../data/content";
+import { exercises } from "../../data/tools";
 import { href } from "../../utils/paths";
 
 const lang = "en";
@@ -59,7 +60,7 @@ const featuredArticles = byLang(articles, lang).slice(0, 3);
     </div>
     <div class="grid">
       <a class="card tool-card" href={href("/en/exercises/")}>
-        <div><span class="meta">20 exercises</span><h3>Exercise library</h3><p>Pictures, target muscles, equipment, difficulty, and recommendation ratings.</p></div>
+        <div><span class="meta">{exercises.length} exercises</span><h3>Exercise library</h3><p>Pictures, target muscles, equipment, difficulty, and recommendation ratings.</p></div>
         <span class="pill-link">View exercises</span>
       </a>
       <a class="card tool-card" href={href("/en/muscles/")}>

@@ -4,6 +4,7 @@ import AdSlot from "../../components/AdSlot.astro";
 import QuestionForm from "../../components/QuestionForm.astro";
 import TopicGrid from "../../components/TopicGrid.astro";
 import { articles, byLang, faqs } from "../../data/content";
+import { exercises } from "../../data/tools";
 import { href } from "../../utils/paths";
 
 const lang = "zh";
@@ -59,7 +60,7 @@ const featuredArticles = byLang(articles, lang).slice(0, 3);
     </div>
     <div class="grid">
       <a class="card tool-card" href={href("/zh/exercises/")}>
-        <div><span class="meta">20 個動作</span><h3>動作庫</h3><p>圖片、主練肌群、器材、難度和推薦指數一次看。</p></div>
+        <div><span class="meta">{exercises.length} 個動作</span><h3>動作庫</h3><p>圖片、主練肌群、器材、難度和推薦指數一次看。</p></div>
         <span class="pill-link">看動作</span>
       </a>
       <a class="card tool-card" href={href("/zh/muscles/")}>

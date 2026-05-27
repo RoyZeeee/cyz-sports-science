@@ -86,6 +86,48 @@ export const muscleGroups: MuscleGroup[] = [
   },
 ];
 
+type QuickExerciseInput = {
+  slug: string;
+  zh: string;
+  en: string;
+  group: Exercise["muscleGroup"];
+  primary: LText[];
+  secondary?: LText[];
+  equipment: LText;
+  difficulty?: Exercise["difficulty"];
+  rating?: Exercise["rating"];
+  focus: Exercise["visualFocus"];
+  summary?: LText;
+};
+
+const lt = (zh: string, en: string): LText => ({ zh, en });
+
+function quickExercise(input: QuickExerciseInput): Exercise {
+  const difficulty = input.difficulty ?? "intermediate";
+  const rating = input.rating ?? 4;
+  const primaryName = input.primary[0] ?? lt("目標肌群", "target muscle");
+  return {
+    slug: input.slug,
+    name: lt(input.zh, input.en),
+    summary:
+      input.summary ??
+      lt(`以${primaryName.zh}為主的常見訓練動作，適合放進對應肌群課表。`, `A common exercise for ${primaryName.en}, useful in a targeted program.`),
+    muscleGroup: input.group,
+    primary: input.primary,
+    secondary: input.secondary ?? [],
+    equipment: input.equipment,
+    difficulty,
+    rating,
+    visualFocus: input.focus,
+    bestFor: [lt("想增加動作選擇、補足肌群訓練量的人", "Lifters who want more exercise options and targeted volume")],
+    cues: [
+      lt("先穩定身體和關節位置，再追求重量。", "Set body and joint position before chasing load."),
+      lt("控制離心，讓目標肌群完成主要輸出。", "Control the lowering phase and let the target muscle do the work."),
+    ],
+    cautions: [lt("若出現尖銳疼痛或代償明顯，先降低重量或換更穩定的變式。", "If sharp pain or obvious compensation appears, lower the load or use a more stable variation.")],
+  };
+}
+
 export const exercises: Exercise[] = [
   {
     slug: "barbell-bench-press",
@@ -387,6 +429,71 @@ export const exercises: Exercise[] = [
     cues: [{ zh: "底部停一下感受伸展，頂端完整踮起。", en: "Pause in the stretch and rise fully at the top." }, { zh: "不要快速彈震。", en: "Avoid fast bouncing reps." }],
     cautions: [{ zh: "阿基里斯腱不舒服時降低幅度和負荷。", en: "Reduce range and load if the Achilles feels irritated." }],
   },
+  quickExercise({ slug: "dumbbell-bench-press", zh: "啞鈴臥推", en: "Dumbbell Bench Press", group: "chest", primary: [lt("胸大肌", "Pectoralis major")], secondary: [lt("前三角", "Front delts"), lt("肱三頭肌", "Triceps")], equipment: lt("啞鈴、臥推椅", "Dumbbells and bench"), rating: 5, focus: "chest", summary: lt("比槓鈴更自由，適合補左右控制和胸部活動範圍。", "A freer press than the barbell, useful for range of motion and side-to-side control.") }),
+  quickExercise({ slug: "smith-machine-bench-press", zh: "史密斯臥推", en: "Smith Machine Bench Press", group: "chest", primary: [lt("胸大肌", "Pectoralis major")], secondary: [lt("前三角", "Front delts"), lt("肱三頭肌", "Triceps")], equipment: lt("史密斯機、臥推椅", "Smith machine and bench"), rating: 4, focus: "chest" }),
+  quickExercise({ slug: "machine-chest-press", zh: "胸推器械", en: "Machine Chest Press", group: "chest", primary: [lt("胸大肌", "Pectoralis major")], secondary: [lt("前三角", "Front delts"), lt("肱三頭肌", "Triceps")], equipment: lt("胸推器械", "Chest press machine"), difficulty: "beginner", rating: 5, focus: "chest", summary: lt("穩定度高，適合累積胸部有效組和做遞減組。", "Stable and useful for accumulating chest volume or drop sets.") }),
+  quickExercise({ slug: "machine-bench-press", zh: "器械臥推", en: "Machine Bench Press", group: "chest", primary: [lt("胸大肌", "Pectoralis major")], secondary: [lt("肱三頭肌", "Triceps")], equipment: lt("臥推器械", "Bench press machine"), difficulty: "beginner", rating: 4, focus: "chest" }),
+  quickExercise({ slug: "incline-barbell-bench-press", zh: "槓鈴上斜臥推", en: "Incline Barbell Bench Press", group: "chest", primary: [lt("上胸", "Upper chest")], secondary: [lt("前三角", "Front delts"), lt("肱三頭肌", "Triceps")], equipment: lt("槓鈴、上斜椅", "Barbell and incline bench"), rating: 4, focus: "chest" }),
+  quickExercise({ slug: "incline-machine-press", zh: "器械上斜推", en: "Incline Machine Press", group: "chest", primary: [lt("上胸", "Upper chest")], secondary: [lt("前三角", "Front delts"), lt("肱三頭肌", "Triceps")], equipment: lt("上斜胸推器械", "Incline press machine"), difficulty: "beginner", rating: 4, focus: "chest" }),
+  quickExercise({ slug: "smith-incline-press", zh: "史密斯上斜臥推", en: "Smith Machine Incline Press", group: "chest", primary: [lt("上胸", "Upper chest")], secondary: [lt("前三角", "Front delts")], equipment: lt("史密斯機、上斜椅", "Smith machine and incline bench"), rating: 4, focus: "chest" }),
+  quickExercise({ slug: "pec-deck-fly", zh: "蝴蝶機夾胸", en: "Pec Deck Fly", group: "chest", primary: [lt("胸大肌", "Pectoralis major")], secondary: [lt("前三角", "Front delts")], equipment: lt("蝴蝶機", "Pec deck machine"), difficulty: "beginner", rating: 4, focus: "chest", summary: lt("穩定孤立胸肌，適合放在推類動作後。", "A stable chest isolation option after presses.") }),
+  quickExercise({ slug: "weighted-dip", zh: "負重雙槓臂屈伸", en: "Weighted Dip", group: "chest", primary: [lt("下胸", "Lower chest")], secondary: [lt("肱三頭肌", "Triceps"), lt("前三角", "Front delts")], equipment: lt("雙槓、負重帶", "Dip bars and weight belt"), difficulty: "advanced", rating: 4, focus: "chest" }),
+  quickExercise({ slug: "high-to-low-cable-fly", zh: "雙邊繩索下斜夾胸", en: "High-to-Low Cable Fly", group: "chest", primary: [lt("中下胸", "Mid/lower chest")], secondary: [lt("前三角", "Front delts")], equipment: lt("龍門架繩索", "Cable crossover station"), rating: 4, focus: "chest" }),
+  quickExercise({ slug: "wide-grip-lat-pulldown", zh: "寬握高位下拉", en: "Wide-Grip Lat Pulldown", group: "back", primary: [lt("背闊肌", "Lats")], secondary: [lt("上背", "Upper back"), lt("肱二頭肌", "Biceps")], equipment: lt("高位下拉機", "Pulldown machine"), difficulty: "beginner", rating: 5, focus: "back" }),
+  quickExercise({ slug: "plate-loaded-row", zh: "槓片式器械划船", en: "Plate-Loaded Row", group: "back", primary: [lt("中背", "Mid back")], secondary: [lt("背闊肌", "Lats"), lt("肱二頭肌", "Biceps")], equipment: lt("槓片式划船機", "Plate-loaded row machine"), rating: 5, focus: "back" }),
+  quickExercise({ slug: "chest-supported-single-arm-row", zh: "單邊靠墊划船", en: "Chest-Supported Single-Arm Row", group: "back", primary: [lt("背闊肌", "Lats")], secondary: [lt("中背", "Mid back")], equipment: lt("胸托划船器械", "Chest-supported row machine"), rating: 5, focus: "back" }),
+  quickExercise({ slug: "bilateral-machine-row", zh: "雙邊器械划船", en: "Bilateral Machine Row", group: "back", primary: [lt("中背", "Mid back")], secondary: [lt("背闊肌", "Lats")], equipment: lt("划船器械", "Row machine"), difficulty: "beginner", rating: 4, focus: "back" }),
+  quickExercise({ slug: "narrow-grip-cable-row", zh: "龍門架窄握划船", en: "Narrow-Grip Cable Row", group: "back", primary: [lt("背闊肌", "Lats")], secondary: [lt("中背", "Mid back"), lt("肱二頭肌", "Biceps")], equipment: lt("龍門架、窄握把", "Cable station and narrow handle"), rating: 4, focus: "back" }),
+  quickExercise({ slug: "neutral-grip-cable-row", zh: "龍門架對握划船", en: "Neutral-Grip Cable Row", group: "back", primary: [lt("中背", "Mid back")], secondary: [lt("背闊肌", "Lats"), lt("肱二頭肌", "Biceps")], equipment: lt("龍門架、對握把", "Cable station and neutral handle"), rating: 4, focus: "back" }),
+  quickExercise({ slug: "wide-grip-cable-row", zh: "龍門架寬握划船", en: "Wide-Grip Cable Row", group: "back", primary: [lt("上背", "Upper back")], secondary: [lt("後三角", "Rear delts"), lt("背闊肌", "Lats")], equipment: lt("龍門架、寬握把", "Cable station and wide bar"), rating: 4, focus: "back" }),
+  quickExercise({ slug: "straight-bar-pulldown", zh: "平槓正握下拉", en: "Straight-Bar Overhand Pulldown", group: "back", primary: [lt("背闊肌", "Lats")], secondary: [lt("肱二頭肌", "Biceps")], equipment: lt("高位滑輪、平槓", "High cable and straight bar"), difficulty: "beginner", rating: 4, focus: "back" }),
+  quickExercise({ slug: "reverse-grip-pulldown", zh: "窄槓反握下拉", en: "Reverse-Grip Pulldown", group: "back", primary: [lt("背闊肌", "Lats")], secondary: [lt("肱二頭肌", "Biceps")], equipment: lt("高位滑輪、窄槓", "High cable and close bar"), rating: 4, focus: "back" }),
+  quickExercise({ slug: "machine-lat-pulldown", zh: "器械下拉", en: "Machine Lat Pulldown", group: "back", primary: [lt("背闊肌", "Lats")], secondary: [lt("肱二頭肌", "Biceps")], equipment: lt("下拉器械", "Pulldown machine"), difficulty: "beginner", rating: 4, focus: "back" }),
+  quickExercise({ slug: "barbell-row", zh: "槓鈴划船", en: "Barbell Row", group: "back", primary: [lt("中背", "Mid back")], secondary: [lt("背闊肌", "Lats"), lt("豎脊肌", "Spinal erectors")], equipment: lt("槓鈴", "Barbell"), difficulty: "advanced", rating: 5, focus: "back" }),
+  quickExercise({ slug: "neutral-grip-pulldown", zh: "對握下拉", en: "Neutral-Grip Pulldown", group: "back", primary: [lt("背闊肌", "Lats")], secondary: [lt("肱二頭肌", "Biceps")], equipment: lt("高位下拉機、對握把", "Pulldown machine and neutral handle"), difficulty: "beginner", rating: 4, focus: "back" }),
+  quickExercise({ slug: "straight-arm-pulldown", zh: "直臂下壓", en: "Straight-Arm Pulldown", group: "back", primary: [lt("背闊肌", "Lats")], secondary: [lt("大圓肌", "Teres major")], equipment: lt("繩索滑輪", "Cable station"), rating: 4, focus: "back" }),
+  quickExercise({ slug: "single-arm-cable-pulldown", zh: "單邊繩索下拉", en: "Single-Arm Cable Pulldown", group: "back", primary: [lt("背闊肌", "Lats")], secondary: [lt("肱二頭肌", "Biceps")], equipment: lt("龍門架單把手", "Cable station and single handle"), rating: 4, focus: "back" }),
+  quickExercise({ slug: "v-grip-t-bar-row", zh: "V 握海豹划船", en: "V-Grip Seal Row", group: "back", primary: [lt("中背", "Mid back")], secondary: [lt("背闊肌", "Lats"), lt("後三角", "Rear delts")], equipment: lt("胸托划船椅、V 握把", "Seal row bench and V handle"), rating: 4, focus: "back" }),
+  quickExercise({ slug: "weighted-pull-up", zh: "負重引體向上", en: "Weighted Pull-up", group: "back", primary: [lt("背闊肌", "Lats")], secondary: [lt("肱二頭肌", "Biceps"), lt("核心", "Core")], equipment: lt("單槓、負重帶", "Pull-up bar and weight belt"), difficulty: "advanced", rating: 5, focus: "back" }),
+  quickExercise({ slug: "barbell-overhead-press", zh: "實力推舉", en: "Barbell Overhead Press", group: "shoulders", primary: [lt("前三角", "Front delts")], secondary: [lt("中三角", "Side delts"), lt("肱三頭肌", "Triceps")], equipment: lt("槓鈴", "Barbell"), difficulty: "advanced", rating: 5, focus: "shoulders" }),
+  quickExercise({ slug: "machine-shoulder-press", zh: "器械肩推", en: "Machine Shoulder Press", group: "shoulders", primary: [lt("前三角", "Front delts"), lt("中三角", "Side delts")], secondary: [lt("肱三頭肌", "Triceps")], equipment: lt("肩推器械", "Shoulder press machine"), difficulty: "beginner", rating: 4, focus: "shoulders" }),
+  quickExercise({ slug: "smith-machine-shoulder-press", zh: "史密斯肩推", en: "Smith Machine Shoulder Press", group: "shoulders", primary: [lt("前三角", "Front delts")], secondary: [lt("肱三頭肌", "Triceps")], equipment: lt("史密斯機、椅子", "Smith machine and bench"), rating: 4, focus: "shoulders" }),
+  quickExercise({ slug: "cable-lateral-raise", zh: "龍門架側平舉", en: "Cable Lateral Raise", group: "shoulders", primary: [lt("中三角", "Side delts")], secondary: [lt("上斜方", "Upper traps")], equipment: lt("龍門架單把手", "Cable station and single handle"), difficulty: "beginner", rating: 5, focus: "shoulders" }),
+  quickExercise({ slug: "dumbbell-rear-delt-fly", zh: "啞鈴後束飛鳥", en: "Dumbbell Rear-Delt Fly", group: "shoulders", primary: [lt("後三角", "Rear delts")], secondary: [lt("上背", "Upper back")], equipment: lt("啞鈴", "Dumbbells"), difficulty: "beginner", rating: 4, focus: "shoulders" }),
+  quickExercise({ slug: "reverse-pec-deck", zh: "蝴蝶機後束", en: "Reverse Pec Deck", group: "shoulders", primary: [lt("後三角", "Rear delts")], secondary: [lt("中下斜方", "Mid/lower traps")], equipment: lt("蝴蝶機", "Reverse pec deck"), difficulty: "beginner", rating: 5, focus: "shoulders" }),
+  quickExercise({ slug: "cable-rear-delt-fly", zh: "龍門架後束飛鳥", en: "Cable Rear-Delt Fly", group: "shoulders", primary: [lt("後三角", "Rear delts")], secondary: [lt("上背", "Upper back")], equipment: lt("龍門架繩索", "Cable station"), rating: 4, focus: "shoulders" }),
+  quickExercise({ slug: "rear-delt-row", zh: "後束提拉", en: "Rear-Delt Row", group: "shoulders", primary: [lt("後三角", "Rear delts")], secondary: [lt("上背", "Upper back")], equipment: lt("啞鈴或繩索", "Dumbbells or cable"), rating: 4, focus: "shoulders" }),
+  quickExercise({ slug: "cable-front-raise", zh: "繩索前平舉", en: "Cable Front Raise", group: "shoulders", primary: [lt("前三角", "Front delts")], secondary: [lt("上胸", "Upper chest")], equipment: lt("低位滑輪", "Low cable"), rating: 3, focus: "shoulders" }),
+  quickExercise({ slug: "cable-crunch", zh: "跪姿繩索捲腹", en: "Kneeling Cable Crunch", group: "core", primary: [lt("腹直肌", "Rectus abdominis")], secondary: [lt("腹斜肌", "Obliques")], equipment: lt("高位繩索", "High cable"), difficulty: "beginner", rating: 5, focus: "core" }),
+  quickExercise({ slug: "incline-bench-crunch", zh: "躺椅捲腹", en: "Incline Bench Crunch", group: "core", primary: [lt("腹直肌", "Rectus abdominis")], secondary: [lt("髖屈肌", "Hip flexors")], equipment: lt("可調斜板", "Incline bench"), difficulty: "beginner", rating: 4, focus: "core" }),
+  quickExercise({ slug: "lying-crunch", zh: "躺姿捲腹", en: "Lying Crunch", group: "core", primary: [lt("腹直肌", "Rectus abdominis")], secondary: [lt("深層核心", "Deep core")], equipment: lt("徒手或墊子", "Bodyweight or mat"), difficulty: "beginner", rating: 3, focus: "core" }),
+  quickExercise({ slug: "cable-oblique-crunch", zh: "繩索腹外斜捲腹", en: "Cable Oblique Crunch", group: "core", primary: [lt("腹外斜肌", "External obliques")], secondary: [lt("腹直肌", "Rectus abdominis")], equipment: lt("繩索滑輪", "Cable station"), rating: 4, focus: "core" }),
+  quickExercise({ slug: "ez-bar-curl", zh: "曲槓二頭彎舉", en: "EZ-Bar Curl", group: "arms", primary: [lt("肱二頭肌", "Biceps")], secondary: [lt("肱肌", "Brachialis")], equipment: lt("曲槓", "EZ bar"), rating: 4, focus: "arms" }),
+  quickExercise({ slug: "cable-biceps-curl", zh: "龍門架二頭彎舉", en: "Cable Biceps Curl", group: "arms", primary: [lt("肱二頭肌", "Biceps")], secondary: [lt("前臂", "Forearms")], equipment: lt("低位滑輪", "Low cable"), difficulty: "beginner", rating: 4, focus: "arms" }),
+  quickExercise({ slug: "reverse-cable-curl", zh: "龍門架反握二頭彎舉", en: "Reverse Cable Curl", group: "arms", primary: [lt("肱橈肌", "Brachioradialis")], secondary: [lt("前臂伸肌", "Forearm extensors"), lt("肱二頭肌", "Biceps")], equipment: lt("低位滑輪、直槓", "Low cable and straight bar"), rating: 3, focus: "arms" }),
+  quickExercise({ slug: "preacher-curl", zh: "牧師椅二頭彎舉", en: "Preacher Curl", group: "arms", primary: [lt("肱二頭肌", "Biceps")], secondary: [lt("肱肌", "Brachialis")], equipment: lt("牧師椅、啞鈴或曲槓", "Preacher bench with dumbbell or EZ bar"), rating: 4, focus: "arms" }),
+  quickExercise({ slug: "machine-preacher-curl", zh: "牧師椅器械彎舉", en: "Machine Preacher Curl", group: "arms", primary: [lt("肱二頭肌", "Biceps")], secondary: [lt("肱肌", "Brachialis")], equipment: lt("牧師椅彎舉器械", "Preacher curl machine"), difficulty: "beginner", rating: 4, focus: "arms" }),
+  quickExercise({ slug: "chest-supported-dumbbell-curl", zh: "胸靠椅二頭彎舉", en: "Chest-Supported Dumbbell Curl", group: "arms", primary: [lt("肱二頭肌", "Biceps")], secondary: [lt("前臂", "Forearms")], equipment: lt("上斜椅、啞鈴", "Incline bench and dumbbells"), rating: 4, focus: "arms" }),
+  quickExercise({ slug: "lying-cable-curl", zh: "躺姿繩索二頭彎舉", en: "Lying Cable Curl", group: "arms", primary: [lt("肱二頭肌", "Biceps")], secondary: [lt("肱肌", "Brachialis")], equipment: lt("低位滑輪", "Low cable"), rating: 3, focus: "arms" }),
+  quickExercise({ slug: "skull-crusher", zh: "碎顱者", en: "Skull Crusher", group: "arms", primary: [lt("肱三頭肌", "Triceps")], secondary: [lt("肘關節穩定", "Elbow stability")], equipment: lt("曲槓或啞鈴", "EZ bar or dumbbells"), rating: 4, focus: "arms" }),
+  quickExercise({ slug: "overhead-triceps-extension", zh: "三頭後屈伸", en: "Overhead Triceps Extension", group: "arms", primary: [lt("肱三頭肌長頭", "Long head of triceps")], secondary: [lt("核心穩定", "Core stability")], equipment: lt("啞鈴或繩索", "Dumbbell or cable"), rating: 4, focus: "arms" }),
+  quickExercise({ slug: "forearm-reverse-curl", zh: "小臂反向彎舉", en: "Reverse Curl", group: "arms", primary: [lt("肱橈肌", "Brachioradialis")], secondary: [lt("前臂伸肌", "Forearm extensors")], equipment: lt("曲槓或啞鈴", "EZ bar or dumbbells"), rating: 3, focus: "arms" }),
+  quickExercise({ slug: "wrist-curl", zh: "小臂正握腕彎舉", en: "Wrist Curl", group: "arms", primary: [lt("前臂屈肌", "Forearm flexors")], secondary: [lt("握力", "Grip")], equipment: lt("啞鈴、槓鈴或繩索", "Dumbbell, barbell, or cable"), rating: 3, focus: "arms" }),
+  quickExercise({ slug: "reverse-wrist-curl", zh: "小臂反握腕彎舉", en: "Reverse Wrist Curl", group: "arms", primary: [lt("前臂伸肌", "Forearm extensors")], secondary: [lt("握力", "Grip")], equipment: lt("啞鈴或繩索", "Dumbbell or cable"), rating: 3, focus: "arms" }),
+  quickExercise({ slug: "rope-hammer-curl", zh: "雙頭繩二頭彎舉", en: "Rope Hammer Curl", group: "arms", primary: [lt("肱肌", "Brachialis")], secondary: [lt("肱二頭肌", "Biceps"), lt("前臂", "Forearms")], equipment: lt("低位滑輪、雙頭繩", "Low cable and rope"), rating: 4, focus: "arms" }),
+  quickExercise({ slug: "single-arm-cable-curl", zh: "單臂繩索二頭彎舉", en: "Single-Arm Cable Curl", group: "arms", primary: [lt("肱二頭肌", "Biceps")], secondary: [lt("前臂", "Forearms")], equipment: lt("龍門架單把手", "Cable station and single handle"), rating: 4, focus: "arms" }),
+  quickExercise({ slug: "single-arm-triceps-pressdown", zh: "單臂三頭下壓", en: "Single-Arm Triceps Pressdown", group: "arms", primary: [lt("肱三頭肌", "Triceps")], secondary: [lt("前臂", "Forearms")], equipment: lt("龍門架單把手", "Cable station and single handle"), rating: 4, focus: "arms" }),
+  quickExercise({ slug: "cable-triceps-kickback", zh: "繩索三頭後踢", en: "Cable Triceps Kickback", group: "arms", primary: [lt("肱三頭肌", "Triceps")], secondary: [lt("肩部穩定", "Shoulder stability")], equipment: lt("低位滑輪", "Low cable"), rating: 3, focus: "arms" }),
+  quickExercise({ slug: "leg-extension", zh: "股四頭器械伸腿", en: "Leg Extension", group: "legs", primary: [lt("股四頭肌", "Quadriceps")], secondary: [lt("膝關節控制", "Knee control")], equipment: lt("伸腿機", "Leg extension machine"), difficulty: "beginner", rating: 4, focus: "quads" }),
+  quickExercise({ slug: "lying-leg-curl", zh: "躺姿腿後彎舉", en: "Lying Leg Curl", group: "legs", primary: [lt("腿後側", "Hamstrings")], secondary: [lt("腓腸肌", "Gastrocnemius")], equipment: lt("腿後彎舉機", "Leg curl machine"), difficulty: "beginner", rating: 4, focus: "hamstrings" }),
+  quickExercise({ slug: "deadlift", zh: "硬拉", en: "Deadlift", group: "legs", primary: [lt("臀大肌", "Glutes"), lt("腿後側", "Hamstrings")], secondary: [lt("豎脊肌", "Spinal erectors"), lt("上背", "Upper back")], equipment: lt("槓鈴", "Barbell"), difficulty: "advanced", rating: 4, focus: "glutes" }),
+  quickExercise({ slug: "walking-lunge", zh: "弓箭步", en: "Walking Lunge", group: "legs", primary: [lt("股四頭肌", "Quadriceps"), lt("臀大肌", "Glutes")], secondary: [lt("內收肌", "Adductors"), lt("核心穩定", "Core stability")], equipment: lt("啞鈴或徒手", "Dumbbells or bodyweight"), rating: 4, focus: "quads" }),
+  quickExercise({ slug: "hip-adduction-machine", zh: "內收器械", en: "Hip Adduction Machine", group: "legs", primary: [lt("內收肌群", "Adductors")], secondary: [lt("骨盆穩定", "Pelvic stability")], equipment: lt("內收機", "Adduction machine"), difficulty: "beginner", rating: 3, focus: "quads" }),
+  quickExercise({ slug: "hip-abduction-machine", zh: "外展器械", en: "Hip Abduction Machine", group: "glutes", primary: [lt("臀中肌", "Glute medius")], secondary: [lt("臀大肌上束", "Upper glutes")], equipment: lt("外展機", "Abduction machine"), difficulty: "beginner", rating: 4, focus: "glutes" }),
+  quickExercise({ slug: "cable-hip-adduction", zh: "繩索髖內收", en: "Cable Hip Adduction", group: "legs", primary: [lt("內收肌群", "Adductors")], secondary: [lt("核心穩定", "Core stability")], equipment: lt("低位滑輪、腳踝帶", "Low cable and ankle strap"), rating: 3, focus: "quads" }),
+  quickExercise({ slug: "smith-calf-raise", zh: "史密斯提踵", en: "Smith Machine Calf Raise", group: "legs", primary: [lt("腓腸肌", "Gastrocnemius")], secondary: [lt("比目魚肌", "Soleus")], equipment: lt("史密斯機", "Smith machine"), difficulty: "beginner", rating: 4, focus: "calves" }),
+  quickExercise({ slug: "barbell-glute-bridge", zh: "槓鈴臀橋", en: "Barbell Glute Bridge", group: "glutes", primary: [lt("臀大肌", "Glutes")], secondary: [lt("腿後側", "Hamstrings"), lt("核心", "Core")], equipment: lt("槓鈴、地墊", "Barbell and mat"), rating: 4, focus: "glutes" }),
+  quickExercise({ slug: "smith-hip-thrust", zh: "史密斯臀推", en: "Smith Machine Hip Thrust", group: "glutes", primary: [lt("臀大肌", "Glutes")], secondary: [lt("腿後側", "Hamstrings")], equipment: lt("史密斯機、椅子", "Smith machine and bench"), rating: 4, focus: "glutes" }),
 ];
 
 export const foods: Food[] = [
