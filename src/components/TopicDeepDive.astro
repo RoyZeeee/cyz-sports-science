@@ -1,0 +1,50 @@
+---
+import { topicDeepDiveBySlug, type Lang, type Topic } from "../data/content";
+
+const { topic, lang } = Astro.props as { topic: Topic; lang: Lang };
+const deepDive = topicDeepDiveBySlug(topic.slug, lang);
+
+function pick(zh: string, en: string) {
+  return lang === "en" ? en : zh;
+}
+---
+
+{
+  deepDive && (
+    <section class="topic-deep-dive" aria-labelledby="deep-dive-title">
+      <div class="deep-dive-head">
+        <p class="eyebrow">{lang === "en" ? "Practical guide" : "實用指南"}</p>
+        <h2 id="deep-dive-title">{pick(deepDive.zhTitle, deepDive.enTitle)}</h2>
+        <p>{pick(deepDive.zhIntro, deepDive.enIntro)}</p>
+      </div>
+      {deepDive.sections.map((section) => (
+        <div class="deep-section">
+          <div class="section-head compact">
+            <div>
+              <h2>{pick(section.zhTitle, section.enTitle)}</h2>
+              <p>{pick(section.zhDescription, section.enDescription)}</p>
+            </div>
+          </div>
+          <div class="detail-grid">
+            {section.cards.map((card) => (
+              <article class="detail-card">
+                <h3>{pick(card.zhTitle, card.enTitle)}</h3>
+                <p>{pick(card.zhBody, card.enBody)}</p>
+                {card.items && (
+                  <dl class="metric-list">
+                    {card.items.map((item) => (
+                      <>
+                        <dt>{pick(item.zhLabel, item.enLabel)}</dt>
+                        <dd>{pick(item.zhValue, item.enValue)}</dd>
+                      </>
+                    ))}
+                  </dl>
+                )}
+              </article>
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
+  )
+}

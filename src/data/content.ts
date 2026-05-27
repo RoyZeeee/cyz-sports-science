@@ -49,6 +49,32 @@ export type Evidence = {
   practicalUse: string[];
 };
 
+export type TopicDeepDive = {
+  slug: string;
+  zhTitle: string;
+  enTitle: string;
+  zhIntro: string;
+  enIntro: string;
+  sections: {
+    zhTitle: string;
+    enTitle: string;
+    zhDescription: string;
+    enDescription: string;
+    cards: {
+      zhTitle: string;
+      enTitle: string;
+      zhBody: string;
+      enBody: string;
+      items?: {
+        zhLabel: string;
+        enLabel: string;
+        zhValue: string;
+        enValue: string;
+      }[];
+    }[];
+  }[];
+};
+
 export const topics: Topic[] = [
   {
     slug: "muscle-gain",
@@ -183,6 +209,232 @@ export const evidence: Evidence[] = [
       "Prioritize rapid refueling for two-a-day training, tournaments, and endurance blocks.",
       "Do not overstate the urgency for casual lifters with 24-48 hours between sessions.",
       "Add protein when total carbohydrate or energy intake is constrained.",
+    ],
+  },
+];
+
+export const topicDeepDives: TopicDeepDive[] = [
+  {
+    slug: "muscle-gain",
+    zhTitle: "增肌不是只問蛋白粉",
+    enTitle: "Muscle gain is not just a protein-powder question",
+    zhIntro: "增肌最需要同時看訓練量、漸進超負荷、蛋白質、碳水、總熱量和恢復。單獨抓一個點，很容易變成補劑焦慮。",
+    enIntro:
+      "Muscle gain depends on training volume, progressive overload, protein, carbohydrates, total calories, and recovery. Looking at only one variable usually creates supplement anxiety.",
+    sections: [
+      {
+        zhTitle: "訓練量、碳水、蛋白質三件事",
+        enTitle: "Training volume, carbohydrates, and protein",
+        zhDescription: "先用這三個槓桿檢查計畫，而不是一開始就追求最複雜的課表。",
+        enDescription: "Use these three levers to audit a plan before chasing a complicated program.",
+        cards: [
+          {
+            zhTitle: "訓練量",
+            enTitle: "Training volume",
+            zhBody: "多數肌群可以先從每週 8-12 組有效組開始，能恢復再逐步加到 12-18 組。有效組指接近力竭、動作穩定、目標肌群真的有輸出的組數。",
+            enBody:
+              "A practical starting range is 8-12 hard sets per muscle per week, then move toward 12-18 if recovery and performance hold. Hard sets should be close enough to failure and actually load the target muscle.",
+            items: [
+              { zhLabel: "新手", enLabel: "Beginner", zhValue: "每肌群每週 6-10 組", enValue: "6-10 sets/muscle/week" },
+              { zhLabel: "穩定訓練者", enLabel: "Trained lifter", zhValue: "每肌群每週 10-18 組", enValue: "10-18 sets/muscle/week" },
+              { zhLabel: "警訊", enLabel: "Warning sign", zhValue: "重量下降、關節痛、睡眠差", enValue: "Load drops, joint pain, poor sleep" },
+            ],
+          },
+          {
+            zhTitle: "碳水",
+            enTitle: "Carbohydrates",
+            zhBody: "碳水不是增肌魔法，但它會影響訓練輸出、肌糖原和總熱量是否吃得上去。訓練量越高，碳水通常越重要。",
+            enBody:
+              "Carbs are not magic, but they support training output, glycogen, and total calorie intake. The higher the training volume, the more useful carbs usually become.",
+            items: [
+              { zhLabel: "一般重訓", enLabel: "General lifting", zhValue: "每公斤體重約 2-4 g/日", enValue: "About 2-4 g/kg/day" },
+              { zhLabel: "高量訓練", enLabel: "High-volume training", zhValue: "每公斤體重約 4-6 g/日", enValue: "About 4-6 g/kg/day" },
+              { zhLabel: "時機", enLabel: "Timing", zhValue: "訓練前後優先放一些碳水", enValue: "Prioritize some carbs around training" },
+            ],
+          },
+          {
+            zhTitle: "蛋白質",
+            enTitle: "Protein",
+            zhBody: "蛋白質先看每日總量，再看餐次分配。蛋白粉只是補缺口，不能替代訓練刺激、熱量和睡眠。",
+            enBody:
+              "Start with total daily protein, then meal distribution. Protein powder fills gaps; it does not replace training stimulus, calories, or sleep.",
+            items: [
+              { zhLabel: "實務起點", enLabel: "Practical start", zhValue: "每公斤體重約 1.6 g/日", enValue: "About 1.6 g/kg/day" },
+              { zhLabel: "減脂或高量", enLabel: "Cutting/high volume", zhValue: "可往 1.8-2.2 g/kg 調整", enValue: "Often 1.8-2.2 g/kg" },
+              { zhLabel: "餐次", enLabel: "Meals", zhValue: "每天 3-5 餐平均分配更容易", enValue: "3-5 protein feedings helps adherence" },
+            ],
+          },
+        ],
+      },
+      {
+        zhTitle: "想練哪一塊肌群？動作優先順序",
+        enTitle: "Which muscle do you want to train? Exercise priorities",
+        zhDescription: "排名不是絕對真理，而是給新手和內容讀者快速建立方向。真正選動作仍要看器材、疼痛史和動作品質。",
+        enDescription:
+          "These rankings are starting points, not universal laws. Equipment, pain history, and technique still matter.",
+        cards: [
+          {
+            zhTitle: "胸",
+            enTitle: "Chest",
+            zhBody: "先用能穩定漸進加重的推類動作，再用飛鳥或夾胸補足伸展和收縮感。",
+            enBody: "Start with presses you can progressively load, then add fly or cable work for stretch and contraction.",
+            items: [
+              { zhLabel: "1", enLabel: "1", zhValue: "槓鈴/啞鈴臥推", enValue: "Barbell or dumbbell bench press" },
+              { zhLabel: "2", enLabel: "2", zhValue: "上斜啞鈴推", enValue: "Incline dumbbell press" },
+              { zhLabel: "3", enLabel: "3", zhValue: "繩索夾胸/飛鳥", enValue: "Cable fly or machine fly" },
+            ],
+          },
+          {
+            zhTitle: "背",
+            enTitle: "Back",
+            zhBody: "背部需要垂直拉和水平拉都安排。不要只追重量，肩胛控制和完整活動範圍很重要。",
+            enBody: "Use both vertical and horizontal pulls. Load matters, but scapular control and range of motion matter too.",
+            items: [
+              { zhLabel: "1", enLabel: "1", zhValue: "引體向上/高位下拉", enValue: "Pull-up or lat pulldown" },
+              { zhLabel: "2", enLabel: "2", zhValue: "坐姿划船/胸托划船", enValue: "Seated row or chest-supported row" },
+              { zhLabel: "3", enLabel: "3", zhValue: "單臂啞鈴划船", enValue: "One-arm dumbbell row" },
+            ],
+          },
+          {
+            zhTitle: "腿臀",
+            enTitle: "Legs and glutes",
+            zhBody: "腿臀通常需要蹲、髖鉸鏈、單腿和腿後側動作組合。不要只靠一個深蹲解決所有問題。",
+            enBody: "Legs and glutes usually need squat, hinge, single-leg, and hamstring work. One squat pattern rarely covers everything.",
+            items: [
+              { zhLabel: "1", enLabel: "1", zhValue: "深蹲/腿推", enValue: "Squat or leg press" },
+              { zhLabel: "2", enLabel: "2", zhValue: "羅馬尼亞硬舉", enValue: "Romanian deadlift" },
+              { zhLabel: "3", enLabel: "3", zhValue: "臀推/保加利亞分腿蹲", enValue: "Hip thrust or Bulgarian split squat" },
+            ],
+          },
+          {
+            zhTitle: "肩手臂",
+            enTitle: "Shoulders and arms",
+            zhBody: "肩膀別只練推舉，側平舉和後三角很常是外觀差異來源。手臂則需要穩定累積量。",
+            enBody: "Shoulders are not only overhead press; lateral and rear-delt work often changes the look. Arms need consistent volume.",
+            items: [
+              { zhLabel: "1", enLabel: "1", zhValue: "啞鈴肩推", enValue: "Dumbbell shoulder press" },
+              { zhLabel: "2", enLabel: "2", zhValue: "側平舉", enValue: "Lateral raise" },
+              { zhLabel: "3", enLabel: "3", zhValue: "二頭彎舉 + 三頭下壓", enValue: "Curl plus triceps pressdown" },
+            ],
+          },
+        ],
+      },
+      {
+        zhTitle: "常見食物營養速查",
+        enTitle: "Common food nutrition quick view",
+        zhDescription: "數字是粗略估算；雞蛋用每顆，其餘食物用每 100 g。實際仍會因品牌、烹調和含水量改變。",
+        enDescription:
+          "Approximate values only. Eggs are listed per egg; other foods are per 100 g. Brands, cooking, and water content change the numbers.",
+        cards: [
+          {
+            zhTitle: "蛋白質來源",
+            enTitle: "Protein sources",
+            zhBody: "增肌飲食先找到穩定蛋白來源，再處理總熱量和碳水。",
+            enBody: "Build stable protein sources first, then adjust total calories and carbs.",
+            items: [
+              { zhLabel: "雞蛋 1 顆", enLabel: "1 egg", zhValue: "約 70 kcal / 蛋白 6 g / 脂肪 5 g", enValue: "~70 kcal / 6 g protein / 5 g fat" },
+              { zhLabel: "雞胸 100 g", enLabel: "Chicken breast 100 g", zhValue: "約 165 kcal / 蛋白 31 g", enValue: "~165 kcal / 31 g protein" },
+              { zhLabel: "希臘優格 100 g", enLabel: "Greek yogurt 100 g", zhValue: "約 60-100 kcal / 蛋白 8-10 g", enValue: "~60-100 kcal / 8-10 g protein" },
+            ],
+          },
+          {
+            zhTitle: "碳水來源",
+            enTitle: "Carb sources",
+            zhBody: "碳水主要幫助訓練輸出和熱量達標。增肌期不需要怕白飯，但要看總量。",
+            enBody: "Carbs support training output and calorie targets. Rice is not the enemy; the total amount matters.",
+            items: [
+              { zhLabel: "熟白飯 100 g", enLabel: "Cooked rice 100 g", zhValue: "約 130 kcal / 碳水 28 g", enValue: "~130 kcal / 28 g carbs" },
+              { zhLabel: "燕麥 100 g", enLabel: "Oats 100 g", zhValue: "約 380 kcal / 碳水 66 g / 蛋白 13 g", enValue: "~380 kcal / 66 g carbs / 13 g protein" },
+              { zhLabel: "馬鈴薯 100 g", enLabel: "Potato 100 g", zhValue: "約 80 kcal / 碳水 17 g", enValue: "~80 kcal / 17 g carbs" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "fat-loss",
+    zhTitle: "先把熱量赤字拎出來",
+    enTitle: "Pull calorie deficit out as its own idea",
+    zhIntro: "減脂不是先選有氧或重訓，而是先建立能持續的熱量赤字；重訓、蛋白質和有氧都是讓赤字更好執行、更少掉肌肉的工具。",
+    enIntro:
+      "Fat loss is not first a cardio-versus-lifting decision. It starts with a sustainable calorie deficit; lifting, protein, and cardio make the deficit easier and protect lean mass.",
+    sections: [
+      {
+        zhTitle: "熱量赤字是什麼？",
+        enTitle: "What is a calorie deficit?",
+        zhDescription: "把它單獨理解，減脂內容就不會被單一食物、單一運動或單一補劑帶偏。",
+        enDescription: "Understanding this separately prevents fat-loss content from being hijacked by one food, exercise, or supplement.",
+        cards: [
+          {
+            zhTitle: "定義",
+            enTitle: "Definition",
+            zhBody: "熱量赤字是長期攝入熱量低於身體消耗。它不是餓到崩潰，而是用飲食、活動量和訓練建立可維持的差距。",
+            enBody:
+              "A calorie deficit means energy intake is lower than expenditure over time. It is not starvation; it is a sustainable gap created through diet, activity, and training.",
+            items: [
+              { zhLabel: "小赤字", enLabel: "Small deficit", zhValue: "約低於維持熱量 10-15%", enValue: "~10-15% below maintenance" },
+              { zhLabel: "中等赤字", enLabel: "Moderate deficit", zhValue: "約低於維持熱量 15-25%", enValue: "~15-25% below maintenance" },
+              { zhLabel: "太激進", enLabel: "Too aggressive", zhValue: "訓練掉、暴食、睡眠差", enValue: "Performance drops, bingeing, poor sleep" },
+            ],
+          },
+          {
+            zhTitle: "怎麼創造赤字",
+            enTitle: "How to create the deficit",
+            zhBody: "最穩的方式通常是飲食先砍一點、日常步數提高一點、重訓保留，再用有氧補足，不要把所有壓力都丟給一種方法。",
+            enBody:
+              "The stable approach is usually a small diet adjustment, more daily steps, preserved lifting, and cardio as a tool. Do not put all the stress on one method.",
+            items: [
+              { zhLabel: "飲食", enLabel: "Diet", zhValue: "先減少高熱量低飽足食物", enValue: "Reduce calorie-dense low-satiety foods first" },
+              { zhLabel: "活動", enLabel: "Activity", zhValue: "步數比硬塞 HIIT 更容易持續", enValue: "Steps are often easier to sustain than forced HIIT" },
+              { zhLabel: "重訓", enLabel: "Lifting", zhValue: "保留肌肉和力量訊號", enValue: "Keeps the muscle and strength signal" },
+            ],
+          },
+          {
+            zhTitle: "不要只看體重一天變化",
+            enTitle: "Do not judge by one day of scale weight",
+            zhBody: "水分、碳水、鹽分、月經週期和腸胃內容物都會讓體重波動。看 7-14 天平均更合理。",
+            enBody:
+              "Water, carbohydrates, sodium, menstrual cycle, and gut content all move scale weight. A 7-14 day average is more useful.",
+            items: [
+              { zhLabel: "判斷週期", enLabel: "Review window", zhValue: "至少看 2 週趨勢", enValue: "Use at least a 2-week trend" },
+              { zhLabel: "蛋白質", enLabel: "Protein", zhValue: "減脂期通常要更重視", enValue: "Usually more important during cutting" },
+              { zhLabel: "調整", enLabel: "Adjustment", zhValue: "先微調 100-200 kcal 或步數", enValue: "Adjust 100-200 kcal or steps first" },
+            ],
+          },
+        ],
+      },
+      {
+        zhTitle: "減脂常見食物營養速查",
+        enTitle: "Fat-loss food nutrition quick view",
+        zhDescription: "雞蛋用每顆，其餘食物用每 100 g。這些數字只用來建立直覺，不取代實際秤重或營養標示。",
+        enDescription:
+          "Eggs are per egg; other foods are per 100 g. These are for intuition and do not replace weighing or nutrition labels.",
+        cards: [
+          {
+            zhTitle: "高蛋白、較有飽足感",
+            enTitle: "Higher protein, more filling",
+            zhBody: "減脂期優先保留蛋白質，通常比先砍掉所有碳水更穩。",
+            enBody: "Prioritizing protein is usually more stable than cutting all carbs first.",
+            items: [
+              { zhLabel: "雞蛋 1 顆", enLabel: "1 egg", zhValue: "約 70 kcal / 蛋白 6 g", enValue: "~70 kcal / 6 g protein" },
+              { zhLabel: "雞胸 100 g", enLabel: "Chicken breast 100 g", zhValue: "約 165 kcal / 蛋白 31 g", enValue: "~165 kcal / 31 g protein" },
+              { zhLabel: "豆腐 100 g", enLabel: "Tofu 100 g", zhValue: "約 80 kcal / 蛋白 8 g", enValue: "~80 kcal / 8 g protein" },
+            ],
+          },
+          {
+            zhTitle: "碳水和主食",
+            enTitle: "Carbs and staples",
+            zhBody: "主食不是不能吃，而是份量要和赤字、訓練輸出和飽足感一起看。",
+            enBody: "Staples are not banned; portions should match the deficit, training output, and satiety.",
+            items: [
+              { zhLabel: "熟白飯 100 g", enLabel: "Cooked rice 100 g", zhValue: "約 130 kcal / 碳水 28 g", enValue: "~130 kcal / 28 g carbs" },
+              { zhLabel: "地瓜 100 g", enLabel: "Sweet potato 100 g", zhValue: "約 85 kcal / 碳水 20 g", enValue: "~85 kcal / 20 g carbs" },
+              { zhLabel: "香蕉 100 g", enLabel: "Banana 100 g", zhValue: "約 90 kcal / 碳水 23 g", enValue: "~90 kcal / 23 g carbs" },
+            ],
+          },
+        ],
+      },
     ],
   },
 ];
@@ -699,6 +951,56 @@ export const articles: Article[] = [
     ],
   },
   {
+    slug: "muscle-gain-program-start",
+    lang: "zh",
+    title: "增肌課表起點：先排訓練量，再補蛋白質和碳水",
+    description: "用每週有效組、目標肌群、蛋白質和碳水建立一個可進步的增肌計畫。",
+    topic: "muscle-gain",
+    readingTime: "6 分鐘",
+    relatedEvidence: ["protein-supplementation", "carbohydrate-refueling"],
+    body: [
+      {
+        heading: "先看每週有效組",
+        paragraphs: [
+          "增肌課表不是動作越多越好，而是每個目標肌群每週有多少真正有效、能恢復、能逐步進步的組數。",
+          "新手可以先從每肌群每週 6-10 組開始，穩定訓練者再往 10-18 組調整。只要重量、次數或動作品質長期上不去，先檢查恢復和總量。",
+        ],
+      },
+      {
+        heading: "蛋白質和碳水是課表的燃料",
+        paragraphs: [
+          "蛋白質提供修復和合成材料，碳水幫助訓練輸出和肌糖原補充。訓練量越高，越不能只靠意志硬撐。",
+          "蛋白質可先抓每公斤體重約 1.6 g/日；碳水則依訓練量、總熱量和體重變化調整。",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "calorie-deficit-basics",
+    lang: "zh",
+    title: "熱量赤字是什麼？減脂先懂這個，再談有氧和重訓",
+    description: "把熱量赤字單獨拎出來，避免被單一食物、運動或補劑帶偏。",
+    topic: "fat-loss",
+    readingTime: "5 分鐘",
+    relatedEvidence: ["concurrent-training", "protein-supplementation"],
+    body: [
+      {
+        heading: "赤字是長期平均，不是一天餓爆",
+        paragraphs: [
+          "熱量赤字指一段時間內攝入低於消耗。它可以來自少吃一點、多走一點、保留重訓和加入適量有氧，而不是把自己逼到無法生活。",
+          "太激進的赤字常帶來訓練表現下降、暴食、睡眠變差和肌肉流失風險。能維持的赤字才有商業和科普價值。",
+        ],
+      },
+      {
+        heading: "重訓和蛋白質讓減脂更像減脂",
+        paragraphs: [
+          "體重下降不等於只掉脂肪。重訓和足夠蛋白質提供保留瘦體重的訊號，讓減脂結果更接近你想要的體態。",
+          "有氧很好，但它是增加消耗與心肺健康的工具，不應該被包裝成唯一答案。",
+        ],
+      },
+    ],
+  },
+  {
     slug: "protein-powder-is-a-tool",
     lang: "en",
     title: "Protein powder is a tool, not a magic muscle switch",
@@ -719,6 +1021,56 @@ export const articles: Article[] = [
         paragraphs: [
           "A healthy lifter eating a high-protein diet is not the same case as someone with kidney disease or a medical protein restriction.",
           "Good public education keeps those categories separate and avoids turning clinical cautions into broad fitness myths.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "muscle-gain-program-start",
+    lang: "en",
+    title: "A muscle-gain program starts with volume, then protein and carbs",
+    description: "Use weekly hard sets, target muscles, protein, and carbohydrates to build a plan that can progress.",
+    topic: "muscle-gain",
+    readingTime: "6 min",
+    relatedEvidence: ["protein-supplementation", "carbohydrate-refueling"],
+    body: [
+      {
+        heading: "Start with weekly hard sets",
+        paragraphs: [
+          "A hypertrophy program is not better because it has more exercises. The useful question is how many recoverable, progressive hard sets each target muscle gets per week.",
+          "Beginners can start around 6-10 sets per muscle per week. Trained lifters may move toward 10-18 if performance and recovery hold.",
+        ],
+      },
+      {
+        heading: "Protein and carbs support the program",
+        paragraphs: [
+          "Protein supplies repair and building material; carbohydrates help training output and glycogen. Higher training volume usually requires better fueling.",
+          "A practical protein start is around 1.6 g/kg/day. Carbohydrates should move with training volume, total calories, and body-weight trend.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "calorie-deficit-basics",
+    lang: "en",
+    title: "What is a calorie deficit?",
+    description: "Understand the deficit before arguing about cardio, lifting, foods, or supplements.",
+    topic: "fat-loss",
+    readingTime: "5 min",
+    relatedEvidence: ["concurrent-training", "protein-supplementation"],
+    body: [
+      {
+        heading: "A deficit is a long-term average",
+        paragraphs: [
+          "A calorie deficit means intake is lower than expenditure over time. It can come from a small diet change, more steps, preserved lifting, and reasonable cardio.",
+          "An aggressive deficit often creates performance drops, binge risk, poor sleep, and more lean-mass loss. Sustainable beats dramatic.",
+        ],
+      },
+      {
+        heading: "Lifting and protein make fat loss look like fat loss",
+        paragraphs: [
+          "Scale weight loss is not automatically fat loss. Lifting and enough protein provide the signal to keep lean mass.",
+          "Cardio is useful, but it is a tool for energy expenditure and health, not the only answer.",
         ],
       },
     ],
@@ -824,6 +1176,12 @@ export function localizedEvidenceBySlug(slug: string, lang: Lang): Evidence | un
   const item = evidenceBySlug(slug);
   if (!item || lang !== "zh-cn") return item;
   return localizedEvidence(lang).find((entry) => entry.slug === slug);
+}
+
+export function topicDeepDiveBySlug(slug: string, lang: Lang): TopicDeepDive | undefined {
+  const item = topicDeepDives.find((entry) => entry.slug === slug);
+  if (!item || lang !== "zh-cn") return item;
+  return toSimplifiedItem(item);
 }
 
 function toSimplifiedItem<T>(item: T): T {

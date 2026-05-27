@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import QuestionForm from "../../../components/QuestionForm.astro";
+import TopicDeepDive from "../../../components/TopicDeepDive.astro";
 import { articles, byLang, faqs, topics, topicDescription, topicTitle } from "../../../data/content";
 import { href } from "../../../utils/paths";
 
@@ -19,6 +20,7 @@ const topicArticles = byLang(articles, lang).filter((article) => article.topic =
     <p class="eyebrow">Topic</p>
     <h1>{topicTitle(topic, lang)}</h1>
     <p class="lede">{topicDescription(topic, lang)}</p>
+    <TopicDeepDive topic={topic} lang={lang} />
     <div class="section-head">
       <h2>常见问题</h2>
       <a class="pill-link" href={href("/zh-cn/faq/")}>全部 FAQ</a>

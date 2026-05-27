@@ -240,6 +240,10 @@ h3 {
   margin-bottom: 18px;
 }
 
+.section-head.compact {
+  margin-top: 24px;
+}
+
 .section-head p {
   color: var(--muted);
   max-width: 620px;
@@ -297,6 +301,69 @@ h3 {
   color: var(--muted);
   line-height: 1.58;
   margin-bottom: 0;
+}
+
+.topic-deep-dive {
+  margin: 28px 0 34px;
+  display: grid;
+  gap: 24px;
+}
+
+.deep-dive-head {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: clamp(20px, 3vw, 30px);
+}
+
+.deep-dive-head p:last-child {
+  color: var(--muted);
+  line-height: 1.68;
+  max-width: 860px;
+  margin-bottom: 0;
+}
+
+.deep-section {
+  display: grid;
+  gap: 14px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.detail-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 18px;
+}
+
+.detail-card p {
+  color: var(--muted);
+  line-height: 1.62;
+}
+
+.metric-list {
+  display: grid;
+  grid-template-columns: minmax(84px, 0.52fr) minmax(0, 1fr);
+  gap: 8px 12px;
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.metric-list dt {
+  color: var(--teal);
+  font-weight: 800;
+}
+
+.metric-list dd {
+  margin: 0;
+  color: #3e3a34;
+  line-height: 1.45;
 }
 
 .tag-row {
@@ -472,6 +539,10 @@ h3 {
   }
 
   .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-grid {
     grid-template-columns: 1fr;
   }
 
