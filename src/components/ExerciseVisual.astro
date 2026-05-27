@@ -37,6 +37,7 @@ const any = (slugs: string[]) => slugs.some((slug) => primarySet.has(slug));
 const frontPrimary = any(["upper-chest", "mid-chest", "lower-chest", "front-delts", "side-delts", "quads", "adductors", "biceps", "forearms", "abs", "obliques"]);
 const backPrimary = any(["lats", "upper-back", "mid-back", "lower-back", "rear-delts", "rotator-cuff", "glute-max", "glute-med", "hamstrings", "calves", "triceps"]);
 const posterior = backPrimary && !frontPrimary;
+const lowerBody = any(["quads", "adductors", "glute-max", "glute-med", "hamstrings", "calves"]);
 
 const primaryLabels = subMuscleLabels(primarySlugs, lang);
 const assistantLabels = listText(exercise.secondary, lang);
@@ -49,11 +50,14 @@ const copy = {
   target: lang === "en" ? "Muscle map" : lang === "zh-cn" ? "肌肉图" : "肌肉圖",
 };
 
-const svgViewBox = compact ? "0 0 210 300" : "0 0 420 300";
-const frontTransform = compact ? "translate(26 32)" : "translate(34 34)";
-const backTransform = compact ? "translate(26 32)" : "translate(206 34)";
+const svgViewBox = compact ? "0 0 210 180" : "0 0 420 300";
+const compactTransform = lowerBody ? "translate(30 2) scale(0.86)" : "translate(24 0) scale(1.04)";
+const frontTransform = compact ? compactTransform : "translate(34 34)";
+const backTransform = compact ? compactTransform : "translate(206 34)";
 const frontLabelX = compact ? 104 : 111;
 const backLabelX = compact ? 104 : 283;
+const showFront = !posterior;
+const showBack = posterior;
 ---
 
 <figure class:list={["exercise-visual", "anatomy-card", compact && "compact"]} aria-label={`${text(exercise.name, lang)} ${copy.target}`}>
@@ -68,11 +72,11 @@ const backLabelX = compact ? 104 : 283;
       </clipPath>
     </defs>
     <rect class="visual-bg" x="0" y="0" width="420" height="300" rx="10"></rect>
-    {(!compact || !posterior) && <text class:list={["view-label", !posterior && "selected"]} x={frontLabelX} y="25">{copy.front}</text>}
-    {(!compact || posterior) && <text class:list={["view-label", posterior && "selected"]} x={backLabelX} y="25">{copy.back}</text>}
+    {!compact && <text class:list={["view-label", showFront && "selected"]} x={frontLabelX} y="25">{copy.front}</text>}
+    {!compact && <text class:list={["view-label", showBack && "selected"]} x={backLabelX} y="25">{copy.back}</text>}
 
-    {(!compact || !posterior) && (
-      <g class:list={["anatomy-view", !posterior && "preferred"]} transform={frontTransform}>
+    {(!compact || showFront) && (
+      <g class:list={["anatomy-view", showFront && "preferred"]} transform={frontTransform}>
         <image
           class="anatomy-photo"
           href="/images/muscles-front-back.svg"
@@ -92,28 +96,31 @@ const backLabelX = compact ? 104 : 283;
           <path d="M39 168c12 17 20 46 22 91M117 168c-12 17-20 46-22 91M65 174l-10 78M91 174l11 78M25 248h36M95 248h36"></path>
         </g>
 
-        <path class:list={["heat-zone", heat("upper-chest")]} d="M49 69c15-13 43-13 58 0-3 10-9 17-16 20H65c-7-3-13-10-16-20z"></path>
-        <path class:list={["heat-zone", heat("mid-chest")]} d="M47 84c18 2 45 2 62 0-2 20-14 34-31 35-17-1-29-15-31-35z"></path>
-        <path class:list={["heat-zone", heat("lower-chest")]} d="M51 108c17 11 37 11 54 0-3 13-12 23-27 25-15-2-24-12-27-25z"></path>
-        <path class:list={["heat-zone", heat("front-delts")]} d="M27 70c16-20 33-19 43-5-8 11-17 20-29 24-8-3-13-9-14-19z"></path>
-        <path class:list={["heat-zone", heat("front-delts")]} d="M129 70c-16-20-33-19-43-5 8 11 17 20 29 24 8-3 13-9 14-19z"></path>
-        <path class:list={["heat-zone", heat("side-delts")]} d="M17 82c13-15 28-17 40-4-7 19-18 32-35 38-7-10-9-21-5-34z"></path>
-        <path class:list={["heat-zone", heat("side-delts")]} d="M139 82c-13-15-28-17-40-4 7 19 18 32 35 38 7-10 9-21 5-34z"></path>
-        <path class:list={["heat-zone", heat("biceps")]} d="M11 122c1-17 7-31 20-43l18 16c-12 20-18 42-20 70H5c0-14 2-29 6-43z"></path>
-        <path class:list={["heat-zone", heat("biceps")]} d="M145 122c-1-17-7-31-20-43l-18 16c12 20 18 42 20 70h24c0-14-2-29-6-43z"></path>
-        <path class:list={["heat-zone", heat("forearms")]} d="M4 162h25l-5 48H-4z"></path>
-        <path class:list={["heat-zone", heat("forearms")]} d="M127 162h25l8 48h-28z"></path>
-        <path class:list={["heat-zone", heat("abs")]} d="M57 120h42l8 50-29 17-29-17z"></path>
-        <path class:list={["heat-zone", heat("obliques")]} d="M43 119l15 7-8 42-17-14z"></path>
-        <path class:list={["heat-zone", heat("obliques")]} d="M113 119l-15 7 8 42 17-14z"></path>
-        <path class:list={["heat-zone", heat("quads")]} d="M39 168h34l-12 91H26z"></path>
-        <path class:list={["heat-zone", heat("quads")]} d="M83 168h34l13 91H95z"></path>
-        <path class:list={["heat-zone", heat("adductors")]} d="M65 174h14l-2 78H55z"></path>
-        <path class:list={["heat-zone", heat("adductors")]} d="M77 174h14l11 78H80z"></path>
-        <path class:list={["heat-zone", heat("calves")]} d="M25 248h36l-8 39H18z"></path>
-        <path class:list={["heat-zone", heat("calves")]} d="M95 248h36l8 39h-35z"></path>
+        <path class:list={["heat-zone", heat("upper-chest")]} d="M43 72c9-13 25-16 37-4-4 7-10 12-19 15-8 2-15 2-19-2-2-3-1-6 1-9z"></path>
+        <path class:list={["heat-zone", heat("upper-chest")]} d="M113 72c-9-13-25-16-37-4 4 7 10 12 19 15 8 2 15 2 19-2 2-3 1-6-1-9z"></path>
+        <path class:list={["heat-zone", heat("mid-chest")]} d="M46 84c9 2 22 1 32-5-1 16-11 28-29 31-4-8-5-18-3-26z"></path>
+        <path class:list={["heat-zone", heat("mid-chest")]} d="M110 84c-9 2-22 1-32-5 1 16 11 28 29 31 4-8 5-18 3-26z"></path>
+        <path class:list={["heat-zone", heat("lower-chest")]} d="M50 105c11 5 21 3 29-5-2 14-10 23-25 25-4-6-5-13-4-20z"></path>
+        <path class:list={["heat-zone", heat("lower-chest")]} d="M106 105c-11 5-21 3-29-5 2 14 10 23 25 25 4-6 5-13 4-20z"></path>
+        <path class:list={["heat-zone", heat("front-delts")]} d="M25 73c9-15 25-18 40-7-5 12-15 20-29 23-7-3-11-8-11-16z"></path>
+        <path class:list={["heat-zone", heat("front-delts")]} d="M131 73c-9-15-25-18-40-7 5 12 15 20 29 23 7-3 11-8 11-16z"></path>
+        <path class:list={["heat-zone", heat("side-delts")]} d="M17 82c13-15 27-16 39-5-6 16-17 27-33 32-6-8-8-17-6-27z"></path>
+        <path class:list={["heat-zone", heat("side-delts")]} d="M139 82c-13-15-27-16-39-5 6 16 17 27 33 32 6-8 8-17 6-27z"></path>
+        <path class:list={["heat-zone", heat("biceps")]} d="M13 120c1-15 6-28 17-39l14 14c-10 18-15 39-16 64H7c0-13 2-27 6-39z"></path>
+        <path class:list={["heat-zone", heat("biceps")]} d="M143 120c-1-15-6-28-17-39l-14 14c10 18 15 39 16 64h21c0-13-2-27-6-39z"></path>
+        <path class:list={["heat-zone", heat("forearms")]} d="M8 160h20l-5 43H1z"></path>
+        <path class:list={["heat-zone", heat("forearms")]} d="M128 160h20l7 43h-22z"></path>
+        <path class:list={["heat-zone", heat("abs")]} d="M59 118h38l7 47-26 15-26-15z"></path>
+        <path class:list={["heat-zone", heat("obliques")]} d="M45 119l13 6-8 39-15-13z"></path>
+        <path class:list={["heat-zone", heat("obliques")]} d="M111 119l-13 6 8 39 15-13z"></path>
+        <path class:list={["heat-zone", heat("quads")]} d="M42 171c9-4 21-2 29 5-1 28-6 55-12 79H33c2-31 4-60 9-84z"></path>
+        <path class:list={["heat-zone", heat("quads")]} d="M114 171c-9-4-21-2-29 5 1 28 6 55 12 79h26c-2-31-4-60-9-84z"></path>
+        <path class:list={["heat-zone", heat("adductors")]} d="M64 176h14l-3 74H56z"></path>
+        <path class:list={["heat-zone", heat("adductors")]} d="M78 176h14l9 74H82z"></path>
+        <path class:list={["heat-zone", heat("calves")]} d="M29 249h31l-7 36H23z"></path>
+        <path class:list={["heat-zone", heat("calves")]} d="M96 249h31l7 36h-30z"></path>
 
-        {!compact && !posterior && (
+        {!compact && showFront && (
           <g class="callouts">
             <path class="callout-line" d="M116 94h55"></path>
             <text class="callout-text" x="178" y="98">{calloutLabel}</text>
@@ -122,8 +129,8 @@ const backLabelX = compact ? 104 : 283;
       </g>
     )}
 
-    {(!compact || posterior) && (
-      <g class:list={["anatomy-view", posterior && "preferred"]} transform={backTransform}>
+    {(!compact || showBack) && (
+      <g class:list={["anatomy-view", showBack && "preferred"]} transform={backTransform}>
         <image
           class="anatomy-photo"
           href="/images/muscles-front-back.svg"
@@ -144,26 +151,26 @@ const backLabelX = compact ? 104 : 283;
           <path d="M40 210h34M82 210h34M25 248h36M95 248h36"></path>
         </g>
 
-        <path class:list={["heat-zone", heat("upper-back")]} d="M43 64c18-12 52-12 70 0l12 24-47 29-47-29z"></path>
-        <path class:list={["heat-zone", heat("mid-back")]} d="M49 91l29 20 29-20-8 54-21 29-21-29z"></path>
-        <path class:list={["heat-zone", heat("lats")]} d="M42 86c-25 20-36 45-39 82h25c8-30 20-52 40-66z"></path>
-        <path class:list={["heat-zone", heat("lats")]} d="M114 86c25 20 36 45 39 82h-25c-8-30-20-52-40-66z"></path>
-        <path class:list={["heat-zone", heat("lower-back")]} d="M57 145l21 28 21-28 9 37-30 24-30-24z"></path>
-        <path class:list={["heat-zone", heat("rear-delts")]} d="M27 68c17-16 34-15 45-1-8 15-18 27-33 33-9-5-14-16-12-32z"></path>
-        <path class:list={["heat-zone", heat("rear-delts")]} d="M129 68c-17-16-34-15-45-1 8 15 18 27 33 33 9-5 14-16 12-32z"></path>
-        <path class:list={["heat-zone", heat("rotator-cuff")]} d="M57 89c12-8 30-8 42 0l-7 18H64z"></path>
-        <path class:list={["heat-zone", heat("triceps")]} d="M11 122c1-17 7-31 20-43l18 16c-12 20-18 42-20 70H5c0-14 2-29 6-43z"></path>
-        <path class:list={["heat-zone", heat("triceps")]} d="M145 122c-1-17-7-31-20-43l-18 16c12 20 18 42 20 70h24c0-14-2-29-6-43z"></path>
-        <path class:list={["heat-zone", heat("glute-med")]} d="M38 162c10-14 24-15 36-4l-26 31z"></path>
-        <path class:list={["heat-zone", heat("glute-med")]} d="M118 162c-10-14-24-15-36-4l26 31z"></path>
-        <path class:list={["heat-zone", heat("glute-max")]} d="M43 180c15-18 31-16 36 5-7 26-23 39-44 33z"></path>
-        <path class:list={["heat-zone", heat("glute-max")]} d="M113 180c-15-18-31-16-36 5 7 26 23 39 44 33z"></path>
-        <path class:list={["heat-zone", heat("hamstrings")]} d="M40 210h34l-12 78H28z"></path>
-        <path class:list={["heat-zone", heat("hamstrings")]} d="M82 210h34l13 78H95z"></path>
-        <path class:list={["heat-zone", heat("calves")]} d="M25 248h36l-8 39H18z"></path>
-        <path class:list={["heat-zone", heat("calves")]} d="M95 248h36l8 39h-35z"></path>
+        <path class:list={["heat-zone", heat("upper-back")]} d="M42 65c19-10 53-10 72 0l10 20-46 25-46-25z"></path>
+        <path class:list={["heat-zone", heat("mid-back")]} d="M50 92l28 17 28-17-9 48-19 27-19-27z"></path>
+        <path class:list={["heat-zone", heat("lats")]} d="M42 86c-20 18-31 42-35 76h20c7-27 18-49 39-62z"></path>
+        <path class:list={["heat-zone", heat("lats")]} d="M114 86c20 18 31 42 35 76h-20c-7-27-18-49-39-62z"></path>
+        <path class:list={["heat-zone", heat("lower-back")]} d="M58 144l20 25 20-25 7 32-27 22-27-22z"></path>
+        <path class:list={["heat-zone", heat("rear-delts")]} d="M29 69c15-14 31-14 42-2-7 13-17 23-31 29-8-5-12-14-11-27z"></path>
+        <path class:list={["heat-zone", heat("rear-delts")]} d="M127 69c-15-14-31-14-42-2 7 13 17 23 31 29 8-5 12-14 11-27z"></path>
+        <path class:list={["heat-zone", heat("rotator-cuff")]} d="M59 88c11-6 27-6 38 0l-6 16H65z"></path>
+        <path class:list={["heat-zone", heat("triceps")]} d="M13 120c1-15 6-28 17-39l14 14c-10 18-15 39-16 64H7c0-13 2-27 6-39z"></path>
+        <path class:list={["heat-zone", heat("triceps")]} d="M143 120c-1-15-6-28-17-39l-14 14c10 18 15 39 16 64h21c0-13-2-27-6-39z"></path>
+        <path class:list={["heat-zone", heat("glute-med")]} d="M41 163c9-12 22-13 32-3l-23 28z"></path>
+        <path class:list={["heat-zone", heat("glute-med")]} d="M115 163c-9-12-22-13-32-3l23 28z"></path>
+        <path class:list={["heat-zone", heat("glute-max")]} d="M44 179c14-16 29-14 34 5-6 23-21 35-40 30z"></path>
+        <path class:list={["heat-zone", heat("glute-max")]} d="M112 179c-14-16-29-14-34 5 6 23 21 35 40 30z"></path>
+        <path class:list={["heat-zone", heat("hamstrings")]} d="M42 208c10-4 21-2 30 5-2 26-7 51-13 72H34c1-27 3-54 8-77z"></path>
+        <path class:list={["heat-zone", heat("hamstrings")]} d="M114 208c-10-4-21-2-30 5 2 26 7 51 13 72h25c-1-27-3-54-8-77z"></path>
+        <path class:list={["heat-zone", heat("calves")]} d="M29 249h31l-7 36H23z"></path>
+        <path class:list={["heat-zone", heat("calves")]} d="M96 249h31l7 36h-30z"></path>
 
-        {!compact && posterior && (
+        {!compact && showBack && (
           <g class="callouts">
             <path class="callout-line" d="M118 100h50"></path>
             <text class="callout-text" x="175" y="104">{calloutLabel}</text>

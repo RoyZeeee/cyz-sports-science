@@ -448,11 +448,15 @@ h3 {
 }
 
 .anatomy-view {
-  opacity: 0.42;
+  opacity: 0.2;
 }
 
 .anatomy-view.preferred {
   opacity: 1;
+}
+
+.anatomy-view:not(.preferred) .heat-zone {
+  opacity: 0;
 }
 
 .anatomy-silhouette {
@@ -477,23 +481,22 @@ h3 {
 .heat-zone {
   fill: transparent;
   stroke: transparent;
-  stroke-width: 1.7;
+  stroke-width: 0;
   opacity: 0;
   transition: opacity 0.15s ease;
   vector-effect: non-scaling-stroke;
+  mix-blend-mode: normal;
 }
 
 .heat-zone.secondary {
-  fill: rgba(245, 164, 84, 0.45);
-  stroke: rgba(172, 86, 46, 0.65);
+  fill: rgba(238, 139, 68, 0.34);
   opacity: 1;
 }
 
 .heat-zone.primary {
-  fill: rgba(10, 137, 132, 0.68);
-  stroke: #0d5553;
+  fill: rgba(0, 150, 143, 0.56);
   opacity: 1;
-  filter: drop-shadow(0 4px 7px rgba(15, 85, 83, 0.2));
+  filter: none;
 }
 
 .callout-line {
@@ -569,7 +572,7 @@ h3 {
 }
 
 .exercise-visual.compact svg {
-  aspect-ratio: 1.62;
+  aspect-ratio: 1.78;
 }
 
 .exercise-visual.compact .view-label {
@@ -586,8 +589,16 @@ h3 {
   stroke-width: 1;
 }
 
+.exercise-visual.compact .anatomy-photo {
+  opacity: 0.96;
+}
+
+.exercise-visual.compact .heat-zone.secondary {
+  opacity: 0;
+}
+
 .exercise-visual.compact .heat-zone.primary {
-  filter: drop-shadow(0 4px 7px rgba(15, 85, 83, 0.2));
+  opacity: 1;
 }
 
 .meta-row {
