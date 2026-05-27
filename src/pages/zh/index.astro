@@ -53,6 +53,28 @@ const featuredArticles = byLang(articles, lang).slice(0, 3);
   <section class="container section">
     <div class="section-head">
       <div>
+        <h2>直接查能用的工具</h2>
+        <p>不只看 FAQ，也能從動作、肌群和食物份量開始做決策。</p>
+      </div>
+    </div>
+    <div class="grid">
+      <a class="card tool-card" href={href("/zh/exercises/")}>
+        <div><span class="meta">20 個動作</span><h3>動作庫</h3><p>圖片、主練肌群、器材、難度和推薦指數一次看。</p></div>
+        <span class="pill-link">看動作</span>
+      </a>
+      <a class="card tool-card" href={href("/zh/muscles/")}>
+        <div><span class="meta">7 個肌群</span><h3>想練哪一塊？</h3><p>胸、背、肩、腿、臀、腹、手臂，各自列出推薦動作排名。</p></div>
+        <span class="pill-link">選肌群</span>
+      </a>
+      <a class="card tool-card" href={href("/zh/foods/")}>
+        <div><span class="meta">常見份量</span><h3>食物營養庫</h3><p>雞蛋用顆，其餘用常見份量或 100 g 建立熱量和營養直覺。</p></div>
+        <span class="pill-link">查食物</span>
+      </a>
+    </div>
+  </section>
+  <section class="container section">
+    <div class="section-head">
+      <div>
         <h2>精選文章</h2>
         <p>從內部 wiki 精選並改寫，適合做長文、短影音腳本和內容產品素材。</p>
       </div>

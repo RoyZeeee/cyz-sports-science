@@ -1,0 +1,42 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
+import ExerciseCard from "../../../components/ExerciseCard.astro";
+import { exercises, muscleGroups, text, toolCopy } from "../../../data/tools";
+import type { Lang } from "../../../data/content";
+import { href } from "../../../utils/paths";
+
+export function getStaticPaths() {
+  return (["zh", "zh-cn", "en"] as Lang[]).map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const copy = toolCopy(lang);
+const title = copy.exercises;
+const description =
+  lang === "en"
+    ? "A practical exercise library with pictures, trained muscles, difficulty, equipment, and recommendation ratings."
+    : lang === "zh-cn"
+      ? "用图片、主练肌群、难度、器材和推荐指数整理常见健身动作。"
+      : "用圖片、主練肌群、難度、器材和推薦指數整理常見健身動作。";
+---
+
+<BaseLayout lang={lang} title={title} description={description} path={`/${lang}/exercises/`}>
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">{copy.exercises}</p>
+        <h1>{title}</h1>
+        <p>{description}</p>
+      </div>
+      <a class="pill-link" href={href(`/${lang}/muscles/`)}>{copy.muscles}</a>
+    </div>
+    <div class="tool-filter-row">
+      {muscleGroups.map((group) => <a class="tag" href={href(`/${lang}/muscles/${group.slug}/`)}>{text(group.name, lang)}</a>)}
+    </div>
+    <div class="exercise-grid">
+      {exercises.map((exercise) => <ExerciseCard exercise={exercise} lang={lang} />)}
+    </div>
+    <QuestionForm lang={lang} />
+  </section>
+</BaseLayout>

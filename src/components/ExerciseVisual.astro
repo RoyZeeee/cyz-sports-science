@@ -1,0 +1,36 @@
+---
+import type { Exercise } from "../data/tools";
+import { text } from "../data/tools";
+import type { Lang } from "../data/content";
+
+const { exercise, lang, compact = false } = Astro.props as { exercise: Exercise; lang: Lang; compact?: boolean };
+const focus = exercise.visualFocus;
+const active = (part: Exercise["visualFocus"] | "legs") =>
+  focus === part || (part === "legs" && (focus === "quads" || focus === "hamstrings" || focus === "calves"));
+---
+
+<figure class:list={["exercise-visual", compact && "compact"]} aria-label={text(exercise.name, lang)}>
+  <svg viewBox="0 0 260 220" role="img">
+    <rect class="visual-bg" x="0" y="0" width="260" height="220" rx="8"></rect>
+    <circle class="body-part" cx="130" cy="34" r="17"></circle>
+    <path class:list={["body-part", active("chest") && "active"]} d="M104 58h52l15 56h-82z"></path>
+    <path class:list={["body-part", active("back") && "active"]} d="M93 73c-24 10-35 31-35 57h22c3-17 11-31 25-39z"></path>
+    <path class:list={["body-part", active("back") && "active"]} d="M167 73c24 10 35 31 35 57h-22c-3-17-11-31-25-39z"></path>
+    <path class:list={["body-part", active("shoulders") && "active"]} d="M83 63c10-12 24-13 33-5l-15 24c-9-1-16-7-18-19z"></path>
+    <path class:list={["body-part", active("shoulders") && "active"]} d="M177 63c-10-12-24-13-33-5l15 24c9-1 16-7 18-19z"></path>
+    <path class:list={["body-part", active("arms") && "active"]} d="M81 83c-14 18-19 40-18 63h18c2-18 7-34 17-49z"></path>
+    <path class:list={["body-part", active("arms") && "active"]} d="M179 83c14 18 19 40 18 63h-18c-2-18-7-34-17-49z"></path>
+    <path class:list={["body-part", active("core") && "active"]} d="M101 113h58l-8 39h-42z"></path>
+    <path class:list={["body-part", active("glutes") && "active"]} d="M105 150h50l10 24h-70z"></path>
+    <path class:list={["body-part", active("legs") && "active"]} d="M99 172h27l-8 40h-25z"></path>
+    <path class:list={["body-part", active("legs") && "active"]} d="M134 172h27l6 40h-25z"></path>
+    <path class:list={["body-part", active("calves") && "active"]} d="M91 205h28l-4 13h-28z"></path>
+    <path class:list={["body-part", active("calves") && "active"]} d="M141 205h28l5 13h-28z"></path>
+    <path class="motion-line" d="M41 45c30-25 65-35 104-29"></path>
+    <path class="motion-line" d="M219 174c-33 22-70 29-112 20"></path>
+  </svg>
+  <figcaption>
+    <strong>{text(exercise.name, lang)}</strong>
+    <span>{text(exercise.summary, lang)}</span>
+  </figcaption>
+</figure>

@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
+import ExerciseVisual from "../../../components/ExerciseVisual.astro";
+import Rating from "../../../components/Rating.astro";
+import { exercises, getExercise, getMuscleGroup, difficultyLabel, listText, text, toolCopy } from "../../../data/tools";
+import type { Lang } from "../../../data/content";
+import { href } from "../../../utils/paths";
+
+export function getStaticPaths() {
+  return (["zh", "zh-cn", "en"] as Lang[]).flatMap((lang) => exercises.map((exercise) => ({ params: { lang, slug: exercise.slug } })));
+}
+
+const lang = Astro.params.lang as Lang;
+const exercise = getExercise(Astro.params.slug ?? "");
+if (!exercise) throw new Error("Exercise not found");
+const copy = toolCopy(lang);
+const muscle = getMuscleGroup(exercise.muscleGroup);
+const related = exercises.filter((item) => item.muscleGroup === exercise.muscleGroup && item.slug !== exercise.slug).slice(0, 4);
+---
+
+<BaseLayout lang={lang} title={text(exercise.name, lang)} description={text(exercise.summary, lang)} path={`/${lang}/exercises/${exercise.slug}/`}>
+  <section class="container content-layout">
+    <article class="article">
+      <p class="eyebrow">{copy.exercises}</p>
+      <h1>{text(exercise.name, lang)}</h1>
+      <p>{text(exercise.summary, lang)}</p>
+      <ExerciseVisual exercise={exercise} lang={lang} />
+      <div class="spec-grid">
+        <div><span>{copy.rating}</span><Rating value={exercise.rating} label={copy.rating} /></div>
+        <div><span>{copy.difficulty}</span><strong>{difficultyLabel(exercise.difficulty, lang)}</strong></div>
+        <div><span>{copy.equipment}</span><strong>{text(exercise.equipment, lang)}</strong></div>
+      </div>
+      <section>
+        <h2>{copy.primary}</h2>
+        <div class="tag-row">{listText(exercise.primary, lang).map((item) => <span class="tag strong-tag">{item}</span>)}</div>
+      </section>
+      <section>
+        <h2>{copy.secondary}</h2>
+        <div class="tag-row">{listText(exercise.secondary, lang).map((item) => <span class="tag">{item}</span>)}</div>
+      </section>
+      <section>
+        <h2>{copy.bestFor}</h2>
+        <ul>{exercise.bestFor.map((item) => <li>{text(item, lang)}</li>)}</ul>
+      </section>
+      <section>
+        <h2>{copy.cues}</h2>
+        <ul>{exercise.cues.map((item) => <li>{text(item, lang)}</li>)}</ul>
+      </section>
+      <section>
+        <h2>{copy.cautions}</h2>
+        <ul>{exercise.cautions.map((item) => <li>{text(item, lang)}</li>)}</ul>
+      </section>
+    </article>
+    <aside class="side-panel">
+      <h2>{muscle ? text(muscle.name, lang) : copy.muscles}</h2>
+      {muscle && <p>{text(muscle.description, lang)}</p>}
+      <a class="pill-link" href={href(`/${lang}/muscles/${exercise.muscleGroup}/`)}>{copy.browse}</a>
+      <h3>{lang === "en" ? "Related exercises" : lang === "zh-cn" ? "相关动作" : "相關動作"}</h3>
+      <ul>{related.map((item) => <li><a href={href(`/${lang}/exercises/${item.slug}/`)}>{text(item.name, lang)}</a></li>)}</ul>
+    </aside>
+  </section>
+  <div class="container"><QuestionForm lang={lang} /></div>
+</BaseLayout>

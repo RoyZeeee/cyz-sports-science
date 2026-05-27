@@ -53,6 +53,28 @@ const featuredArticles = byLang(articles, lang).slice(0, 3);
   <section class="container section">
     <div class="section-head">
       <div>
+        <h2>Practical tools</h2>
+        <p>Move beyond FAQ into exercises, muscle-group choices, and food nutrition decisions.</p>
+      </div>
+    </div>
+    <div class="grid">
+      <a class="card tool-card" href={href("/en/exercises/")}>
+        <div><span class="meta">20 exercises</span><h3>Exercise library</h3><p>Pictures, target muscles, equipment, difficulty, and recommendation ratings.</p></div>
+        <span class="pill-link">View exercises</span>
+      </a>
+      <a class="card tool-card" href={href("/en/muscles/")}>
+        <div><span class="meta">7 muscle groups</span><h3>What do you want to train?</h3><p>Chest, back, shoulders, legs, glutes, core, and arms with ranked exercise picks.</p></div>
+        <span class="pill-link">Choose muscle</span>
+      </a>
+      <a class="card tool-card" href={href("/en/foods/")}>
+        <div><span class="meta">Common servings</span><h3>Food nutrition</h3><p>Eggs per egg; other foods by practical serving or 100 g for calorie and macro intuition.</p></div>
+        <span class="pill-link">View foods</span>
+      </a>
+    </div>
+  </section>
+  <section class="container section">
+    <div class="section-head">
+      <div>
         <h2>Featured articles</h2>
         <p>Public-facing articles adapted from the internal wiki for education, scripts, and future products.</p>
       </div>

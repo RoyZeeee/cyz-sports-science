@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
+import { foods, text, toolCopy } from "../../../data/tools";
+import type { Lang } from "../../../data/content";
+
+export function getStaticPaths() {
+  return (["zh", "zh-cn", "en"] as Lang[]).map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const copy = toolCopy(lang);
+const intro =
+  lang === "en"
+    ? "Approximate nutrition for common fitness foods. Eggs are per egg; most other foods use a practical serving or 100 g."
+    : lang === "zh-cn"
+      ? "常见健身食物的大概营养。鸡蛋用每颗，其余以常见份量或 100 g 建立直觉。"
+      : "常見健身食物的大概營養。雞蛋用每顆，其餘以常見份量或 100 g 建立直覺。";
+---
+
+<BaseLayout lang={lang} title={copy.foods} description={intro} path={`/${lang}/foods/`}>
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">{copy.foods}</p>
+        <h1>{copy.foods}</h1>
+        <p>{intro}</p>
+      </div>
+    </div>
+    <div class="nutrition-grid">
+      {foods.map((food) => (
+        <article class="nutrition-card">
+          <div>
+            <span class="meta">{text(food.unit, lang)}</span>
+            <h3>{text(food.name, lang)}</h3>
+            <p>{text(food.bestUse, lang)}</p>
+          </div>
+          <dl class="nutrition-facts">
+            <div><dt>{copy.kcal}</dt><dd>{food.kcal}</dd></div>
+            <div><dt>{copy.protein}</dt><dd>{food.protein}</dd></div>
+            <div><dt>{copy.carbs}</dt><dd>{food.carbs}</dd></div>
+            <div><dt>{copy.fat}</dt><dd>{food.fat}</dd></div>
+          </dl>
+          <p class="mini-meta">{text(food.note, lang)}</p>
+        </article>
+      ))}
+    </div>
+    <QuestionForm lang={lang} />
+  </section>
+</BaseLayout>

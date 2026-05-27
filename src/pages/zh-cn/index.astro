@@ -52,6 +52,28 @@ const featuredArticles = byLang(articles, lang).slice(0, 3);
   <section class="container section">
     <div class="section-head">
       <div>
+        <h2>直接查能用的工具</h2>
+        <p>不只看 FAQ，也能从动作、肌群和食物份量开始做决策。</p>
+      </div>
+    </div>
+    <div class="grid">
+      <a class="card tool-card" href={href("/zh-cn/exercises/")}>
+        <div><span class="meta">20 个动作</span><h3>动作库</h3><p>图片、主练肌群、器材、难度和推荐指数一次看。</p></div>
+        <span class="pill-link">看动作</span>
+      </a>
+      <a class="card tool-card" href={href("/zh-cn/muscles/")}>
+        <div><span class="meta">7 个肌群</span><h3>想练哪一块？</h3><p>胸、背、肩、腿、臀、腹、手臂，各自列出推荐动作排名。</p></div>
+        <span class="pill-link">选肌群</span>
+      </a>
+      <a class="card tool-card" href={href("/zh-cn/foods/")}>
+        <div><span class="meta">常见份量</span><h3>食物营养库</h3><p>鸡蛋用颗，其余用常见份量或 100 g 建立热量和营养直觉。</p></div>
+        <span class="pill-link">查食物</span>
+      </a>
+    </div>
+  </section>
+  <section class="container section">
+    <div class="section-head">
+      <div>
         <h2>精选文章</h2>
         <p>从内部 wiki 精选并改写，适合做长文、短视频脚本和内容产品素材。</p>
       </div>

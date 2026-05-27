@@ -55,9 +55,11 @@ const htmlLang = lang === "zh" ? "zh-Hant" : lang === "zh-cn" ? "zh-Hans" : "en"
           </a>
           <div class="nav-links">
             <a href={href(`/${lang}/topics/`)}>{copy.topics}</a>
+            <a href={href(`/${lang}/exercises/`)}>{copy.exercises}</a>
+            <a href={href(`/${lang}/muscles/`)}>{copy.muscles}</a>
+            <a href={href(`/${lang}/foods/`)}>{copy.foods}</a>
             <a href={href(`/${lang}/faq/`)}>{copy.faq}</a>
             <a href={href(`/${lang}/articles/`)}>{copy.articles}</a>
-            <a href={href(`/${lang}/trends/`)}>{copy.trends}</a>
             <a href={href(`/${lang}/evidence/`)}>{copy.evidence}</a>
             <LanguageSwitcher lang={lang} alternatePath={alternatePath} />
           </div>

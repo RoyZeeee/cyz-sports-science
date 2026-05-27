@@ -1,0 +1,40 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
+import ExerciseCard from "../../../components/ExerciseCard.astro";
+import { exercisesForMuscle, getMuscleGroup, muscleGroups, text, toolCopy } from "../../../data/tools";
+import type { Lang } from "../../../data/content";
+import { href } from "../../../utils/paths";
+
+export function getStaticPaths() {
+  return (["zh", "zh-cn", "en"] as Lang[]).flatMap((lang) => muscleGroups.map((group) => ({ params: { lang, slug: group.slug } })));
+}
+
+const lang = Astro.params.lang as Lang;
+const group = getMuscleGroup(Astro.params.slug ?? "");
+if (!group) throw new Error("Muscle group not found");
+const copy = toolCopy(lang);
+const ranked = exercisesForMuscle(group.slug);
+---
+
+<BaseLayout lang={lang} title={text(group.name, lang)} description={text(group.description, lang)} path={`/${lang}/muscles/${group.slug}/`}>
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">{copy.muscles}</p>
+        <h1>{text(group.name, lang)}</h1>
+        <p>{text(group.description, lang)} {text(group.trainingNote, lang)}</p>
+      </div>
+      <a class="pill-link" href={href(`/${lang}/exercises/`)}>{copy.exercises}</a>
+    </div>
+    <div class="rank-list">
+      {ranked.map((exercise, index) => (
+        <div class="rank-row">
+          <span class="rank-number">#{index + 1}</span>
+          <ExerciseCard exercise={exercise} lang={lang} />
+        </div>
+      ))}
+    </div>
+    <QuestionForm lang={lang} />
+  </section>
+</BaseLayout>

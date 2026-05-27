@@ -1,0 +1,25 @@
+---
+import ExerciseVisual from "./ExerciseVisual.astro";
+import Rating from "./Rating.astro";
+import type { Lang } from "../data/content";
+import type { Exercise } from "../data/tools";
+import { difficultyLabel, listText, text, toolCopy } from "../data/tools";
+import { href } from "../utils/paths";
+
+const { exercise, lang } = Astro.props as { exercise: Exercise; lang: Lang };
+const copy = toolCopy(lang);
+---
+
+<a class="card exercise-card" href={href(`/${lang}/exercises/${exercise.slug}/`)}>
+  <ExerciseVisual exercise={exercise} lang={lang} compact />
+  <div class="exercise-card-body">
+    <h3>{text(exercise.name, lang)}</h3>
+    <p>{text(exercise.summary, lang)}</p>
+    <div class="meta-row">
+      <Rating value={exercise.rating} label={copy.rating} />
+      <span class="tag">{difficultyLabel(exercise.difficulty, lang)}</span>
+    </div>
+    <p class="mini-meta">{copy.primary}: {listText(exercise.primary, lang).join("、")}</p>
+  </div>
+  <span class="pill-link">{copy.read}</span>
+</a>

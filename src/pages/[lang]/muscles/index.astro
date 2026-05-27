@@ -1,0 +1,43 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
+import { exercisesForMuscle, muscleGroups, text, toolCopy } from "../../../data/tools";
+import type { Lang } from "../../../data/content";
+import { href } from "../../../utils/paths";
+
+export function getStaticPaths() {
+  return (["zh", "zh-cn", "en"] as Lang[]).map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const copy = toolCopy(lang);
+---
+
+<BaseLayout lang={lang} title={copy.muscles} description={lang === "en" ? "Choose a muscle group and see ranked exercise recommendations." : lang === "zh-cn" ? "选择想练的肌群，查看动作排名和训练重点。" : "選擇想練的肌群，查看動作排名和訓練重點。"} path={`/${lang}/muscles/`}>
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">{copy.muscles}</p>
+        <h1>{copy.muscles}</h1>
+        <p>{lang === "en" ? "Start from the body part, then choose exercises by recommendation, equipment, and difficulty." : lang === "zh-cn" ? "先从想练哪一块开始，再按推荐指数、器材和难度选择动作。" : "先從想練哪一塊開始，再按推薦指數、器材和難度選擇動作。"}</p>
+      </div>
+      <a class="pill-link" href={href(`/${lang}/exercises/`)}>{copy.exercises}</a>
+    </div>
+    <div class="grid">
+      {muscleGroups.map((group) => {
+        const top = exercisesForMuscle(group.slug).slice(0, 3);
+        return (
+          <a class="card muscle-card" href={href(`/${lang}/muscles/${group.slug}/`)}>
+            <div>
+              <h3>{text(group.name, lang)}</h3>
+              <p>{text(group.description, lang)}</p>
+              <ol>{top.map((exercise) => <li>{text(exercise.name, lang)}</li>)}</ol>
+            </div>
+            <span class="pill-link">{copy.browse}</span>
+          </a>
+        );
+      })}
+    </div>
+    <QuestionForm lang={lang} />
+  </section>
+</BaseLayout>
