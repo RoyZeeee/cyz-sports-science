@@ -429,26 +429,11 @@ h3 {
 .exercise-visual svg {
   display: block;
   width: 100%;
-  aspect-ratio: 1.44;
+  aspect-ratio: 1.4;
 }
 
 .visual-bg {
-  fill: #f2eadf;
-}
-
-.body-part {
-  fill: #fbf8ef;
-  stroke: rgba(105, 100, 92, 0.62);
-  stroke-width: 2;
-}
-
-.body-part.neutral {
-  fill: #f9f3e8;
-}
-
-.body-part.active {
-  fill: #197c79;
-  stroke: #0f5553;
+  fill: #f6efe5;
 }
 
 .view-label {
@@ -470,52 +455,45 @@ h3 {
   opacity: 1;
 }
 
-.body-outline {
-  fill: #f9f3e8;
-  stroke: rgba(105, 100, 92, 0.46);
-  stroke-width: 1.8;
+.anatomy-silhouette {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 0;
 }
 
-.muscle {
-  fill: #fffaf0;
-  stroke: rgba(105, 100, 92, 0.52);
-  stroke-width: 1.3;
+.anatomy-photo {
+  opacity: 0.9;
+  filter: saturate(0.82) contrast(1.04);
 }
 
-.muscle.subtle {
-  fill: #f6dec5;
-  stroke: rgba(151, 105, 69, 0.6);
+.muscle-map-lines {
+  display: none;
 }
 
-.muscle.secondary {
-  fill: #f3b88f;
-  stroke: #a85f35;
+.anatomy-view.preferred .muscle-map-lines {
+  display: none;
 }
 
-.muscle.primary {
-  fill: #197c79;
-  stroke: #0f5553;
-  stroke-width: 1.8;
+.heat-zone {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 1.7;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  vector-effect: non-scaling-stroke;
 }
 
-.muscle.primary.chest-zone,
-.muscle.primary.back-zone {
-  fill: #0f8f8a;
+.heat-zone.secondary {
+  fill: rgba(245, 164, 84, 0.45);
+  stroke: rgba(172, 86, 46, 0.65);
+  opacity: 1;
 }
 
-.separation {
-  fill: none;
-  stroke: rgba(105, 100, 92, 0.38);
-  stroke-width: 1.2;
-  stroke-linecap: round;
-}
-
-.motion-line {
-  fill: none;
-  stroke: rgba(201, 95, 71, 0.64);
-  stroke-width: 4;
-  stroke-linecap: round;
-  stroke-dasharray: 6 9;
+.heat-zone.primary {
+  fill: rgba(10, 137, 132, 0.68);
+  stroke: #0d5553;
+  opacity: 1;
+  filter: drop-shadow(0 4px 7px rgba(15, 85, 83, 0.2));
 }
 
 .callout-line {
@@ -570,6 +548,11 @@ h3 {
   flex: 0 0 auto;
 }
 
+.visual-source {
+  color: color-mix(in srgb, var(--muted), transparent 18%);
+  font-weight: 700;
+}
+
 .exercise-visual figcaption {
   display: grid;
   gap: 4px;
@@ -586,7 +569,25 @@ h3 {
 }
 
 .exercise-visual.compact svg {
-  aspect-ratio: 1.44;
+  aspect-ratio: 1.62;
+}
+
+.exercise-visual.compact .view-label {
+  display: none;
+}
+
+.exercise-visual.compact .anatomy-silhouette {
+  fill: #fbf6ee;
+  stroke: rgba(54, 50, 45, 0.5);
+}
+
+.exercise-visual.compact .muscle-map-lines {
+  opacity: 0.72;
+  stroke-width: 1;
+}
+
+.exercise-visual.compact .heat-zone.primary {
+  filter: drop-shadow(0 4px 7px rgba(15, 85, 83, 0.2));
 }
 
 .meta-row {

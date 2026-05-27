@@ -17,7 +17,7 @@ export type MuscleGroup = {
 
 export type SubMuscleGroup = {
   slug: string;
-  parent: "chest" | "back";
+  parent: "chest" | "back" | "shoulders" | "legs" | "glutes" | "arms" | "core";
   name: LText;
   description: LText;
 };
@@ -135,15 +135,99 @@ export const subMuscleGroups: SubMuscleGroup[] = [
   },
   {
     slug: "rear-delts",
-    parent: "back",
+    parent: "shoulders",
     name: lt("後三角", "Rear delts"),
-    description: lt("嚴格說屬肩部，但常和背日一起安排，影響背面視覺寬度。", "Technically shoulder muscle, but often trained on back days and important for rear-view width."),
+    description: lt("肩膀後束，常和背日一起安排，但主分類仍屬肩部。", "The posterior shoulder, often trained on back days but still a shoulder target."),
   },
   {
     slug: "lower-back",
     parent: "back",
     name: lt("下背/豎脊肌", "Lower back, spinal erectors"),
     description: lt("負責髖鉸鏈和軀幹伸展穩定，硬拉和槓鈴划船會大量參與。", "Supports hip hinges and trunk extension, heavily involved in deadlifts and unsupported rows."),
+  },
+  {
+    slug: "front-delts",
+    parent: "shoulders",
+    name: lt("前三角", "Front delts"),
+    description: lt("肩膀前束，推舉、上斜推和前平舉會大量參與。", "The front shoulder, trained by presses, incline pressing, and front raises."),
+  },
+  {
+    slug: "side-delts",
+    parent: "shoulders",
+    name: lt("中三角", "Side delts"),
+    description: lt("影響肩寬視覺，側平舉和肩推會用到。", "The side shoulder region, important for shoulder width and trained by raises and presses."),
+  },
+  {
+    slug: "rotator-cuff",
+    parent: "shoulders",
+    name: lt("旋轉肌群", "Rotator cuff"),
+    description: lt("肩關節穩定肌群，面拉和外旋類動作常會訓練到。", "Shoulder stabilizers involved in face pulls and external rotation patterns."),
+  },
+  {
+    slug: "quads",
+    parent: "legs",
+    name: lt("股四頭", "Quads"),
+    description: lt("膝伸主力，深蹲、腿推和伸腿機常用來訓練。", "The main knee-extension muscles, trained by squats, leg presses, and leg extensions."),
+  },
+  {
+    slug: "hamstrings",
+    parent: "legs",
+    name: lt("腿後側", "Hamstrings"),
+    description: lt("髖伸和膝屈都會參與，羅馬尼亞硬舉和腿後彎舉互補。", "Involved in hip extension and knee flexion; hinges and leg curls complement each other."),
+  },
+  {
+    slug: "glute-max",
+    parent: "glutes",
+    name: lt("臀大肌", "Glute max"),
+    description: lt("髖伸主力，臀推、硬舉和深蹲都會用到。", "The main hip-extension muscle, trained by hip thrusts, deadlifts, and squats."),
+  },
+  {
+    slug: "glute-med",
+    parent: "glutes",
+    name: lt("臀中肌", "Glute med"),
+    description: lt("影響髖外展和骨盆穩定，外展機和單腿動作常用。", "Important for hip abduction and pelvic stability, trained by abduction and single-leg work."),
+  },
+  {
+    slug: "adductors",
+    parent: "legs",
+    name: lt("內收肌", "Adductors"),
+    description: lt("大腿內側肌群，深蹲、弓箭步和內收動作都可能參與。", "Inner-thigh muscles involved in squats, lunges, and direct adduction work."),
+  },
+  {
+    slug: "calves",
+    parent: "legs",
+    name: lt("小腿", "Calves"),
+    description: lt("腓腸肌和比目魚肌為主，提踵類動作最直接。", "Calf muscles, trained most directly by calf raises."),
+  },
+  {
+    slug: "biceps",
+    parent: "arms",
+    name: lt("肱二頭", "Biceps"),
+    description: lt("手臂前側彎舉主力，也會輔助多數拉類動作。", "Front-arm elbow flexors, also assisting most pulling exercises."),
+  },
+  {
+    slug: "triceps",
+    parent: "arms",
+    name: lt("肱三頭", "Triceps"),
+    description: lt("手臂後側伸肘主力，也會輔助推類動作。", "Back-arm elbow extensors, also assisting pressing exercises."),
+  },
+  {
+    slug: "forearms",
+    parent: "arms",
+    name: lt("前臂", "Forearms"),
+    description: lt("握力、腕屈伸與肱橈肌相關動作會訓練到。", "Grip, wrist flexion/extension, and brachioradialis-focused work."),
+  },
+  {
+    slug: "abs",
+    parent: "core",
+    name: lt("腹直肌", "Abs"),
+    description: lt("捲腹和抬腿類動作的主要目標。", "The main target of crunch and leg-raise patterns."),
+  },
+  {
+    slug: "obliques",
+    parent: "core",
+    name: lt("腹斜肌", "Obliques"),
+    description: lt("側屈、旋轉和抗旋轉控制常會用到。", "Used in side-bending, rotation, and anti-rotation control."),
   },
 ];
 
@@ -213,15 +297,150 @@ function withInferredSubMuscles(exercise: Exercise): Exercise {
   if (exercise.muscleGroup === "back") {
     const subMuscles = new Set<string>();
     if (/背闊|lats|lat|pulldown|pull-up|引體|下拉|直臂/.test(textBlob)) subMuscles.add("lats");
-    if (/上背|upper back|trap|rhomboid|寬握|wide|face|後束|rear/.test(textBlob)) subMuscles.add("upper-back");
+    if (/上背|upper back|trap|rhomboid|寬握|wide/.test(textBlob)) subMuscles.add("upper-back");
     if (/中背|mid back|row|划船/.test(textBlob)) subMuscles.add("mid-back");
-    if (/後三角|rear delt/.test(textBlob)) subMuscles.add("rear-delts");
     if (/豎脊|spinal|lower back|deadlift|硬拉|barbell-row/.test(textBlob)) subMuscles.add("lower-back");
     if (!subMuscles.size) subMuscles.add("lats");
     return { ...exercise, subMuscles: Array.from(subMuscles) };
   }
 
+  if (exercise.muscleGroup === "shoulders") {
+    const subMuscles = new Set<string>();
+    if (/後三角|rear delt|face|後束|reverse pec/.test(textBlob)) subMuscles.add("rear-delts");
+    if (/中三角|side delt|lateral/.test(textBlob)) subMuscles.add("side-delts");
+    if (/前三角|front delt|front raise|press|推舉|肩推/.test(textBlob)) subMuscles.add("front-delts");
+    if (/旋轉|rotator/.test(textBlob)) subMuscles.add("rotator-cuff");
+    if (!subMuscles.size) subMuscles.add("side-delts");
+    return { ...exercise, subMuscles: Array.from(subMuscles) };
+  }
+
+  if (exercise.muscleGroup === "legs" || exercise.muscleGroup === "glutes") {
+    const subMuscles = new Set<string>();
+    if (/股四|quad|squat|leg press|lunge|伸腿|深蹲|腿推|弓箭/.test(textBlob)) subMuscles.add("quads");
+    if (/腿後|hamstring|romanian|curl|硬舉|彎舉/.test(textBlob)) subMuscles.add("hamstrings");
+    if (/臀大|glute|hip thrust|bridge|臀推|臀橋|deadlift|硬拉/.test(textBlob)) subMuscles.add("glute-max");
+    if (/臀中|abduction|外展/.test(textBlob)) subMuscles.add("glute-med");
+    if (/內收|adductor|adduction/.test(textBlob)) subMuscles.add("adductors");
+    if (/小腿|calf|提踵/.test(textBlob)) subMuscles.add("calves");
+    if (!subMuscles.size) subMuscles.add(exercise.muscleGroup === "glutes" ? "glute-max" : "quads");
+    return { ...exercise, subMuscles: Array.from(subMuscles) };
+  }
+
+  if (exercise.muscleGroup === "arms") {
+    const subMuscles = new Set<string>();
+    if (/二頭|biceps|curl|肱肌|brachialis|hammer/.test(textBlob)) subMuscles.add("biceps");
+    if (/三頭|triceps|pressdown|extension|crusher|kickback/.test(textBlob)) subMuscles.add("triceps");
+    if (/前臂|forearm|wrist|reverse curl|肱橈/.test(textBlob)) subMuscles.add("forearms");
+    if (!subMuscles.size) subMuscles.add("biceps");
+    return { ...exercise, subMuscles: Array.from(subMuscles) };
+  }
+
+  if (exercise.muscleGroup === "core") {
+    const subMuscles = new Set<string>();
+    if (/腹斜|oblique/.test(textBlob)) subMuscles.add("obliques");
+    if (/腹直|abs|crunch|leg raise|plank|核心|捲腹|抬腿/.test(textBlob)) subMuscles.add("abs");
+    if (!subMuscles.size) subMuscles.add("abs");
+    return { ...exercise, subMuscles: Array.from(subMuscles) };
+  }
+
   return exercise;
+}
+
+const exerciseCorrections: Record<string, Partial<Exercise>> = {
+  "barbell-bench-press": { subMuscles: ["mid-chest"] },
+  "incline-dumbbell-press": { subMuscles: ["upper-chest"] },
+  "cable-fly": { subMuscles: ["mid-chest"] },
+  "dumbbell-bench-press": { subMuscles: ["mid-chest"] },
+  "smith-machine-bench-press": { subMuscles: ["mid-chest"] },
+  "machine-chest-press": { subMuscles: ["mid-chest"] },
+  "machine-bench-press": { subMuscles: ["mid-chest"] },
+  "incline-barbell-bench-press": { subMuscles: ["upper-chest"] },
+  "incline-machine-press": { subMuscles: ["upper-chest"] },
+  "smith-incline-press": { subMuscles: ["upper-chest"] },
+  "pec-deck-fly": { subMuscles: ["mid-chest"] },
+  "weighted-dip": { subMuscles: ["lower-chest"] },
+  "high-to-low-cable-fly": { subMuscles: ["lower-chest"] },
+
+  "pull-up": { subMuscles: ["lats"] },
+  "lat-pulldown": { subMuscles: ["lats"] },
+  "wide-grip-lat-pulldown": { subMuscles: ["lats"] },
+  "straight-bar-pulldown": { subMuscles: ["lats"] },
+  "reverse-grip-pulldown": { subMuscles: ["lats"] },
+  "machine-lat-pulldown": { subMuscles: ["lats"] },
+  "neutral-grip-pulldown": { subMuscles: ["lats"] },
+  "straight-arm-pulldown": { subMuscles: ["lats"] },
+  "single-arm-cable-pulldown": { subMuscles: ["lats"] },
+  "weighted-pull-up": { subMuscles: ["lats"] },
+  "seated-cable-row": { subMuscles: ["mid-back"] },
+  "one-arm-dumbbell-row": { subMuscles: ["lats"] },
+  "plate-loaded-row": { subMuscles: ["mid-back"] },
+  "chest-supported-single-arm-row": { subMuscles: ["lats"] },
+  "bilateral-machine-row": { subMuscles: ["mid-back"] },
+  "narrow-grip-cable-row": { subMuscles: ["lats"] },
+  "neutral-grip-cable-row": { subMuscles: ["mid-back"] },
+  "wide-grip-cable-row": { subMuscles: ["upper-back"] },
+  "barbell-row": { subMuscles: ["mid-back"] },
+  "v-grip-t-bar-row": { subMuscles: ["mid-back"] },
+
+  "dumbbell-shoulder-press": { subMuscles: ["front-delts", "side-delts"] },
+  "barbell-overhead-press": { subMuscles: ["front-delts", "side-delts"] },
+  "machine-shoulder-press": { subMuscles: ["front-delts", "side-delts"] },
+  "smith-machine-shoulder-press": { subMuscles: ["front-delts"] },
+  "lateral-raise": { subMuscles: ["side-delts"] },
+  "cable-lateral-raise": { subMuscles: ["side-delts"] },
+  "face-pull": { subMuscles: ["rear-delts"] },
+  "dumbbell-rear-delt-fly": { subMuscles: ["rear-delts"] },
+  "reverse-pec-deck": { subMuscles: ["rear-delts"] },
+  "cable-rear-delt-fly": { subMuscles: ["rear-delts"] },
+  "rear-delt-row": { subMuscles: ["rear-delts"] },
+  "cable-front-raise": { subMuscles: ["front-delts"] },
+
+  "back-squat": { subMuscles: ["quads", "glute-max"] },
+  "leg-press": { subMuscles: ["quads"] },
+  "bulgarian-split-squat": { subMuscles: ["quads", "glute-max"] },
+  "walking-lunge": { subMuscles: ["quads", "glute-max"] },
+  "leg-extension": { subMuscles: ["quads"] },
+  "romanian-deadlift": { subMuscles: ["hamstrings", "glute-max"] },
+  "lying-leg-curl": { subMuscles: ["hamstrings"] },
+  "deadlift": { subMuscles: ["glute-max", "hamstrings"] },
+  "hip-thrust": { subMuscles: ["glute-max"] },
+  "barbell-glute-bridge": { subMuscles: ["glute-max"] },
+  "smith-hip-thrust": { subMuscles: ["glute-max"] },
+  "hip-adduction-machine": { subMuscles: ["adductors"] },
+  "cable-hip-adduction": { subMuscles: ["adductors"] },
+  "hip-abduction-machine": { subMuscles: ["glute-med"] },
+  "standing-calf-raise": { subMuscles: ["calves"] },
+  "smith-calf-raise": { subMuscles: ["calves"] },
+
+  "biceps-curl": { subMuscles: ["biceps"] },
+  "ez-bar-curl": { subMuscles: ["biceps"] },
+  "cable-biceps-curl": { subMuscles: ["biceps"] },
+  "reverse-cable-curl": { subMuscles: ["forearms", "biceps"] },
+  "preacher-curl": { subMuscles: ["biceps"] },
+  "machine-preacher-curl": { subMuscles: ["biceps"] },
+  "chest-supported-dumbbell-curl": { subMuscles: ["biceps"] },
+  "lying-cable-curl": { subMuscles: ["biceps"] },
+  "rope-hammer-curl": { subMuscles: ["biceps", "forearms"] },
+  "single-arm-cable-curl": { subMuscles: ["biceps"] },
+  "triceps-pressdown": { subMuscles: ["triceps"] },
+  "skull-crusher": { subMuscles: ["triceps"] },
+  "overhead-triceps-extension": { subMuscles: ["triceps"] },
+  "single-arm-triceps-pressdown": { subMuscles: ["triceps"] },
+  "cable-triceps-kickback": { subMuscles: ["triceps"] },
+  "forearm-reverse-curl": { subMuscles: ["forearms"] },
+  "wrist-curl": { subMuscles: ["forearms"] },
+  "reverse-wrist-curl": { subMuscles: ["forearms"] },
+
+  "plank": { subMuscles: ["abs"] },
+  "hanging-leg-raise": { subMuscles: ["abs"] },
+  "cable-crunch": { subMuscles: ["abs"] },
+  "incline-bench-crunch": { subMuscles: ["abs"] },
+  "lying-crunch": { subMuscles: ["abs"] },
+  "cable-oblique-crunch": { subMuscles: ["obliques", "abs"] },
+};
+
+function withExerciseCorrections(exercise: Exercise): Exercise {
+  return { ...exercise, ...(exerciseCorrections[exercise.slug] ?? {}) };
 }
 
 export const exercises: Exercise[] = [
@@ -590,7 +809,7 @@ export const exercises: Exercise[] = [
   quickExercise({ slug: "smith-calf-raise", zh: "史密斯提踵", en: "Smith Machine Calf Raise", group: "legs", primary: [lt("腓腸肌", "Gastrocnemius")], secondary: [lt("比目魚肌", "Soleus")], equipment: lt("史密斯機", "Smith machine"), difficulty: "beginner", rating: 4, focus: "calves" }),
   quickExercise({ slug: "barbell-glute-bridge", zh: "槓鈴臀橋", en: "Barbell Glute Bridge", group: "glutes", primary: [lt("臀大肌", "Glutes")], secondary: [lt("腿後側", "Hamstrings"), lt("核心", "Core")], equipment: lt("槓鈴、地墊", "Barbell and mat"), rating: 4, focus: "glutes" }),
   quickExercise({ slug: "smith-hip-thrust", zh: "史密斯臀推", en: "Smith Machine Hip Thrust", group: "glutes", primary: [lt("臀大肌", "Glutes")], secondary: [lt("腿後側", "Hamstrings")], equipment: lt("史密斯機、椅子", "Smith machine and bench"), rating: 4, focus: "glutes" }),
-].map(withInferredSubMuscles);
+].map(withInferredSubMuscles).map(withExerciseCorrections);
 
 export const foods: Food[] = [
   { slug: "egg", name: { zh: "雞蛋", en: "Egg" }, unit: { zh: "1 顆", en: "1 egg" }, kcal: "70", protein: "6 g", carbs: "0.5 g", fat: "5 g", bestUse: { zh: "便宜、方便的蛋白和脂肪來源", en: "Cheap, convenient protein and fat" }, note: { zh: "大小不同會影響數字。", en: "Egg size changes the numbers." } },

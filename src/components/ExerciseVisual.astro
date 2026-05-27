@@ -1,124 +1,183 @@
 ---
 import type { Exercise } from "../data/tools";
-import { subMuscleLabels, text } from "../data/tools";
+import { listText, subMuscleLabels, text } from "../data/tools";
 import type { Lang } from "../data/content";
 
 const { exercise, lang, compact = false } = Astro.props as { exercise: Exercise; lang: Lang; compact?: boolean };
-const focus = exercise.visualFocus;
-const subMuscles = exercise.subMuscles ?? [];
-const posterior = focus === "back" || focus === "glutes" || focus === "hamstrings" || focus === "calves";
-
-const hasSub = (slug: string) => subMuscles.includes(slug);
-const active = (part: Exercise["visualFocus"] | "legs") =>
-  focus === part || (part === "legs" && (focus === "quads" || focus === "hamstrings" || focus === "calves"));
-const primary = (part: Exercise["visualFocus"] | "legs") => active(part) ? "primary" : "";
-const secondary = (part: Exercise["visualFocus"] | "legs") => {
-  if (focus === "chest" && (part === "shoulders" || part === "arms")) return "secondary";
-  if (focus === "back" && (part === "shoulders" || part === "arms")) return "secondary";
-  if (focus === "shoulders" && part === "arms") return "secondary";
-  if ((focus === "quads" || focus === "glutes" || focus === "hamstrings") && (part === "legs" || part === "calves")) return "secondary";
-  return "";
+const primarySlugs = exercise.subMuscles ?? [];
+const primarySet = new Set(primarySlugs);
+const secondaryText = [...exercise.secondary.flatMap((item) => [item.zh, item.en]), text(exercise.summary, lang)].join(" ").toLowerCase();
+const secondarySet = new Set<string>();
+const addIf = (slug: string, pattern: RegExp) => {
+  if (pattern.test(secondaryText)) secondarySet.add(slug);
 };
-const state = (part: Exercise["visualFocus"] | "legs") => primary(part) || secondary(part);
-const subState = (slug: string, fallback = false) => (hasSub(slug) || fallback ? "primary" : focus === "chest" || focus === "back" ? "subtle" : "");
 
-const viewLabel = {
+addIf("front-delts", /前三角|front delt|shoulder|肩/);
+addIf("side-delts", /中三角|side delt|lateral/);
+addIf("rear-delts", /後三角|rear delt|後束/);
+addIf("rotator-cuff", /旋轉|rotator/);
+addIf("triceps", /三頭|triceps/);
+addIf("biceps", /二頭|biceps|肱肌|brachialis/);
+addIf("forearms", /前臂|forearm|grip|握力|wrist/);
+addIf("upper-back", /上背|upper back|trap|斜方|rhomboid|菱形|下斜方|中下斜方/);
+addIf("mid-back", /中背|mid back/);
+addIf("lats", /背闊|lat|lats/);
+addIf("lower-back", /豎脊|spinal|lower back|下背/);
+addIf("quads", /股四|quad|膝/);
+addIf("hamstrings", /腿後|hamstring/);
+addIf("glute-max", /臀大|glute|臀部|glutes/);
+addIf("glute-med", /臀中|abduction|外展/);
+addIf("adductors", /內收|adductor/);
+addIf("calves", /小腿|calf|腓腸|比目魚/);
+addIf("abs", /腹直|abs|core|核心|髖屈/);
+addIf("obliques", /腹斜|oblique/);
+
+const heat = (slug: string) => primarySet.has(slug) ? "primary" : secondarySet.has(slug) ? "secondary" : "";
+const any = (slugs: string[]) => slugs.some((slug) => primarySet.has(slug));
+const frontPrimary = any(["upper-chest", "mid-chest", "lower-chest", "front-delts", "side-delts", "quads", "adductors", "biceps", "forearms", "abs", "obliques"]);
+const backPrimary = any(["lats", "upper-back", "mid-back", "lower-back", "rear-delts", "rotator-cuff", "glute-max", "glute-med", "hamstrings", "calves", "triceps"]);
+const posterior = backPrimary && !frontPrimary;
+
+const primaryLabels = subMuscleLabels(primarySlugs, lang);
+const assistantLabels = listText(exercise.secondary, lang);
+const calloutLabel = primaryLabels.length > 1 ? `${primaryLabels[0]} +${primaryLabels.length - 1}` : primaryLabels[0] ?? text(exercise.primary[0], lang);
+const copy = {
   front: lang === "en" ? "Front" : lang === "zh-cn" ? "前侧" : "前側",
   back: lang === "en" ? "Back" : lang === "zh-cn" ? "后侧" : "後側",
+  main: lang === "en" ? "Main" : lang === "zh-cn" ? "主练" : "主練",
+  assist: lang === "en" ? "Assist" : lang === "zh-cn" ? "辅助" : "輔助",
+  target: lang === "en" ? "Muscle map" : lang === "zh-cn" ? "肌肉图" : "肌肉圖",
 };
 
-const focusLabelMap: Record<Exercise["visualFocus"], { zh: string; en: string }> = {
-  chest: { zh: "胸肌", en: "Chest" },
-  back: { zh: "背部", en: "Back" },
-  shoulders: { zh: "肩膀", en: "Shoulders" },
-  quads: { zh: "股四頭", en: "Quads" },
-  glutes: { zh: "臀部", en: "Glutes" },
-  hamstrings: { zh: "腿後側", en: "Hamstrings" },
-  arms: { zh: "手臂", en: "Arms" },
-  core: { zh: "核心腹肌", en: "Core" },
-  calves: { zh: "小腿", en: "Calves" },
-};
-const labelFor = (item: { zh: string; en: string }) => lang === "en" ? item.en : item.zh;
-const targetLabels = subMuscleLabels(subMuscles, lang);
-const mainLabel = targetLabels.length > 0 ? targetLabels.join(" / ") : labelFor(focusLabelMap[focus]);
-const calloutLabel = targetLabels.length > 1 ? `${targetLabels[0]} +${targetLabels.length - 1}` : mainLabel;
-const assistLabel = lang === "en" ? "Assistant muscles" : lang === "zh-cn" ? "辅助参与" : "輔助參與";
-const mainText = lang === "en" ? "Main target" : lang === "zh-cn" ? "主要目标" : "主要目標";
+const svgViewBox = compact ? "0 0 210 300" : "0 0 420 300";
+const frontTransform = compact ? "translate(26 32)" : "translate(34 34)";
+const backTransform = compact ? "translate(26 32)" : "translate(206 34)";
+const frontLabelX = compact ? 104 : 111;
+const backLabelX = compact ? 104 : 283;
 ---
 
-<figure class:list={["exercise-visual", compact && "compact"]} aria-label={text(exercise.name, lang)}>
-  <svg viewBox="0 0 360 250" role="img" aria-labelledby={`visual-title-${exercise.slug}`}>
-    <title id={`visual-title-${exercise.slug}`}>{text(exercise.name, lang)} - {mainLabel}</title>
-    <rect class="visual-bg" x="0" y="0" width="360" height="250" rx="8"></rect>
-    <text class:list={["view-label", !posterior && "selected"]} x="91" y="24">{viewLabel.front}</text>
-    <text class:list={["view-label", posterior && "selected"]} x="239" y="24">{viewLabel.back}</text>
+<figure class:list={["exercise-visual", "anatomy-card", compact && "compact"]} aria-label={`${text(exercise.name, lang)} ${copy.target}`}>
+  <svg viewBox={svgViewBox} role="img" aria-labelledby={`visual-title-${exercise.slug}`}>
+    <title id={`visual-title-${exercise.slug}`}>{text(exercise.name, lang)} - {primaryLabels.join(" / ")}</title>
+    <defs>
+      <clipPath id={`front-crop-${exercise.slug}`}>
+        <rect x="-8" y="-2" width="172" height="292" rx="12"></rect>
+      </clipPath>
+      <clipPath id={`back-crop-${exercise.slug}`}>
+        <rect x="-8" y="-2" width="172" height="292" rx="12"></rect>
+      </clipPath>
+    </defs>
+    <rect class="visual-bg" x="0" y="0" width="420" height="300" rx="10"></rect>
+    {(!compact || !posterior) && <text class:list={["view-label", !posterior && "selected"]} x={frontLabelX} y="25">{copy.front}</text>}
+    {(!compact || posterior) && <text class:list={["view-label", posterior && "selected"]} x={backLabelX} y="25">{copy.back}</text>}
 
-    <g class:list={["anatomy-view", !posterior && "preferred"]} transform="translate(26 30)">
-      <circle class="body-part neutral" cx="66" cy="16" r="12"></circle>
-      <path class="body-outline" d="M51 31h30l13 19 22 9 10 42-15 4-10-31-8 39 10 74h-22l-14-57-14 57h-22l10-74-8-39-10 31-15-4 10-42 22-9z"></path>
-
-      <path class:list={["muscle", "deltoid", state("shoulders")]} d="M38 44c9-13 20-15 29-6l-12 22c-9 0-15-5-17-16z"></path>
-      <path class:list={["muscle", "deltoid", state("shoulders")]} d="M94 44c-9-13-20-15-29-6l12 22c9 0 15-5 17-16z"></path>
-
-      <path class:list={["muscle", "chest-zone", subState("upper-chest", focus === "chest" && subMuscles.length === 0)]} d="M45 52c10-8 25-8 34 0l-6 12H51z"></path>
-      <path class:list={["muscle", "chest-zone", subState("upper-chest", focus === "chest" && subMuscles.length === 0)]} d="M87 52c-10-8-25-8-34 0l6 12h22z"></path>
-      <path class:list={["muscle", "chest-zone", subState("mid-chest", focus === "chest" && subMuscles.length === 0)]} d="M48 64h25c-4 10-11 15-25 16z"></path>
-      <path class:list={["muscle", "chest-zone", subState("mid-chest", focus === "chest" && subMuscles.length === 0)]} d="M84 64H59c4 10 11 15 25 16z"></path>
-      <path class:list={["muscle", "chest-zone", subState("lower-chest", focus === "chest" && subMuscles.length === 0)]} d="M49 78c12 1 20-2 24-11l-5 17H52z"></path>
-      <path class:list={["muscle", "chest-zone", subState("lower-chest", focus === "chest" && subMuscles.length === 0)]} d="M83 78c-12 1-20-2-24-11l5 17h16z"></path>
-
-      <path class:list={["muscle", state("core")]} d="M51 82h30l5 36-20 9-20-9z"></path>
-      <path class="separation" d="M66 83v42M55 95h22M54 108h24"></path>
-      <path class:list={["muscle", state("arms")]} d="M25 67c-10 17-13 35-12 57h15c1-18 5-34 14-47z"></path>
-      <path class:list={["muscle", state("arms")]} d="M107 67c10 17 13 35 12 57h-15c-1-18-5-34-14-47z"></path>
-      <path class:list={["muscle", state("quads")]} d="M42 123h22l-8 64h-23z"></path>
-      <path class:list={["muscle", state("quads")]} d="M68 123h22l9 64h-23z"></path>
-      <path class:list={["muscle", state("calves")]} d="M32 181h23l-5 24h-22z"></path>
-      <path class:list={["muscle", state("calves")]} d="M77 181h23l5 24h-22z"></path>
-
-      {!compact && !posterior && (
-        <g class="callouts">
-          <path class="callout-line" d="M93 70h38"></path>
-          <text class="callout-text" x="136" y="73">{calloutLabel}</text>
+    {(!compact || !posterior) && (
+      <g class:list={["anatomy-view", !posterior && "preferred"]} transform={frontTransform}>
+        <image
+          class="anatomy-photo"
+          href="/images/muscles-front-back.svg"
+          x="8"
+          y="-2"
+          width="334"
+          height="291"
+          preserveAspectRatio="xMidYMin slice"
+          clip-path={`url(#front-crop-${exercise.slug})`}
+        ></image>
+        <path class="anatomy-silhouette" d="M78 5c13 0 22 10 22 23 0 10-6 18-14 21l9 14 30 8 28 31 10 62-21 4-12-48-14 45 9 96H96l-18-77-18 77H31l9-96-14-45-12 48-21-4 10-62 28-31 30-8 9-14c-8-3-14-11-14-21C56 15 65 5 78 5z"></path>
+        <g class="muscle-map-lines" aria-hidden="true">
+          <path d="M49 69c15-13 43-13 58 0M47 84c18 2 45 2 62 0M51 108c17 11 37 11 54 0"></path>
+          <path d="M78 68v118M57 120h42M54 138h48M52 156h52M43 119c7 14 9 29 6 49M113 119c-7 14-9 29-6 49"></path>
+          <path d="M27 70c16-20 33-19 43-5M129 70c-16-20-33-19-43-5M17 82c13-15 28-17 40-4M139 82c-13-15-28-17-40-4"></path>
+          <path d="M30 80c-14 22-21 49-25 85M126 80c14 22 21 49 25 85M20 163h25M111 163h25"></path>
+          <path d="M39 168c12 17 20 46 22 91M117 168c-12 17-20 46-22 91M65 174l-10 78M91 174l11 78M25 248h36M95 248h36"></path>
         </g>
-      )}
-    </g>
 
-    <g class:list={["anatomy-view", posterior && "preferred"]} transform="translate(174 30)">
-      <circle class="body-part neutral" cx="66" cy="16" r="12"></circle>
-      <path class="body-outline" d="M51 31h30l13 19 22 9 10 42-15 4-10-31-8 39 10 74h-22l-14-57-14 57h-22l10-74-8-39-10 31-15-4 10-42 22-9z"></path>
+        <path class:list={["heat-zone", heat("upper-chest")]} d="M49 69c15-13 43-13 58 0-3 10-9 17-16 20H65c-7-3-13-10-16-20z"></path>
+        <path class:list={["heat-zone", heat("mid-chest")]} d="M47 84c18 2 45 2 62 0-2 20-14 34-31 35-17-1-29-15-31-35z"></path>
+        <path class:list={["heat-zone", heat("lower-chest")]} d="M51 108c17 11 37 11 54 0-3 13-12 23-27 25-15-2-24-12-27-25z"></path>
+        <path class:list={["heat-zone", heat("front-delts")]} d="M27 70c16-20 33-19 43-5-8 11-17 20-29 24-8-3-13-9-14-19z"></path>
+        <path class:list={["heat-zone", heat("front-delts")]} d="M129 70c-16-20-33-19-43-5 8 11 17 20 29 24 8-3 13-9 14-19z"></path>
+        <path class:list={["heat-zone", heat("side-delts")]} d="M17 82c13-15 28-17 40-4-7 19-18 32-35 38-7-10-9-21-5-34z"></path>
+        <path class:list={["heat-zone", heat("side-delts")]} d="M139 82c-13-15-28-17-40-4 7 19 18 32 35 38 7-10 9-21 5-34z"></path>
+        <path class:list={["heat-zone", heat("biceps")]} d="M11 122c1-17 7-31 20-43l18 16c-12 20-18 42-20 70H5c0-14 2-29 6-43z"></path>
+        <path class:list={["heat-zone", heat("biceps")]} d="M145 122c-1-17-7-31-20-43l-18 16c12 20 18 42 20 70h24c0-14-2-29-6-43z"></path>
+        <path class:list={["heat-zone", heat("forearms")]} d="M4 162h25l-5 48H-4z"></path>
+        <path class:list={["heat-zone", heat("forearms")]} d="M127 162h25l8 48h-28z"></path>
+        <path class:list={["heat-zone", heat("abs")]} d="M57 120h42l8 50-29 17-29-17z"></path>
+        <path class:list={["heat-zone", heat("obliques")]} d="M43 119l15 7-8 42-17-14z"></path>
+        <path class:list={["heat-zone", heat("obliques")]} d="M113 119l-15 7 8 42 17-14z"></path>
+        <path class:list={["heat-zone", heat("quads")]} d="M39 168h34l-12 91H26z"></path>
+        <path class:list={["heat-zone", heat("quads")]} d="M83 168h34l13 91H95z"></path>
+        <path class:list={["heat-zone", heat("adductors")]} d="M65 174h14l-2 78H55z"></path>
+        <path class:list={["heat-zone", heat("adductors")]} d="M77 174h14l11 78H80z"></path>
+        <path class:list={["heat-zone", heat("calves")]} d="M25 248h36l-8 39H18z"></path>
+        <path class:list={["heat-zone", heat("calves")]} d="M95 248h36l8 39h-35z"></path>
 
-      <path class:list={["muscle", "back-zone", subState("upper-back", focus === "back" && subMuscles.length === 0)]} d="M51 34h30l10 23-25 12-25-12z"></path>
-      <path class:list={["muscle", "back-zone", subState("mid-back", focus === "back" && subMuscles.length === 0)]} d="M42 58l24 11 24-11-8 34-16 15-16-15z"></path>
-      <path class:list={["muscle", "back-zone", subState("lats", focus === "back" && subMuscles.length === 0)]} d="M41 62c-18 14-25 31-26 54h17c4-19 12-33 24-44z"></path>
-      <path class:list={["muscle", "back-zone", subState("lats", focus === "back" && subMuscles.length === 0)]} d="M91 62c18 14 25 31 26 54h-17c-4-19-12-33-24-44z"></path>
-      <path class:list={["muscle", "back-zone", subState("lower-back", false)]} d="M55 96l11 11 11-11 5 25-16 8-16-8z"></path>
+        {!compact && !posterior && (
+          <g class="callouts">
+            <path class="callout-line" d="M116 94h55"></path>
+            <text class="callout-text" x="178" y="98">{calloutLabel}</text>
+          </g>
+        )}
+      </g>
+    )}
 
-      <path class:list={["muscle", state("shoulders"), subState("rear-delts", false)]} d="M38 43c10-11 21-12 30-4l-13 22c-8-1-15-7-17-18z"></path>
-      <path class:list={["muscle", state("shoulders"), subState("rear-delts", false)]} d="M94 43c-10-11-21-12-30-4l13 22c8-1 15-7 17-18z"></path>
-      <path class:list={["muscle", state("arms")]} d="M25 67c-10 17-13 35-12 57h15c1-18 5-34 14-47z"></path>
-      <path class:list={["muscle", state("arms")]} d="M107 67c10 17 13 35 12 57h-15c-1-18-5-34-14-47z"></path>
-      <path class:list={["muscle", state("glutes")]} d="M41 116c10-10 20-9 25 3-4 16-14 24-28 21z"></path>
-      <path class:list={["muscle", state("glutes")]} d="M91 116c-10-10-20-9-25 3 4 16 14 24 28 21z"></path>
-      <path class:list={["muscle", state("hamstrings")]} d="M41 139h23l-8 48h-23z"></path>
-      <path class:list={["muscle", state("hamstrings")]} d="M68 139h23l8 48h-23z"></path>
-      <path class:list={["muscle", state("calves")]} d="M32 181h23l-5 24h-22z"></path>
-      <path class:list={["muscle", state("calves")]} d="M77 181h23l5 24h-22z"></path>
-      <path class="separation" d="M66 35v88M45 77h42M66 119v22"></path>
-
-      {!compact && posterior && (
-        <g class="callouts">
-          <path class="callout-line" d="M108 75h26"></path>
-          <text class="callout-text right" x="130" y="68">{calloutLabel}</text>
+    {(!compact || posterior) && (
+      <g class:list={["anatomy-view", posterior && "preferred"]} transform={backTransform}>
+        <image
+          class="anatomy-photo"
+          href="/images/muscles-front-back.svg"
+          x="-188"
+          y="-2"
+          width="334"
+          height="291"
+          preserveAspectRatio="xMidYMin slice"
+          clip-path={`url(#back-crop-${exercise.slug})`}
+        ></image>
+        <path class="anatomy-silhouette" d="M78 5c13 0 22 10 22 23 0 10-6 18-14 21l9 14 30 8 28 31 10 62-21 4-12-48-14 45 9 96H96l-18-77-18 77H31l9-96-14-45-12 48-21-4 10-62 28-31 30-8 9-14c-8-3-14-11-14-21C56 15 65 5 78 5z"></path>
+        <g class="muscle-map-lines" aria-hidden="true">
+          <path d="M43 64c18-12 52-12 70 0M31 88l47 29 47-29M49 91l29 20 29-20"></path>
+          <path d="M78 52v154M57 145l21 28 21-28M48 182l30 24 30-24"></path>
+          <path d="M42 86c-25 20-36 45-39 82M114 86c25 20 36 45 39 82M57 89c12-8 30-8 42 0"></path>
+          <path d="M27 68c17-16 34-15 45-1M129 68c-17-16-34-15-45-1M30 80c-14 22-21 49-25 85M126 80c14 22 21 49 25 85"></path>
+          <path d="M38 162c10-14 24-15 36-4M118 162c-10-14-24-15-36-4M43 180c15-18 31-16 36 5M113 180c-15-18-31-16-36 5"></path>
+          <path d="M40 210h34M82 210h34M25 248h36M95 248h36"></path>
         </g>
-      )}
-    </g>
+
+        <path class:list={["heat-zone", heat("upper-back")]} d="M43 64c18-12 52-12 70 0l12 24-47 29-47-29z"></path>
+        <path class:list={["heat-zone", heat("mid-back")]} d="M49 91l29 20 29-20-8 54-21 29-21-29z"></path>
+        <path class:list={["heat-zone", heat("lats")]} d="M42 86c-25 20-36 45-39 82h25c8-30 20-52 40-66z"></path>
+        <path class:list={["heat-zone", heat("lats")]} d="M114 86c25 20 36 45 39 82h-25c-8-30-20-52-40-66z"></path>
+        <path class:list={["heat-zone", heat("lower-back")]} d="M57 145l21 28 21-28 9 37-30 24-30-24z"></path>
+        <path class:list={["heat-zone", heat("rear-delts")]} d="M27 68c17-16 34-15 45-1-8 15-18 27-33 33-9-5-14-16-12-32z"></path>
+        <path class:list={["heat-zone", heat("rear-delts")]} d="M129 68c-17-16-34-15-45-1 8 15 18 27 33 33 9-5 14-16 12-32z"></path>
+        <path class:list={["heat-zone", heat("rotator-cuff")]} d="M57 89c12-8 30-8 42 0l-7 18H64z"></path>
+        <path class:list={["heat-zone", heat("triceps")]} d="M11 122c1-17 7-31 20-43l18 16c-12 20-18 42-20 70H5c0-14 2-29 6-43z"></path>
+        <path class:list={["heat-zone", heat("triceps")]} d="M145 122c-1-17-7-31-20-43l-18 16c12 20 18 42 20 70h24c0-14-2-29-6-43z"></path>
+        <path class:list={["heat-zone", heat("glute-med")]} d="M38 162c10-14 24-15 36-4l-26 31z"></path>
+        <path class:list={["heat-zone", heat("glute-med")]} d="M118 162c-10-14-24-15-36-4l26 31z"></path>
+        <path class:list={["heat-zone", heat("glute-max")]} d="M43 180c15-18 31-16 36 5-7 26-23 39-44 33z"></path>
+        <path class:list={["heat-zone", heat("glute-max")]} d="M113 180c-15-18-31-16-36 5 7 26 23 39 44 33z"></path>
+        <path class:list={["heat-zone", heat("hamstrings")]} d="M40 210h34l-12 78H28z"></path>
+        <path class:list={["heat-zone", heat("hamstrings")]} d="M82 210h34l13 78H95z"></path>
+        <path class:list={["heat-zone", heat("calves")]} d="M25 248h36l-8 39H18z"></path>
+        <path class:list={["heat-zone", heat("calves")]} d="M95 248h36l8 39h-35z"></path>
+
+        {!compact && posterior && (
+          <g class="callouts">
+            <path class="callout-line" d="M118 100h50"></path>
+            <text class="callout-text" x="175" y="104">{calloutLabel}</text>
+          </g>
+        )}
+      </g>
+    )}
   </svg>
   {
     !compact && (
-      <div class="visual-key" aria-label={mainText}>
-        <span><i class="legend-dot primary"></i>{mainText}: {mainLabel}</span>
-        <span><i class="legend-dot secondary"></i>{assistLabel}</span>
+      <div class="visual-key" aria-label={copy.target}>
+        <span><i class="legend-dot primary"></i>{copy.main}: {primaryLabels.join(" / ") || listText(exercise.primary, lang).join(" / ")}</span>
+        <span><i class="legend-dot secondary"></i>{copy.assist}: {assistantLabels.join(" / ") || "-"}</span>
+        <span class="visual-source">OpenStax / Wikimedia CC BY-SA 4.0</span>
       </div>
     )
   }
