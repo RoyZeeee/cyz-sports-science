@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import { localizedEvidence } from "../../../data/content";
+import { href } from "../../../utils/paths";
+
+const lang = "zh-cn";
+const items = localizedEvidence(lang);
+---
+
+<BaseLayout lang={lang} title="证据库" description="补剂、训练和恢复主题的证据摘要。" path="/zh-cn/evidence/">
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Evidence</p>
+        <h1>证据库</h1>
+        <p>公开网站只放精选证据摘要；完整研究笔记仍保留在内部 wiki。</p>
+      </div>
+    </div>
+    <div class="grid">
+      {items.map((item) => (
+        <a class="card" href={href(`/zh-cn/evidence/${item.slug}/`)}>
+          <div>
+            <span class="evidence-badge">{item.strength}</span>
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+          </div>
+          <span class="pill-link">查看证据</span>
+        </a>
+      ))}
+    </div>
+    <NewsletterSignup lang={lang} />
+  </section>
+</BaseLayout>

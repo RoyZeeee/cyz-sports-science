@@ -17,6 +17,22 @@ export const labels = {
     relatedEvidence: "相關證據",
     medical: "此內容為一般科普，不取代醫師、營養師或物理治療師的個別建議。",
   },
+  "zh-cn": {
+    brand: "运动科学笔记",
+    tagline: "用证据回答健身问题",
+    topics: "主题",
+    faq: "常见问题",
+    articles: "文章",
+    evidence: "证据库",
+    newsletter: "电子报",
+    readMore: "阅读",
+    viewQuestion: "看回答",
+    evidenceLabel: "证据",
+    audience: "适合对象",
+    takeaways: "重点整理",
+    relatedEvidence: "相关证据",
+    medical: "此内容为一般科普，不取代医生、营养师或物理治疗师的个别建议。",
+  },
   en: {
     brand: "Sports Science Notes",
     tagline: "Evidence-based answers for fitness decisions",
@@ -40,5 +56,7 @@ export function t(lang: Lang) {
 }
 
 export function otherLang(lang: Lang): Lang {
-  return lang === "zh" ? "en" : "zh";
+  if (lang === "zh") return "zh-cn";
+  if (lang === "zh-cn") return "en";
+  return "zh";
 }

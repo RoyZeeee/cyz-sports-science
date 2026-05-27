@@ -1,4 +1,6 @@
-export type Lang = "zh" | "en";
+import * as OpenCC from "opencc-js";
+
+export type Lang = "zh" | "zh-cn" | "en";
 
 export type Topic = {
   slug: string;
@@ -778,9 +780,59 @@ export function getTopic(slug: string) {
 }
 
 export function byLang<T extends { lang: Lang }>(items: T[], lang: Lang): T[] {
+  if (lang === "zh-cn") {
+    return items.filter((item) => item.lang === "zh").map((item) => toSimplifiedItem(item));
+  }
   return items.filter((item) => item.lang === lang);
 }
 
 export function evidenceBySlug(slug: string) {
   return evidence.find((item) => item.slug === slug);
+}
+
+const toCn = OpenCC.Converter({ from: "tw", to: "cn" });
+
+export function localizeText(text: string, lang: Lang): string {
+  return lang === "zh-cn" ? toCn(text) : text;
+}
+
+export function topicTitle(topic: Topic | undefined, lang: Lang): string {
+  if (!topic) return "";
+  if (lang === "en") return topic.enTitle;
+  return localizeText(topic.zhTitle, lang);
+}
+
+export function topicDescription(topic: Topic | undefined, lang: Lang): string {
+  if (!topic) return "";
+  if (lang === "en") return topic.enDescription;
+  return localizeText(topic.zhDescription, lang);
+}
+
+export function localizedEvidence(lang: Lang): Evidence[] {
+  if (lang !== "zh-cn") return evidence;
+  return evidence.map((item) => ({
+    ...item,
+    title: localizeText(item.title, lang),
+    description: localizeText(item.description, lang),
+    sourceType: localizeText(item.sourceType, lang),
+    summary: localizeText(item.summary, lang),
+    practicalUse: item.practicalUse.map((use) => localizeText(use, lang)),
+  }));
+}
+
+export function localizedEvidenceBySlug(slug: string, lang: Lang): Evidence | undefined {
+  const item = evidenceBySlug(slug);
+  if (!item || lang !== "zh-cn") return item;
+  return localizedEvidence(lang).find((entry) => entry.slug === slug);
+}
+
+function toSimplifiedItem<T>(item: T): T {
+  if (typeof item === "string") return toCn(item) as T;
+  if (Array.isArray(item)) return item.map((entry) => toSimplifiedItem(entry)) as T;
+  if (item && typeof item === "object") {
+    return Object.fromEntries(
+      Object.entries(item).map(([key, value]) => [key, key === "lang" ? "zh-cn" : toSimplifiedItem(value)])
+    ) as T;
+  }
+  return item;
 }

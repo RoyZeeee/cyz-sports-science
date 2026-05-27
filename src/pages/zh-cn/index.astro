@@ -1,0 +1,74 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import NewsletterSignup from "../../components/NewsletterSignup.astro";
+import TopicGrid from "../../components/TopicGrid.astro";
+import { articles, byLang, faqs } from "../../data/content";
+import { href } from "../../utils/paths";
+
+const lang = "zh-cn";
+const featuredFaqs = byLang(faqs, lang).slice(0, 5);
+const featuredArticles = byLang(articles, lang).slice(0, 3);
+---
+
+<BaseLayout
+  lang={lang}
+  title="运动科学笔记"
+  description="用证据回答增肌、减脂、补剂、恢复与中老年训练问题。"
+  path="/zh-cn/"
+>
+  <section class="container hero">
+    <div class="hero-copy">
+      <p class="eyebrow">健身问题，先问证据</p>
+      <h1>把常见健身疑问，整理成能实际使用的科学答案。</h1>
+      <p class="lede">
+        从蛋白粉、肌酸、有氧、减脂到中老年重训，这里把热门问题和研究证据放在同一张地图上。
+      </p>
+      <div class="tag-row">
+        <span class="tag">增肌</span>
+        <span class="tag">减脂</span>
+        <span class="tag">补剂避坑</span>
+        <span class="tag">恢复</span>
+      </div>
+    </div>
+    <aside class="hero-panel" aria-label="热门问题">
+      <h2>热门问题</h2>
+      <div class="question-strip">
+        {featuredFaqs.map((faq) => <a href={href(`/zh-cn/faq/${faq.slug}/`)}><strong>{faq.title}</strong><span>{faq.description}</span></a>)}
+      </div>
+    </aside>
+  </section>
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <h2>从目标开始找答案</h2>
+        <p>不是每个人都需要同一套补剂、课表或饮食策略。先选情境，再看证据。</p>
+      </div>
+      <a class="pill-link" href={href("/zh-cn/topics/")}>全部主题</a>
+    </div>
+    <TopicGrid lang={lang} />
+  </section>
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <h2>精选文章</h2>
+        <p>从内部 wiki 精选并改写，适合做长文、短视频脚本和内容产品素材。</p>
+      </div>
+      <a class="pill-link" href={href("/zh-cn/articles/")}>全部文章</a>
+    </div>
+    <div class="grid">
+      {featuredArticles.map((article) => (
+        <a class="card" href={href(`/zh-cn/articles/${article.slug}/`)}>
+          <div>
+            <span class="meta">{article.readingTime}</span>
+            <h3>{article.title}</h3>
+            <p>{article.description}</p>
+          </div>
+          <span class="pill-link">阅读</span>
+        </a>
+      ))}
+    </div>
+  </section>
+  <div class="container">
+    <NewsletterSignup lang={lang} />
+  </div>
+</BaseLayout>

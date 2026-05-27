@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import TopicGrid from "../../../components/TopicGrid.astro";
+
+const lang = "zh-cn";
+---
+
+<BaseLayout lang={lang} title="主题" description="按增肌、减脂、补剂、恢复、训练与中老年健康浏览健身科普。" path="/zh-cn/topics/">
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Topics</p>
+        <h1>主题入口</h1>
+        <p>先用目标筛选内容，再看 FAQ、文章和证据。</p>
+      </div>
+    </div>
+    <TopicGrid lang={lang} />
+    <NewsletterSignup lang={lang} />
+  </section>
+</BaseLayout>

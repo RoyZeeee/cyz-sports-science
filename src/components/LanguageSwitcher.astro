@@ -1,6 +1,5 @@
 ---
 import type { Lang } from "../data/content";
-import { otherLang } from "../utils/i18n";
 import { href as withBase } from "../utils/paths";
 
 type Props = {
@@ -8,12 +7,24 @@ type Props = {
   alternatePath?: string;
 };
 
-const { lang, alternatePath } = Astro.props;
-const nextLang = otherLang(lang);
-const target = withBase(alternatePath ?? `/${nextLang}/`);
-const label = nextLang === "zh" ? "繁中" : "English";
+const { lang } = Astro.props;
+const languageOptions: { lang: Lang; label: string }[] = [
+  { lang: "zh", label: "繁中" },
+  { lang: "zh-cn", label: "简中" },
+  { lang: "en", label: "English" },
+];
+
+function localizedPath(targetLang: Lang) {
+  return withBase(`/${targetLang}/`);
+}
 ---
 
 <span class="language-switcher">
-  <a href={target} aria-label="Switch language">{label}</a>
+  {
+    languageOptions.map((option) => (
+      <a href={localizedPath(option.lang)} aria-label={`Switch language to ${option.label}`} aria-current={option.lang === lang ? "page" : undefined}>
+        {option.label}
+      </a>
+    ))
+  }
 </span>

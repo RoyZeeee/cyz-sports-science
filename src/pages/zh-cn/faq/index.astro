@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import { byLang, faqs, getTopic, topicTitle } from "../../../data/content";
+import { href } from "../../../utils/paths";
+
+const lang = "zh-cn";
+const items = byLang(faqs, lang);
+---
+
+<BaseLayout lang={lang} title="常见问题" description="健身、补剂、减脂、恢复与中老年训练常见问题。" path="/zh-cn/faq/">
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">FAQ</p>
+        <h1>常见问题</h1>
+        <p>用清楚问句承接搜索需求，再用证据和情境回答。</p>
+      </div>
+    </div>
+    <div class="grid">
+      {items.map((faq) => (
+        <a class="card" href={href(`/zh-cn/faq/${faq.slug}/`)}>
+          <div>
+            <div class="tag-row">
+              <span class="tag">{topicTitle(getTopic(faq.topic), lang)}</span>
+              <span class="tag">{faq.evidence}</span>
+            </div>
+            <h3>{faq.title}</h3>
+            <p>{faq.description}</p>
+          </div>
+          <span class="pill-link">看回答</span>
+        </a>
+      ))}
+    </div>
+    <NewsletterSignup lang={lang} />
+  </section>
+</BaseLayout>

@@ -1,0 +1,51 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import { byLang, evidenceBySlug, faqs, getTopic, topicTitle, localizeText } from "../../../data/content";
+import { t } from "../../../utils/i18n";
+import { href } from "../../../utils/paths";
+
+export function getStaticPaths() {
+  return byLang(faqs, "zh-cn").map((faq) => ({ params: { slug: faq.slug }, props: { faq } }));
+}
+
+const { faq } = Astro.props;
+const lang = "zh-cn";
+const topic = getTopic(faq.topic);
+const copy = t(lang);
+---
+
+<BaseLayout lang={lang} title={faq.title} description={faq.description} path={`/zh-cn/faq/${faq.slug}/`}>
+  <div class="container content-layout">
+    <article class="article">
+      <p class="eyebrow">{topicTitle(topic, lang)} · FAQ</p>
+      <h1>{faq.title}</h1>
+      <p class="lede">{faq.description}</p>
+      {faq.answer.map((paragraph) => <p>{paragraph}</p>)}
+      <section>
+        <h2>{copy.takeaways}</h2>
+        <ul>
+          {faq.takeaways.map((item) => <li>{item}</li>)}
+        </ul>
+      </section>
+      <section>
+        <h2>安全边界</h2>
+        <p>{copy.medical}</p>
+      </section>
+      <NewsletterSignup lang={lang} />
+    </article>
+    <aside class="side-panel">
+      <h3>{copy.audience}</h3>
+      <p class="meta">{faq.audience}</p>
+      <h3>{copy.evidenceLabel}</h3>
+      <p><span class="evidence-badge">{faq.evidence}</span></p>
+      <h3>{copy.relatedEvidence}</h3>
+      <ul>
+        {faq.relatedEvidence.map((slug) => {
+          const item = evidenceBySlug(slug);
+          return item ? <li><a href={href(`/zh-cn/evidence/${item.slug}/`)}>{localizeText(item.title, lang)}</a></li> : null;
+        })}
+      </ul>
+    </aside>
+  </div>
+</BaseLayout>
