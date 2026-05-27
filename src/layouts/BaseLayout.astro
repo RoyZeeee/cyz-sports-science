@@ -19,10 +19,11 @@ const copy = t(lang);
 const siteName = copy.brand;
 const canonical = new URL(href(path), Astro.site ?? "https://example.github.io/").toString();
 const adsenseEnabled = Boolean(siteConfig.adsensePublisherId);
+const htmlLang = lang === "zh" ? "zh-Hant" : lang === "zh-cn" ? "zh-Hans" : "en";
 ---
 
 <!doctype html>
-<html lang={lang === "zh" ? "zh-Hant" : "en"}>
+<html lang={htmlLang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

@@ -3,6 +3,7 @@ import { topicDescription, topics, topicTitle, type Lang } from "../data/content
 import { href } from "../utils/paths";
 
 const { lang } = Astro.props as { lang: Lang };
+const browseLabel = lang === "zh" ? "瀏覽主題" : lang === "zh-cn" ? "浏览主题" : "Browse topic";
 ---
 
 <div class="grid">
@@ -13,7 +14,7 @@ const { lang } = Astro.props as { lang: Lang };
           <h3>{topicTitle(topic, lang)}</h3>
           <p>{topicDescription(topic, lang)}</p>
         </div>
-        <span class="pill-link">{lang === "zh" ? "瀏覽主題" : "Browse topic"}</span>
+        <span class="pill-link">{browseLabel}</span>
       </a>
     ))
   }

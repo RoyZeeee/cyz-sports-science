@@ -2,7 +2,7 @@ import type { Lang } from "../data/content";
 
 export const labels = {
   zh: {
-    brand: "運動科學筆記",
+    brand: "超越者運動科學",
     tagline: "用證據回答健身問題",
     topics: "主題",
     faq: "常見問題",
@@ -19,7 +19,7 @@ export const labels = {
     medical: "此內容為一般科普，不取代醫師、營養師或物理治療師的個別建議。",
   },
   "zh-cn": {
-    brand: "运动科学笔记",
+    brand: "超越者运动科学",
     tagline: "用证据回答健身问题",
     topics: "主题",
     faq: "常见问题",
@@ -36,7 +36,7 @@ export const labels = {
     medical: "此内容为一般科普，不取代医生、营养师或物理治疗师的个别建议。",
   },
   en: {
-    brand: "Sports Science Notes",
+    brand: "CYZ Sports Science",
     tagline: "Evidence-based answers for fitness decisions",
     topics: "Topics",
     faq: "FAQ",
