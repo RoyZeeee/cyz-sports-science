@@ -8,9 +8,28 @@ import { href } from "../utils/paths";
 
 const { exercise, lang } = Astro.props as { exercise: Exercise; lang: Lang };
 const copy = toolCopy(lang);
+const searchText = [
+  exercise.slug,
+  text(exercise.name, lang),
+  exercise.name.zh,
+  exercise.name.en,
+  text(exercise.summary, lang),
+  ...listText(exercise.primary, lang),
+  ...listText(exercise.secondary, lang),
+  text(exercise.equipment, lang),
+].join(" ");
 ---
 
-<a class="card exercise-card" href={href(`/${lang}/exercises/${exercise.slug}/`)}>
+<a
+  class="card exercise-card"
+  href={href(`/${lang}/exercises/${exercise.slug}/`)}
+  data-exercise-card
+  data-muscle={exercise.muscleGroup}
+  data-difficulty={exercise.difficulty}
+  data-rating={exercise.rating}
+  data-equipment={text(exercise.equipment, lang)}
+  data-search={searchText.toLowerCase()}
+>
   <ExerciseVisual exercise={exercise} lang={lang} compact />
   <div class="exercise-card-body">
     <h3>{text(exercise.name, lang)}</h3>

@@ -33,6 +33,7 @@ a {
 
 button,
 input,
+select,
 textarea {
   font: inherit;
 }
@@ -315,6 +316,74 @@ h3 {
   margin: -4px 0 20px;
 }
 
+.tool-filter-row button {
+  cursor: pointer;
+}
+
+.exercise-filter-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 16px;
+  margin: 0 0 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.filter-search,
+.filter-controls label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.filter-search input,
+.filter-controls select {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffaf0;
+  color: var(--ink);
+  padding: 0 12px;
+}
+
+.filter-controls {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.filter-actions {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+}
+
+.filter-actions button {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffaf0;
+  color: var(--ink);
+  padding: 0 14px;
+  cursor: pointer;
+}
+
+.empty-state {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--muted);
+  padding: 18px;
+  text-align: center;
+}
+
 .exercise-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -325,6 +394,10 @@ h3 {
   padding: 0;
   overflow: hidden;
   min-height: 0;
+}
+
+.exercise-card[hidden] {
+  display: none;
 }
 
 .exercise-card-body {
@@ -824,7 +897,8 @@ h3 {
 
   .exercise-grid,
   .nutrition-grid,
-  .spec-grid {
+  .spec-grid,
+  .filter-controls {
     grid-template-columns: 1fr;
   }
 

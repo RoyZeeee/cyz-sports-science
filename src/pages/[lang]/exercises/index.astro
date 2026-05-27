@@ -2,7 +2,7 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import QuestionForm from "../../../components/QuestionForm.astro";
 import ExerciseCard from "../../../components/ExerciseCard.astro";
-import { exercises, muscleGroups, text, toolCopy } from "../../../data/tools";
+import { difficultyLabel, exercises, muscleGroups, text, toolCopy } from "../../../data/tools";
 import type { Lang } from "../../../data/content";
 import { href } from "../../../utils/paths";
 
@@ -19,6 +19,43 @@ const description =
     : lang === "zh-cn"
       ? "用图片、主练肌群、难度、器材和推荐指数整理常见健身动作。"
       : "用圖片、主練肌群、難度、器材和推薦指數整理常見健身動作。";
+const uniqueEquipment = Array.from(new Set(exercises.map((exercise) => text(exercise.equipment, lang))));
+const filterCopy =
+  lang === "en"
+    ? {
+        search: "Search exercises, muscles, or equipment",
+        allMuscles: "All muscles",
+        allEquipment: "All equipment",
+        allDifficulty: "All difficulty",
+        minRating: "Minimum rating",
+        allRatings: "Any rating",
+        reset: "Reset",
+        empty: "No exercises match these filters yet.",
+        count: "exercises shown",
+      }
+    : lang === "zh-cn"
+      ? {
+          search: "搜动作、肌群或器材",
+          allMuscles: "全部肌群",
+          allEquipment: "全部器材",
+          allDifficulty: "全部难度",
+          minRating: "最低推荐",
+          allRatings: "不限推荐",
+          reset: "重置",
+          empty: "目前没有符合筛选的动作。",
+          count: "个动作",
+        }
+      : {
+          search: "搜動作、肌群或器材",
+          allMuscles: "全部肌群",
+          allEquipment: "全部器材",
+          allDifficulty: "全部難度",
+          minRating: "最低推薦",
+          allRatings: "不限推薦",
+          reset: "重置",
+          empty: "目前沒有符合篩選的動作。",
+          count: "個動作",
+        };
 ---
 
 <BaseLayout lang={lang} title={title} description={description} path={`/${lang}/exercises/`}>
@@ -31,12 +68,111 @@ const description =
       </div>
       <a class="pill-link" href={href(`/${lang}/muscles/`)}>{copy.muscles}</a>
     </div>
-    <div class="tool-filter-row">
-      {muscleGroups.map((group) => <a class="tag" href={href(`/${lang}/muscles/${group.slug}/`)}>{text(group.name, lang)}</a>)}
+    <div class="exercise-filter-panel" data-exercise-filters>
+      <label class="filter-search">
+        <span>{filterCopy.search}</span>
+        <input type="search" data-filter-search placeholder={filterCopy.search} />
+      </label>
+      <div class="filter-controls">
+        <label>
+          <span>{copy.muscles}</span>
+          <select data-filter-muscle>
+            <option value="">{filterCopy.allMuscles}</option>
+            {muscleGroups.map((group) => <option value={group.slug}>{text(group.name, lang)}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>{copy.equipment}</span>
+          <select data-filter-equipment>
+            <option value="">{filterCopy.allEquipment}</option>
+            {uniqueEquipment.map((equipment) => <option value={equipment}>{equipment}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>{copy.difficulty}</span>
+          <select data-filter-difficulty>
+            <option value="">{filterCopy.allDifficulty}</option>
+            <option value="beginner">{difficultyLabel("beginner", lang)}</option>
+            <option value="intermediate">{difficultyLabel("intermediate", lang)}</option>
+            <option value="advanced">{difficultyLabel("advanced", lang)}</option>
+          </select>
+        </label>
+        <label>
+          <span>{filterCopy.minRating}</span>
+          <select data-filter-rating>
+            <option value="">{filterCopy.allRatings}</option>
+            <option value="5">5/5</option>
+            <option value="4">4/5+</option>
+            <option value="3">3/5+</option>
+          </select>
+        </label>
+      </div>
+      <div class="filter-actions">
+        <span data-filter-count data-count-label={filterCopy.count}>{exercises.length} {filterCopy.count}</span>
+        <button type="button" data-filter-reset>{filterCopy.reset}</button>
+      </div>
     </div>
-    <div class="exercise-grid">
+    <div class="tool-filter-row" aria-label={copy.muscles}>
+      <button class="tag strong-tag" type="button" data-muscle-chip value="">{filterCopy.allMuscles}</button>
+      {muscleGroups.map((group) => <button class="tag" type="button" data-muscle-chip value={group.slug}>{text(group.name, lang)}</button>)}
+    </div>
+    <div class="exercise-grid" data-exercise-grid>
       {exercises.map((exercise) => <ExerciseCard exercise={exercise} lang={lang} />)}
     </div>
+    <p class="empty-state" data-filter-empty hidden>{filterCopy.empty}</p>
     <QuestionForm lang={lang} />
   </section>
+  <script>
+    const panel = document.querySelector("[data-exercise-filters]");
+    const cards = Array.from(document.querySelectorAll("[data-exercise-card]"));
+    const search = panel?.querySelector("[data-filter-search]");
+    const muscle = panel?.querySelector("[data-filter-muscle]");
+    const equipment = panel?.querySelector("[data-filter-equipment]");
+    const difficulty = panel?.querySelector("[data-filter-difficulty]");
+    const rating = panel?.querySelector("[data-filter-rating]");
+    const reset = panel?.querySelector("[data-filter-reset]");
+    const count = panel?.querySelector("[data-filter-count]");
+    const empty = document.querySelector("[data-filter-empty]");
+    const chips = Array.from(document.querySelectorAll("[data-muscle-chip]"));
+
+    function applyFilters() {
+      const query = String(search?.value || "").trim().toLowerCase();
+      const selectedMuscle = String(muscle?.value || "");
+      const selectedEquipment = String(equipment?.value || "");
+      const selectedDifficulty = String(difficulty?.value || "");
+      const minRating = Number(rating?.value || 0);
+      let visible = 0;
+
+      cards.forEach((card) => {
+        const matchesQuery = !query || String(card.dataset.search || "").includes(query);
+        const matchesMuscle = !selectedMuscle || card.dataset.muscle === selectedMuscle;
+        const matchesEquipment = !selectedEquipment || card.dataset.equipment === selectedEquipment;
+        const matchesDifficulty = !selectedDifficulty || card.dataset.difficulty === selectedDifficulty;
+        const matchesRating = !minRating || Number(card.dataset.rating || 0) >= minRating;
+        const show = matchesQuery && matchesMuscle && matchesEquipment && matchesDifficulty && matchesRating;
+        card.hidden = !show;
+        if (show) visible += 1;
+      });
+
+      if (count) count.textContent = `${visible} ${count.dataset.countLabel || ""}`;
+      if (empty) empty.hidden = visible !== 0;
+      chips.forEach((chip) => chip.classList.toggle("strong-tag", chip.value === selectedMuscle));
+    }
+
+    [search, muscle, equipment, difficulty, rating].forEach((control) => control?.addEventListener("input", applyFilters));
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        if (muscle) muscle.value = chip.value;
+        applyFilters();
+      });
+    });
+    reset?.addEventListener("click", () => {
+      if (search) search.value = "";
+      if (muscle) muscle.value = "";
+      if (equipment) equipment.value = "";
+      if (difficulty) difficulty.value = "";
+      if (rating) rating.value = "";
+      applyFilters();
+    });
+  </script>
 </BaseLayout>
