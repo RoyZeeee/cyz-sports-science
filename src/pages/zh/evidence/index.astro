@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import { evidence } from "../../../data/content";
+import { href } from "../../../utils/paths";
+---
+
+<BaseLayout lang="zh" title="證據庫" description="補劑、訓練和恢復主題的證據摘要。" path="/zh/evidence/" alternatePath="/en/evidence/">
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Evidence</p>
+        <h1>證據庫</h1>
+        <p>公開網站只放精選證據摘要；完整研究筆記仍保留在內部 wiki。</p>
+      </div>
+    </div>
+    <div class="grid">
+      {evidence.map((item) => (
+        <a class="card" href={href(`/zh/evidence/${item.slug}/`)}>
+          <div>
+            <span class="evidence-badge">{item.strength}</span>
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+          </div>
+          <span class="pill-link">查看證據</span>
+        </a>
+      ))}
+    </div>
+    <NewsletterSignup lang="zh" />
+  </section>
+</BaseLayout>

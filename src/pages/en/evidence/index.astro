@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import { evidence } from "../../../data/content";
+import { href } from "../../../utils/paths";
+---
+
+<BaseLayout lang="en" title="Evidence" description="Evidence summaries for supplements, training, recovery, and health." path="/en/evidence/" alternatePath="/zh/evidence/">
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Evidence</p>
+        <h1>Evidence library</h1>
+        <p>The public site shows curated evidence summaries; the full research notes stay in the internal wiki.</p>
+      </div>
+    </div>
+    <div class="grid">
+      {evidence.map((item) => (
+        <a class="card" href={href(`/en/evidence/${item.slug}/`)}>
+          <div>
+            <span class="evidence-badge">{item.strength}</span>
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+          </div>
+          <span class="pill-link">View evidence</span>
+        </a>
+      ))}
+    </div>
+    <NewsletterSignup lang="en" />
+  </section>
+</BaseLayout>

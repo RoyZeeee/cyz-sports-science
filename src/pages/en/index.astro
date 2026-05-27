@@ -1,0 +1,75 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import NewsletterSignup from "../../components/NewsletterSignup.astro";
+import TopicGrid from "../../components/TopicGrid.astro";
+import { articles, byLang, faqs } from "../../data/content";
+import { href } from "../../utils/paths";
+
+const lang = "en";
+const featuredFaqs = byLang(faqs, lang).slice(0, 5);
+const featuredArticles = byLang(articles, lang).slice(0, 3);
+---
+
+<BaseLayout
+  lang={lang}
+  title="Sports Science Notes"
+  description="Evidence-based answers for muscle gain, fat loss, supplements, recovery, and older-adult training."
+  path="/en/"
+  alternatePath="/zh/"
+>
+  <section class="container hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Fitness questions, evidence first</p>
+      <h1>Clear answers for the fitness questions people actually ask.</h1>
+      <p class="lede">
+        Protein powder, creatine, cardio, fat loss, recovery, and training for older adults, translated into practical decisions.
+      </p>
+      <div class="tag-row">
+        <span class="tag">Muscle gain</span>
+        <span class="tag">Fat loss</span>
+        <span class="tag">Supplement filters</span>
+        <span class="tag">Recovery</span>
+      </div>
+    </div>
+    <aside class="hero-panel" aria-label="Popular questions">
+      <h2>Popular questions</h2>
+      <div class="question-strip">
+        {featuredFaqs.map((faq) => <a href={href(`/en/faq/${faq.slug}/`)}><strong>{faq.title}</strong><span>{faq.description}</span></a>)}
+      </div>
+    </aside>
+  </section>
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <h2>Start with the goal</h2>
+        <p>Not everyone needs the same supplement, program, or diet strategy. Choose the context first, then read the evidence.</p>
+      </div>
+      <a class="pill-link" href={href("/en/topics/")}>All topics</a>
+    </div>
+    <TopicGrid lang={lang} />
+  </section>
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <h2>Featured articles</h2>
+        <p>Public-facing articles adapted from the internal wiki for education, scripts, and future products.</p>
+      </div>
+      <a class="pill-link" href={href("/en/articles/")}>All articles</a>
+    </div>
+    <div class="grid">
+      {featuredArticles.map((article) => (
+        <a class="card" href={href(`/en/articles/${article.slug}/`)}>
+          <div>
+            <span class="meta">{article.readingTime}</span>
+            <h3>{article.title}</h3>
+            <p>{article.description}</p>
+          </div>
+          <span class="pill-link">Read</span>
+        </a>
+      ))}
+    </div>
+  </section>
+  <div class="container">
+    <NewsletterSignup lang={lang} />
+  </div>
+</BaseLayout>

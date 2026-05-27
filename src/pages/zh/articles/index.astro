@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import { articles, byLang, getTopic } from "../../../data/content";
+import { href } from "../../../utils/paths";
+
+const lang = "zh";
+const items = byLang(articles, lang);
+---
+
+<BaseLayout lang={lang} title="文章" description="由運動科學 wiki 改寫的公開科普文章。" path="/zh/articles/" alternatePath="/en/articles/">
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Articles</p>
+        <h1>科普文章</h1>
+        <p>把研究摘要和實務判斷轉成可以閱讀、分享、再拆成內容腳本的文章。</p>
+      </div>
+    </div>
+    <div class="grid">
+      {items.map((article) => (
+        <a class="card" href={href(`/zh/articles/${article.slug}/`)}>
+          <div>
+            <div class="tag-row"><span class="tag">{getTopic(article.topic)?.zhTitle}</span><span class="tag">{article.readingTime}</span></div>
+            <h3>{article.title}</h3>
+            <p>{article.description}</p>
+          </div>
+          <span class="pill-link">閱讀</span>
+        </a>
+      ))}
+    </div>
+    <NewsletterSignup lang={lang} />
+  </section>
+</BaseLayout>

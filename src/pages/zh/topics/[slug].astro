@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import { articles, faqs, topics } from "../../../data/content";
+import { href } from "../../../utils/paths";
+
+export function getStaticPaths() {
+  return topics.map((topic) => ({ params: { slug: topic.slug }, props: { topic } }));
+}
+
+const { topic } = Astro.props;
+const topicFaqs = faqs.filter((faq) => faq.lang === "zh" && faq.topic === topic.slug);
+const topicArticles = articles.filter((article) => article.lang === "zh" && article.topic === topic.slug);
+---
+
+<BaseLayout lang="zh" title={topic.zhTitle} description={topic.zhDescription} path={`/zh/topics/${topic.slug}/`} alternatePath={`/en/topics/${topic.slug}/`}>
+  <section class="container section">
+    <p class="eyebrow">Topic</p>
+    <h1>{topic.zhTitle}</h1>
+    <p class="lede">{topic.zhDescription}</p>
+    <div class="section-head">
+      <h2>常見問題</h2>
+      <a class="pill-link" href={href("/zh/faq/")}>全部 FAQ</a>
+    </div>
+    <div class="grid">
+      {topicFaqs.map((faq) => (
+        <a class="card" href={href(`/zh/faq/${faq.slug}/`)}>
+          <div><h3>{faq.title}</h3><p>{faq.description}</p></div>
+          <span class="pill-link">看回答</span>
+        </a>
+      ))}
+    </div>
+    <div class="section-head" style="margin-top: 34px;">
+      <h2>文章</h2>
+      <a class="pill-link" href={href("/zh/articles/")}>全部文章</a>
+    </div>
+    <div class="grid">
+      {topicArticles.map((article) => (
+        <a class="card" href={href(`/zh/articles/${article.slug}/`)}>
+          <div><h3>{article.title}</h3><p>{article.description}</p></div>
+          <span class="pill-link">閱讀</span>
+        </a>
+      ))}
+    </div>
+    <NewsletterSignup lang="zh" />
+  </section>
+</BaseLayout>

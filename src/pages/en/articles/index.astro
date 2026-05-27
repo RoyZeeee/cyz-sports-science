@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import { articles, byLang, getTopic } from "../../../data/content";
+import { href } from "../../../utils/paths";
+
+const lang = "en";
+const items = byLang(articles, lang);
+---
+
+<BaseLayout lang={lang} title="Articles" description="Public education articles adapted from the internal sports science wiki." path="/en/articles/" alternatePath="/zh/articles/">
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Articles</p>
+        <h1>Evidence-based articles</h1>
+        <p>Research notes translated into public-facing articles, scripts, and future product material.</p>
+      </div>
+    </div>
+    <div class="grid">
+      {items.map((article) => (
+        <a class="card" href={href(`/en/articles/${article.slug}/`)}>
+          <div>
+            <div class="tag-row"><span class="tag">{getTopic(article.topic)?.enTitle}</span><span class="tag">{article.readingTime}</span></div>
+            <h3>{article.title}</h3>
+            <p>{article.description}</p>
+          </div>
+          <span class="pill-link">Read</span>
+        </a>
+      ))}
+    </div>
+    <NewsletterSignup lang={lang} />
+  </section>
+</BaseLayout>

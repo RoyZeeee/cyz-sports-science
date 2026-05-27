@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import { byLang, faqs, getTopic } from "../../../data/content";
+import { href } from "../../../utils/paths";
+
+const lang = "en";
+const items = byLang(faqs, lang);
+---
+
+<BaseLayout lang={lang} title="FAQ" description="Common fitness questions about supplements, fat loss, recovery, and training." path="/en/faq/" alternatePath="/zh/faq/">
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">FAQ</p>
+        <h1>Fitness questions</h1>
+        <p>Search-friendly questions answered with context, evidence, and practical boundaries.</p>
+      </div>
+    </div>
+    <div class="grid">
+      {items.map((faq) => (
+        <a class="card" href={href(`/en/faq/${faq.slug}/`)}>
+          <div>
+            <div class="tag-row">
+              <span class="tag">{getTopic(faq.topic)?.enTitle}</span>
+              <span class="tag">{faq.evidence}</span>
+            </div>
+            <h3>{faq.title}</h3>
+            <p>{faq.description}</p>
+          </div>
+          <span class="pill-link">Answer</span>
+        </a>
+      ))}
+    </div>
+    <NewsletterSignup lang={lang} />
+  </section>
+</BaseLayout>

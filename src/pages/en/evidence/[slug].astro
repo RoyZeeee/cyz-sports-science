@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import { evidence } from "../../../data/content";
+
+export function getStaticPaths() {
+  return evidence.map((item) => ({ params: { slug: item.slug }, props: { item } }));
+}
+
+const { item } = Astro.props;
+---
+
+<BaseLayout lang="en" title={item.title} description={item.description} path={`/en/evidence/${item.slug}/`} alternatePath={`/zh/evidence/${item.slug}/`}>
+  <div class="container content-layout">
+    <article class="article">
+      <p class="eyebrow">Evidence · Level {item.strength}</p>
+      <h1>{item.title}</h1>
+      <p class="lede">{item.description}</p>
+      <section>
+        <h2>Summary</h2>
+        <p>{item.summary}</p>
+      </section>
+      <section>
+        <h2>Practical use</h2>
+        <ul>{item.practicalUse.map((use) => <li>{use}</li>)}</ul>
+      </section>
+      <NewsletterSignup lang="en" />
+    </article>
+    <aside class="side-panel">
+      <h3>Evidence level</h3>
+      <p><span class="evidence-badge">{item.strength}</span></p>
+      <h3>Source type</h3>
+      <p class="meta">{item.sourceType}</p>
+    </aside>
+  </div>
+</BaseLayout>

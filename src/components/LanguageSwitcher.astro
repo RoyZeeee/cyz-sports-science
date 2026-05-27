@@ -1,0 +1,19 @@
+---
+import type { Lang } from "../data/content";
+import { otherLang } from "../utils/i18n";
+import { href as withBase } from "../utils/paths";
+
+type Props = {
+  lang: Lang;
+  alternatePath?: string;
+};
+
+const { lang, alternatePath } = Astro.props;
+const nextLang = otherLang(lang);
+const target = withBase(alternatePath ?? `/${nextLang}/`);
+const label = nextLang === "zh" ? "繁中" : "English";
+---
+
+<span class="language-switcher">
+  <a href={target} aria-label="Switch language">{label}</a>
+</span>

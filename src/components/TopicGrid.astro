@@ -1,0 +1,20 @@
+---
+import { topics, type Lang } from "../data/content";
+import { href } from "../utils/paths";
+
+const { lang } = Astro.props as { lang: Lang };
+---
+
+<div class="grid">
+  {
+    topics.map((topic) => (
+      <a class="card topic-card" data-accent={topic.accent} href={href(`/${lang}/topics/${topic.slug}/`)}>
+        <div>
+          <h3>{lang === "zh" ? topic.zhTitle : topic.enTitle}</h3>
+          <p>{lang === "zh" ? topic.zhDescription : topic.enDescription}</p>
+        </div>
+        <span class="pill-link">{lang === "zh" ? "瀏覽主題" : "Browse topic"}</span>
+      </a>
+    ))
+  }
+</div>

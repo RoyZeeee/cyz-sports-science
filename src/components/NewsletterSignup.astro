@@ -1,0 +1,35 @@
+---
+import type { Lang } from "../data/content";
+
+const { lang } = Astro.props as { lang: Lang };
+const copy =
+  lang === "zh"
+    ? {
+        title: "每週收到更清楚的健身科學",
+        body: "補劑避坑、增肌減脂、恢復與中老年訓練。第一版先開放等待名單，電子報服務接上後會正式收信箱。",
+        placeholder: "你的 email",
+        button: "等待開放",
+        note: "表單尚未接入服務，不會送出資料。",
+      }
+    : {
+        title: "Get clearer fitness science each week",
+        body: "Supplement filters, muscle gain, fat loss, recovery, and older-adult training. The email service is not connected yet.",
+        placeholder: "Your email",
+        button: "Coming soon",
+        note: "Placeholder form only. No data is submitted yet.",
+      };
+---
+
+<section class="newsletter" aria-labelledby="newsletter-title">
+  <div>
+    <h2 id="newsletter-title">{copy.title}</h2>
+    <p>{copy.body}</p>
+  </div>
+  <form>
+    <div class="form-row">
+      <input type="email" placeholder={copy.placeholder} aria-label={copy.placeholder} disabled />
+      <button type="button" disabled>{copy.button}</button>
+    </div>
+    <span class="form-note">{copy.note}</span>
+  </form>
+</section>

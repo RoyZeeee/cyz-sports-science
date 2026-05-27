@@ -1,0 +1,64 @@
+---
+import "../styles/global.css";
+import LanguageSwitcher from "../components/LanguageSwitcher.astro";
+import { t } from "../utils/i18n";
+import type { Lang } from "../data/content";
+import { href } from "../utils/paths";
+
+type Props = {
+  lang: Lang;
+  title: string;
+  description: string;
+  path: string;
+  alternatePath?: string;
+};
+
+const { lang, title, description, path, alternatePath } = Astro.props;
+const copy = t(lang);
+const siteName = copy.brand;
+const canonical = new URL(href(path), Astro.site ?? "https://example.github.io/").toString();
+---
+
+<!doctype html>
+<html lang={lang === "zh" ? "zh-Hant" : "en"}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title === siteName ? title : `${title} | ${siteName}`}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={title === siteName ? title : `${title} | ${siteName}`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="site-header">
+        <nav class="nav" aria-label="Main navigation">
+          <a class="brand" href={href(`/${lang}/`)}>
+            <strong>{copy.brand}</strong>
+            <span>{copy.tagline}</span>
+          </a>
+          <div class="nav-links">
+            <a href={href(`/${lang}/topics/`)}>{copy.topics}</a>
+            <a href={href(`/${lang}/faq/`)}>{copy.faq}</a>
+            <a href={href(`/${lang}/articles/`)}>{copy.articles}</a>
+            <a href={href(`/${lang}/evidence/`)}>{copy.evidence}</a>
+            <LanguageSwitcher lang={lang} alternatePath={alternatePath} />
+          </div>
+        </nav>
+      </header>
+      <main>
+        <slot />
+      </main>
+      <footer class="site-footer">
+        <div class="container footer-row">
+          <span>{copy.brand} · {copy.tagline}</span>
+          <span>{copy.medical}</span>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

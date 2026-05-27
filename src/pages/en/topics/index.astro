@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import TopicGrid from "../../../components/TopicGrid.astro";
+
+const lang = "en";
+---
+
+<BaseLayout lang={lang} title="Topics" description="Browse muscle gain, fat loss, supplements, recovery, training, and older-adult health." path="/en/topics/" alternatePath="/zh/topics/">
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Topics</p>
+        <h1>Topic guides</h1>
+        <p>Start with the goal, then move into FAQ, articles, and evidence.</p>
+      </div>
+    </div>
+    <TopicGrid lang={lang} />
+    <NewsletterSignup lang={lang} />
+  </section>
+</BaseLayout>

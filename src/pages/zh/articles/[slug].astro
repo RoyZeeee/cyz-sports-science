@@ -1,0 +1,39 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import NewsletterSignup from "../../../components/NewsletterSignup.astro";
+import { articles, evidenceBySlug, getTopic } from "../../../data/content";
+import { href } from "../../../utils/paths";
+
+export function getStaticPaths() {
+  return articles.filter((article) => article.lang === "zh").map((article) => ({ params: { slug: article.slug }, props: { article } }));
+}
+
+const { article } = Astro.props;
+const topic = getTopic(article.topic);
+---
+
+<BaseLayout lang="zh" title={article.title} description={article.description} path={`/zh/articles/${article.slug}/`} alternatePath="/en/articles/">
+  <div class="container content-layout">
+    <article class="article">
+      <p class="eyebrow">{topic?.zhTitle} · {article.readingTime}</p>
+      <h1>{article.title}</h1>
+      <p class="lede">{article.description}</p>
+      {article.body.map((section) => (
+        <section>
+          <h2>{section.heading}</h2>
+          {section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+        </section>
+      ))}
+      <NewsletterSignup lang="zh" />
+    </article>
+    <aside class="side-panel">
+      <h3>相關證據</h3>
+      <ul>
+        {article.relatedEvidence.map((slug) => {
+          const item = evidenceBySlug(slug);
+          return item ? <li><a href={href(`/zh/evidence/${item.slug}/`)}>{item.title}</a></li> : null;
+        })}
+      </ul>
+    </aside>
+  </div>
+</BaseLayout>

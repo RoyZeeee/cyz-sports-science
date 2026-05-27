@@ -1,0 +1,17 @@
+---
+import { href } from "../utils/paths";
+
+const zhHref = href("/zh/");
+---
+
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0; url=${zhHref}`} />
+    <link rel="canonical" href={zhHref} />
+    <title>運動科學筆記</title>
+  </head>
+  <body>
+    <a href={zhHref}>前往運動科學筆記</a>
+  </body>
+</html>
