@@ -1,57 +1,127 @@
 ---
 import type { Exercise } from "../data/tools";
-import { text } from "../data/tools";
+import { subMuscleLabels, text } from "../data/tools";
 import type { Lang } from "../data/content";
 
 const { exercise, lang, compact = false } = Astro.props as { exercise: Exercise; lang: Lang; compact?: boolean };
 const focus = exercise.visualFocus;
+const subMuscles = exercise.subMuscles ?? [];
+const posterior = focus === "back" || focus === "glutes" || focus === "hamstrings" || focus === "calves";
+
+const hasSub = (slug: string) => subMuscles.includes(slug);
 const active = (part: Exercise["visualFocus"] | "legs") =>
   focus === part || (part === "legs" && (focus === "quads" || focus === "hamstrings" || focus === "calves"));
-const posterior = focus === "back" || focus === "glutes" || focus === "hamstrings" || focus === "calves";
+const primary = (part: Exercise["visualFocus"] | "legs") => active(part) ? "primary" : "";
+const secondary = (part: Exercise["visualFocus"] | "legs") => {
+  if (focus === "chest" && (part === "shoulders" || part === "arms")) return "secondary";
+  if (focus === "back" && (part === "shoulders" || part === "arms")) return "secondary";
+  if (focus === "shoulders" && part === "arms") return "secondary";
+  if ((focus === "quads" || focus === "glutes" || focus === "hamstrings") && (part === "legs" || part === "calves")) return "secondary";
+  return "";
+};
+const state = (part: Exercise["visualFocus"] | "legs") => primary(part) || secondary(part);
+const subState = (slug: string, fallback = false) => (hasSub(slug) || fallback ? "primary" : focus === "chest" || focus === "back" ? "subtle" : "");
+
+const viewLabel = {
+  front: lang === "en" ? "Front" : lang === "zh-cn" ? "前侧" : "前側",
+  back: lang === "en" ? "Back" : lang === "zh-cn" ? "后侧" : "後側",
+};
+
+const focusLabelMap: Record<Exercise["visualFocus"], { zh: string; en: string }> = {
+  chest: { zh: "胸肌", en: "Chest" },
+  back: { zh: "背部", en: "Back" },
+  shoulders: { zh: "肩膀", en: "Shoulders" },
+  quads: { zh: "股四頭", en: "Quads" },
+  glutes: { zh: "臀部", en: "Glutes" },
+  hamstrings: { zh: "腿後側", en: "Hamstrings" },
+  arms: { zh: "手臂", en: "Arms" },
+  core: { zh: "核心腹肌", en: "Core" },
+  calves: { zh: "小腿", en: "Calves" },
+};
+const labelFor = (item: { zh: string; en: string }) => lang === "en" ? item.en : item.zh;
+const targetLabels = subMuscleLabels(subMuscles, lang);
+const mainLabel = targetLabels.length > 0 ? targetLabels.join(" / ") : labelFor(focusLabelMap[focus]);
+const calloutLabel = targetLabels.length > 1 ? `${targetLabels[0]} +${targetLabels.length - 1}` : mainLabel;
+const assistLabel = lang === "en" ? "Assistant muscles" : lang === "zh-cn" ? "辅助参与" : "輔助參與";
+const mainText = lang === "en" ? "Main target" : lang === "zh-cn" ? "主要目标" : "主要目標";
 ---
 
 <figure class:list={["exercise-visual", compact && "compact"]} aria-label={text(exercise.name, lang)}>
-  <svg viewBox="0 0 320 230" role="img">
-    <rect class="visual-bg" x="0" y="0" width="320" height="230" rx="8"></rect>
-    <text class="view-label" x="82" y="22">{lang === "en" ? "Front" : "前側"}</text>
-    <text class="view-label" x="226" y="22">{lang === "en" ? "Back" : "後側"}</text>
+  <svg viewBox="0 0 360 250" role="img" aria-labelledby={`visual-title-${exercise.slug}`}>
+    <title id={`visual-title-${exercise.slug}`}>{text(exercise.name, lang)} - {mainLabel}</title>
+    <rect class="visual-bg" x="0" y="0" width="360" height="250" rx="8"></rect>
+    <text class:list={["view-label", !posterior && "selected"]} x="91" y="24">{viewLabel.front}</text>
+    <text class:list={["view-label", posterior && "selected"]} x="239" y="24">{viewLabel.back}</text>
 
-    <g class:list={["anatomy-view", !posterior && "preferred"]} transform="translate(26 26)">
-      <circle class="body-part neutral" cx="62" cy="16" r="12"></circle>
-      <path class="body-outline" d="M49 31h26l13 21 21 8 10 43-15 3-10-31-8 39 10 76h-21l-13-58-13 58h-21l10-76-8-39-10 31-15-3 10-43 21-8z"></path>
-      <path class:list={["muscle", "deltoid", active("shoulders") && "active"]} d="M35 46c10-14 21-15 30-5l-12 21c-9 0-16-5-18-16z"></path>
-      <path class:list={["muscle", "deltoid", active("shoulders") && "active"]} d="M89 46c-10-14-21-15-30-5l12 21c9 0 16-5 18-16z"></path>
-      <path class:list={["muscle", active("chest") && "active"]} d="M43 53c10-8 24-9 33 0-4 14-12 21-28 22z"></path>
-      <path class:list={["muscle", active("chest") && "active"]} d="M81 53c-10-8-24-9-33 0 4 14 12 21 28 22z"></path>
-      <path class:list={["muscle", active("core") && "active"]} d="M49 77h26l5 40-18 8-18-8z"></path>
-      <path class="separation" d="M62 78v44M51 91h22M50 105h24"></path>
-      <path class:list={["muscle", active("arms") && "active"]} d="M23 68c-10 17-13 36-12 57h15c1-19 5-35 14-48z"></path>
-      <path class:list={["muscle", active("arms") && "active"]} d="M101 68c10 17 13 36 12 57h-15c-1-19-5-35-14-48z"></path>
-      <path class:list={["muscle", active("quads") && "active"]} d="M39 122h21l-8 67h-22z"></path>
-      <path class:list={["muscle", active("quads") && "active"]} d="M64 122h21l9 67h-22z"></path>
-      <path class:list={["muscle", active("calves") && "active"]} d="M29 184h23l-5 24h-22z"></path>
-      <path class:list={["muscle", active("calves") && "active"]} d="M72 184h23l5 24h-22z"></path>
+    <g class:list={["anatomy-view", !posterior && "preferred"]} transform="translate(26 30)">
+      <circle class="body-part neutral" cx="66" cy="16" r="12"></circle>
+      <path class="body-outline" d="M51 31h30l13 19 22 9 10 42-15 4-10-31-8 39 10 74h-22l-14-57-14 57h-22l10-74-8-39-10 31-15-4 10-42 22-9z"></path>
+
+      <path class:list={["muscle", "deltoid", state("shoulders")]} d="M38 44c9-13 20-15 29-6l-12 22c-9 0-15-5-17-16z"></path>
+      <path class:list={["muscle", "deltoid", state("shoulders")]} d="M94 44c-9-13-20-15-29-6l12 22c9 0 15-5 17-16z"></path>
+
+      <path class:list={["muscle", "chest-zone", subState("upper-chest", focus === "chest" && subMuscles.length === 0)]} d="M45 52c10-8 25-8 34 0l-6 12H51z"></path>
+      <path class:list={["muscle", "chest-zone", subState("upper-chest", focus === "chest" && subMuscles.length === 0)]} d="M87 52c-10-8-25-8-34 0l6 12h22z"></path>
+      <path class:list={["muscle", "chest-zone", subState("mid-chest", focus === "chest" && subMuscles.length === 0)]} d="M48 64h25c-4 10-11 15-25 16z"></path>
+      <path class:list={["muscle", "chest-zone", subState("mid-chest", focus === "chest" && subMuscles.length === 0)]} d="M84 64H59c4 10 11 15 25 16z"></path>
+      <path class:list={["muscle", "chest-zone", subState("lower-chest", focus === "chest" && subMuscles.length === 0)]} d="M49 78c12 1 20-2 24-11l-5 17H52z"></path>
+      <path class:list={["muscle", "chest-zone", subState("lower-chest", focus === "chest" && subMuscles.length === 0)]} d="M83 78c-12 1-20-2-24-11l5 17h16z"></path>
+
+      <path class:list={["muscle", state("core")]} d="M51 82h30l5 36-20 9-20-9z"></path>
+      <path class="separation" d="M66 83v42M55 95h22M54 108h24"></path>
+      <path class:list={["muscle", state("arms")]} d="M25 67c-10 17-13 35-12 57h15c1-18 5-34 14-47z"></path>
+      <path class:list={["muscle", state("arms")]} d="M107 67c10 17 13 35 12 57h-15c-1-18-5-34-14-47z"></path>
+      <path class:list={["muscle", state("quads")]} d="M42 123h22l-8 64h-23z"></path>
+      <path class:list={["muscle", state("quads")]} d="M68 123h22l9 64h-23z"></path>
+      <path class:list={["muscle", state("calves")]} d="M32 181h23l-5 24h-22z"></path>
+      <path class:list={["muscle", state("calves")]} d="M77 181h23l5 24h-22z"></path>
+
+      {!compact && !posterior && (
+        <g class="callouts">
+          <path class="callout-line" d="M93 70h38"></path>
+          <text class="callout-text" x="136" y="73">{calloutLabel}</text>
+        </g>
+      )}
     </g>
 
-    <g class:list={["anatomy-view", posterior && "preferred"]} transform="translate(170 26)">
-      <circle class="body-part neutral" cx="62" cy="16" r="12"></circle>
-      <path class="body-outline" d="M49 31h26l13 21 21 8 10 43-15 3-10-31-8 39 10 76h-21l-13-58-13 58h-21l10-76-8-39-10 31-15-3 10-43 21-8z"></path>
-      <path class:list={["muscle", active("back") && "active"]} d="M49 34h26l13 34-26 31-26-31z"></path>
-      <path class:list={["muscle", active("back") && "active"]} d="M38 62c-18 14-25 32-26 55h17c4-19 12-34 25-45z"></path>
-      <path class:list={["muscle", active("back") && "active"]} d="M86 62c18 14 25 32 26 55h-17c-4-19-12-34-25-45z"></path>
-      <path class:list={["muscle", active("shoulders") && "active"]} d="M35 44c10-11 20-12 29-4l-13 22c-8-1-14-7-16-18z"></path>
-      <path class:list={["muscle", active("shoulders") && "active"]} d="M89 44c-10-11-20-12-29-4l13 22c8-1 14-7 16-18z"></path>
-      <path class:list={["muscle", active("arms") && "active"]} d="M23 68c-10 17-13 36-12 57h15c1-19 5-35 14-48z"></path>
-      <path class:list={["muscle", active("arms") && "active"]} d="M101 68c10 17 13 36 12 57h-15c-1-19-5-35-14-48z"></path>
-      <path class:list={["muscle", active("glutes") && "active"]} d="M38 116c10-10 19-9 24 3-4 17-14 25-27 22z"></path>
-      <path class:list={["muscle", active("glutes") && "active"]} d="M86 116c-10-10-19-9-24 3 4 17 14 25 27 22z"></path>
-      <path class:list={["muscle", active("hamstrings") && "active"]} d="M38 139h22l-7 50h-23z"></path>
-      <path class:list={["muscle", active("hamstrings") && "active"]} d="M64 139h22l8 50h-23z"></path>
-      <path class:list={["muscle", active("calves") && "active"]} d="M29 184h23l-5 24h-22z"></path>
-      <path class:list={["muscle", active("calves") && "active"]} d="M72 184h23l5 24h-22z"></path>
-      <path class="separation" d="M62 35v78M42 78h40M62 119v23"></path>
+    <g class:list={["anatomy-view", posterior && "preferred"]} transform="translate(174 30)">
+      <circle class="body-part neutral" cx="66" cy="16" r="12"></circle>
+      <path class="body-outline" d="M51 31h30l13 19 22 9 10 42-15 4-10-31-8 39 10 74h-22l-14-57-14 57h-22l10-74-8-39-10 31-15-4 10-42 22-9z"></path>
+
+      <path class:list={["muscle", "back-zone", subState("upper-back", focus === "back" && subMuscles.length === 0)]} d="M51 34h30l10 23-25 12-25-12z"></path>
+      <path class:list={["muscle", "back-zone", subState("mid-back", focus === "back" && subMuscles.length === 0)]} d="M42 58l24 11 24-11-8 34-16 15-16-15z"></path>
+      <path class:list={["muscle", "back-zone", subState("lats", focus === "back" && subMuscles.length === 0)]} d="M41 62c-18 14-25 31-26 54h17c4-19 12-33 24-44z"></path>
+      <path class:list={["muscle", "back-zone", subState("lats", focus === "back" && subMuscles.length === 0)]} d="M91 62c18 14 25 31 26 54h-17c-4-19-12-33-24-44z"></path>
+      <path class:list={["muscle", "back-zone", subState("lower-back", false)]} d="M55 96l11 11 11-11 5 25-16 8-16-8z"></path>
+
+      <path class:list={["muscle", state("shoulders"), subState("rear-delts", false)]} d="M38 43c10-11 21-12 30-4l-13 22c-8-1-15-7-17-18z"></path>
+      <path class:list={["muscle", state("shoulders"), subState("rear-delts", false)]} d="M94 43c-10-11-21-12-30-4l13 22c8-1 15-7 17-18z"></path>
+      <path class:list={["muscle", state("arms")]} d="M25 67c-10 17-13 35-12 57h15c1-18 5-34 14-47z"></path>
+      <path class:list={["muscle", state("arms")]} d="M107 67c10 17 13 35 12 57h-15c-1-18-5-34-14-47z"></path>
+      <path class:list={["muscle", state("glutes")]} d="M41 116c10-10 20-9 25 3-4 16-14 24-28 21z"></path>
+      <path class:list={["muscle", state("glutes")]} d="M91 116c-10-10-20-9-25 3 4 16 14 24 28 21z"></path>
+      <path class:list={["muscle", state("hamstrings")]} d="M41 139h23l-8 48h-23z"></path>
+      <path class:list={["muscle", state("hamstrings")]} d="M68 139h23l8 48h-23z"></path>
+      <path class:list={["muscle", state("calves")]} d="M32 181h23l-5 24h-22z"></path>
+      <path class:list={["muscle", state("calves")]} d="M77 181h23l5 24h-22z"></path>
+      <path class="separation" d="M66 35v88M45 77h42M66 119v22"></path>
+
+      {!compact && posterior && (
+        <g class="callouts">
+          <path class="callout-line" d="M108 75h26"></path>
+          <text class="callout-text right" x="130" y="68">{calloutLabel}</text>
+        </g>
+      )}
     </g>
   </svg>
+  {
+    !compact && (
+      <div class="visual-key" aria-label={mainText}>
+        <span><i class="legend-dot primary"></i>{mainText}: {mainLabel}</span>
+        <span><i class="legend-dot secondary"></i>{assistLabel}</span>
+      </div>
+    )
+  }
   <figcaption>
     <strong>{text(exercise.name, lang)}</strong>
     <span>{text(exercise.summary, lang)}</span>

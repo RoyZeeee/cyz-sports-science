@@ -429,11 +429,11 @@ h3 {
 .exercise-visual svg {
   display: block;
   width: 100%;
-  aspect-ratio: 1.18;
+  aspect-ratio: 1.44;
 }
 
 .visual-bg {
-  fill: #eee7dc;
+  fill: #f2eadf;
 }
 
 .body-part {
@@ -458,8 +458,12 @@ h3 {
   text-anchor: middle;
 }
 
+.view-label.selected {
+  fill: var(--ink);
+}
+
 .anatomy-view {
-  opacity: 0.72;
+  opacity: 0.42;
 }
 
 .anatomy-view.preferred {
@@ -478,9 +482,25 @@ h3 {
   stroke-width: 1.3;
 }
 
-.muscle.active {
+.muscle.subtle {
+  fill: #f6dec5;
+  stroke: rgba(151, 105, 69, 0.6);
+}
+
+.muscle.secondary {
+  fill: #f3b88f;
+  stroke: #a85f35;
+}
+
+.muscle.primary {
   fill: #197c79;
   stroke: #0f5553;
+  stroke-width: 1.8;
+}
+
+.muscle.primary.chest-zone,
+.muscle.primary.back-zone {
+  fill: #0f8f8a;
 }
 
 .separation {
@@ -498,6 +518,58 @@ h3 {
   stroke-dasharray: 6 9;
 }
 
+.callout-line {
+  fill: none;
+  stroke: #0f5553;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
+
+.callout-text {
+  fill: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.callout-text.right {
+  text-anchor: end;
+}
+
+.legend-dot.primary {
+  fill: #197c79;
+}
+
+.legend-dot.secondary {
+  fill: #f3b88f;
+  stroke: #a85f35;
+}
+
+.visual-key {
+  display: flex;
+  gap: 12px 18px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 0 16px 12px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.visual-key span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.visual-key .legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  flex: 0 0 auto;
+}
+
 .exercise-visual figcaption {
   display: grid;
   gap: 4px;
@@ -511,6 +583,10 @@ h3 {
 
 .exercise-visual.compact figcaption {
   display: none;
+}
+
+.exercise-visual.compact svg {
+  aspect-ratio: 1.44;
 }
 
 .meta-row {
