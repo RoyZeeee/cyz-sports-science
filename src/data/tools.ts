@@ -423,7 +423,7 @@ const exerciseCorrections: Record<string, Partial<Exercise>> = {
   "machine-preacher-curl": { subMuscles: ["biceps"], aliases: [lt("牧師椅器械", "Machine preacher curl")] },
   "chest-supported-dumbbell-curl": { subMuscles: ["biceps"], aliases: [lt("胸靠著椅子二頭", "Chest-supported curl"), lt("胸靠椅二頭", "Chest-supported curl")] },
   "lying-cable-curl": { subMuscles: ["biceps"], aliases: [lt("躺著二頭", "Lying cable curl")] },
-  "rope-hammer-curl": { subMuscles: ["biceps", "forearms"], aliases: [lt("雙頭繩二頭", "Rope hammer curl"), lt("雙頭繩", "Rope curl")] },
+  "rope-hammer-curl": { subMuscles: ["biceps", "forearms"], aliases: [lt("肱肌", "Brachialis curl"), lt("公雞", "Brachialis curl"), lt("Cable 公雞", "Cable brachialis curl"), lt("雙頭繩二頭", "Rope hammer curl"), lt("雙頭繩", "Rope curl")] },
   "single-arm-cable-curl": { subMuscles: ["biceps"], aliases: [lt("單臂二頭繩索", "Single-arm cable curl"), lt("龍門架單邊二頭", "Single-arm cable curl")] },
   "triceps-pressdown": { subMuscles: ["triceps"], aliases: [lt("三頭平槓下壓", "Straight-bar triceps pressdown"), lt("三頭下壓", "Triceps pressdown"), lt("雙頭繩三頭下壓", "Rope triceps pressdown")] },
   "skull-crusher": { subMuscles: ["triceps"], aliases: [lt("碎顱者", "Skull crusher")] },
