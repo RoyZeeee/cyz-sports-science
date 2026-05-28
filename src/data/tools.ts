@@ -207,6 +207,12 @@ export const subMuscleGroups: SubMuscleGroup[] = [
     description: lt("手臂前側彎舉主力，也會輔助多數拉類動作。", "Front-arm elbow flexors, also assisting most pulling exercises."),
   },
   {
+    slug: "brachialis",
+    parent: "arms",
+    name: lt("肱肌", "Brachialis"),
+    description: lt("位在肱二頭深層的屈肘肌，槌式、對握和繩索槌式彎舉更常拿來補強。", "A deep elbow flexor under the biceps, often emphasized with hammer, neutral-grip, and rope curl variations."),
+  },
+  {
     slug: "triceps",
     parent: "arms",
     name: lt("肱三頭", "Triceps"),
@@ -331,7 +337,8 @@ function withInferredSubMuscles(exercise: Exercise): Exercise {
 
   if (exercise.muscleGroup === "arms") {
     const subMuscles = new Set<string>();
-    if (/二頭|biceps|curl|肱肌|brachialis|hammer/.test(textBlob)) subMuscles.add("biceps");
+    if (/肱肌|brachialis|hammer|槌式|公雞|雙頭繩/.test(textBlob)) subMuscles.add("brachialis");
+    if (/二頭|biceps|curl/.test(textBlob)) subMuscles.add("biceps");
     if (/三頭|triceps|pressdown|extension|crusher|kickback/.test(textBlob)) subMuscles.add("triceps");
     if (/前臂|forearm|wrist|reverse curl|肱橈/.test(textBlob)) subMuscles.add("forearms");
     if (!subMuscles.size) subMuscles.add("biceps");
@@ -388,7 +395,7 @@ const exerciseCorrections: Record<string, Partial<Exercise>> = {
   "dumbbell-shoulder-press": { subMuscles: ["front-delts", "side-delts"], aliases: [lt("啞鈴肩推", "Dumbbell shoulder press")] },
   "barbell-overhead-press": { subMuscles: ["front-delts", "side-delts"], aliases: [lt("實力推舉", "Strict press"), lt("槓鈴肩推", "Barbell shoulder press")] },
   "machine-shoulder-press": { subMuscles: ["front-delts", "side-delts"], aliases: [lt("器械肩推", "Machine shoulder press")] },
-  "smith-machine-shoulder-press": { subMuscles: ["front-delts"], aliases: [lt("史密斯肩推", "Smith shoulder press")] },
+  "smith-machine-shoulder-press": { subMuscles: ["front-delts", "side-delts"], aliases: [lt("史密斯肩推", "Smith shoulder press")] },
   "lateral-raise": { subMuscles: ["side-delts"], aliases: [lt("啞鈴飛鳥", "Dumbbell lateral raise"), lt("啞鈴側平舉", "Dumbbell lateral raise")] },
   "cable-lateral-raise": { subMuscles: ["side-delts"], aliases: [lt("龍門架側平舉", "Cable lateral raise"), lt("龍門架中束", "Cable side delt raise")] },
   "face-pull": { subMuscles: ["rear-delts"], aliases: [lt("面拉", "Face pull")] },
@@ -423,7 +430,7 @@ const exerciseCorrections: Record<string, Partial<Exercise>> = {
   "machine-preacher-curl": { subMuscles: ["biceps"], aliases: [lt("牧師椅器械", "Machine preacher curl")] },
   "chest-supported-dumbbell-curl": { subMuscles: ["biceps"], aliases: [lt("胸靠著椅子二頭", "Chest-supported curl"), lt("胸靠椅二頭", "Chest-supported curl")] },
   "lying-cable-curl": { subMuscles: ["biceps"], aliases: [lt("躺著二頭", "Lying cable curl")] },
-  "rope-hammer-curl": { subMuscles: ["biceps", "forearms"], aliases: [lt("肱肌", "Brachialis curl"), lt("公雞", "Brachialis curl"), lt("Cable 公雞", "Cable brachialis curl"), lt("雙頭繩二頭", "Rope hammer curl"), lt("雙頭繩", "Rope curl")] },
+  "rope-hammer-curl": { subMuscles: ["brachialis"], aliases: [lt("肱肌", "Brachialis curl"), lt("公雞", "Brachialis curl"), lt("Cable 公雞", "Cable brachialis curl"), lt("雙頭繩二頭", "Rope hammer curl"), lt("雙頭繩", "Rope curl")] },
   "single-arm-cable-curl": { subMuscles: ["biceps"], aliases: [lt("單臂二頭繩索", "Single-arm cable curl"), lt("龍門架單邊二頭", "Single-arm cable curl")] },
   "triceps-pressdown": { subMuscles: ["triceps"], aliases: [lt("三頭平槓下壓", "Straight-bar triceps pressdown"), lt("三頭下壓", "Triceps pressdown"), lt("雙頭繩三頭下壓", "Rope triceps pressdown")] },
   "skull-crusher": { subMuscles: ["triceps"], aliases: [lt("碎顱者", "Skull crusher")] },
@@ -775,7 +782,7 @@ export const exercises: Exercise[] = [
   quickExercise({ slug: "weighted-pull-up", zh: "負重引體向上", en: "Weighted Pull-up", group: "back", primary: [lt("背闊肌", "Lats")], secondary: [lt("肱二頭肌", "Biceps"), lt("核心", "Core")], equipment: lt("單槓、負重帶", "Pull-up bar and weight belt"), difficulty: "advanced", rating: 5, focus: "back" }),
   quickExercise({ slug: "barbell-overhead-press", zh: "實力推舉", en: "Barbell Overhead Press", group: "shoulders", primary: [lt("前三角", "Front delts")], secondary: [lt("中三角", "Side delts"), lt("肱三頭肌", "Triceps")], equipment: lt("槓鈴", "Barbell"), difficulty: "advanced", rating: 5, focus: "shoulders" }),
   quickExercise({ slug: "machine-shoulder-press", zh: "器械肩推", en: "Machine Shoulder Press", group: "shoulders", primary: [lt("前三角", "Front delts"), lt("中三角", "Side delts")], secondary: [lt("肱三頭肌", "Triceps")], equipment: lt("肩推器械", "Shoulder press machine"), difficulty: "beginner", rating: 4, focus: "shoulders" }),
-  quickExercise({ slug: "smith-machine-shoulder-press", zh: "史密斯肩推", en: "Smith Machine Shoulder Press", group: "shoulders", primary: [lt("前三角", "Front delts")], secondary: [lt("肱三頭肌", "Triceps")], equipment: lt("史密斯機、椅子", "Smith machine and bench"), rating: 4, focus: "shoulders" }),
+  quickExercise({ slug: "smith-machine-shoulder-press", zh: "史密斯肩推", en: "Smith Machine Shoulder Press", group: "shoulders", primary: [lt("前三角", "Front delts"), lt("中三角", "Side delts")], secondary: [lt("肱三頭肌", "Triceps")], equipment: lt("史密斯機、椅子", "Smith machine and bench"), rating: 4, focus: "shoulders" }),
   quickExercise({ slug: "cable-lateral-raise", zh: "龍門架側平舉", en: "Cable Lateral Raise", group: "shoulders", primary: [lt("中三角", "Side delts")], secondary: [lt("上斜方", "Upper traps")], equipment: lt("龍門架單把手", "Cable station and single handle"), difficulty: "beginner", rating: 5, focus: "shoulders" }),
   quickExercise({ slug: "dumbbell-rear-delt-fly", zh: "啞鈴後束飛鳥", en: "Dumbbell Rear-Delt Fly", group: "shoulders", primary: [lt("後三角", "Rear delts")], secondary: [lt("上背", "Upper back")], equipment: lt("啞鈴", "Dumbbells"), difficulty: "beginner", rating: 4, focus: "shoulders" }),
   quickExercise({ slug: "reverse-pec-deck", zh: "蝴蝶機後束", en: "Reverse Pec Deck", group: "shoulders", primary: [lt("後三角", "Rear delts")], secondary: [lt("中下斜方", "Mid/lower traps")], equipment: lt("蝴蝶機", "Reverse pec deck"), difficulty: "beginner", rating: 5, focus: "shoulders" }),

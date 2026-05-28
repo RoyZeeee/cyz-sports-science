@@ -8,7 +8,7 @@ const outputDir = resolve(root, "public/images/anatomy-targets");
 const anatomySvg = readFileSync(sourcePath, "utf-8");
 
 const anatomyPathMap = {
-  "upper-chest": ["path861"],
+  "upper-chest": ["path847"],
   "mid-chest": ["path847"],
   "lower-chest": ["path847"],
   lats: ["path2220"],
@@ -26,6 +26,7 @@ const anatomyPathMap = {
   adductors: ["path1337"],
   calves: ["path3254", "path3216", "path3075", "path3022"],
   biceps: ["path908", "path968", "path881"],
+  brachialis: ["path908", "path968"],
   triceps: ["path1109", "path1513", "path1486", "path1542"],
   forearms: ["path1065", "path1080", "path998", "path987", "path991"],
   abs: ["path1100"],

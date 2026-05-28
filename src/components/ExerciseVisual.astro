@@ -20,7 +20,8 @@ addIf("side-delts", /中三角|side delt|lateral/);
 addIf("rear-delts", /後三角|rear delt|後束/);
 addIf("rotator-cuff", /旋轉|rotator/);
 addIf("triceps", /三頭|triceps/);
-addIf("biceps", /二頭|biceps|肱肌|brachialis/);
+addIf("brachialis", /肱肌|brachialis|hammer|槌式/);
+addIf("biceps", /二頭|biceps/);
 addIf("forearms", /前臂|forearm|grip|握力|wrist/);
 addIf("upper-back", /上背|upper back|trap|斜方|rhomboid|菱形|下斜方|中下斜方/);
 addIf("mid-back", /中背|mid back/);
@@ -47,7 +48,7 @@ const copy = {
 };
 
 const anatomyPathMap: Record<string, string[]> = {
-  "upper-chest": ["path861"],
+  "upper-chest": ["path847"],
   "mid-chest": ["path847"],
   "lower-chest": ["path847"],
   lats: ["path2220"],
@@ -65,6 +66,7 @@ const anatomyPathMap: Record<string, string[]> = {
   adductors: ["path1337"],
   calves: ["path3254", "path3216", "path3075", "path3022"],
   biceps: ["path908", "path968", "path881"],
+  brachialis: ["path908", "path968"],
   triceps: ["path1109", "path1513", "path1486", "path1542"],
   forearms: ["path1065", "path1080", "path998", "path987", "path991"],
   abs: ["path1100"],
