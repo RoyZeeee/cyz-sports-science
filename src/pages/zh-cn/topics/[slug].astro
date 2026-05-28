@@ -1,8 +1,9 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import QuestionForm from "../../../components/QuestionForm.astro";
-import TopicDeepDive from "../../../components/TopicDeepDive.astro";
-import { articles, byLang, faqs, topics, topicDescription, topicTitle } from "../../../data/content";
+import TopicSeoGuide from "../../../components/TopicSeoGuide.astro";
+import { articles, byLang, faqs, topics, localizeText } from "../../../data/content";
+import { topicGuideBySlug } from "../../../data/topicGuides";
 import { href } from "../../../utils/paths";
 
 export function getStaticPaths() {
@@ -11,40 +12,48 @@ export function getStaticPaths() {
 
 const { topic } = Astro.props;
 const lang = "zh-cn";
+const guide = topicGuideBySlug(topic.slug);
+if (!guide) throw new Error("Topic guide not found");
 const topicFaqs = byLang(faqs, lang).filter((faq) => faq.topic === topic.slug);
 const topicArticles = byLang(articles, lang).filter((article) => article.topic === topic.slug);
 ---
 
-<BaseLayout lang={lang} title={topicTitle(topic, lang)} description={topicDescription(topic, lang)} path={`/zh-cn/topics/${topic.slug}/`}>
+<BaseLayout lang={lang} title={localizeText(guide.zhSeoTitle, lang)} description={localizeText(guide.zhDescription, lang)} path={`/zh-cn/topics/${topic.slug}/`}>
   <section class="container section">
-    <p class="eyebrow">Topic</p>
-    <h1>{topicTitle(topic, lang)}</h1>
-    <p class="lede">{topicDescription(topic, lang)}</p>
-    <TopicDeepDive topic={topic} lang={lang} />
+    <p class="eyebrow">完整指南</p>
+    <h1>{localizeText(guide.zhH1, lang)}</h1>
+    <p class="lede">{localizeText(guide.zhIntro, lang)}</p>
+    <TopicSeoGuide guide={guide} lang={lang} />
     <div class="section-head">
       <h2>常见问题</h2>
       <a class="pill-link" href={href("/zh-cn/faq/")}>全部 FAQ</a>
     </div>
     <div class="grid">
-      {topicFaqs.map((faq) => (
+      {topicFaqs.slice(0, 6).map((faq) => (
         <a class="card" href={href(`/zh-cn/faq/${faq.slug}/`)}>
           <div><h3>{faq.title}</h3><p>{faq.description}</p></div>
           <span class="pill-link">看回答</span>
         </a>
       ))}
     </div>
-    <div class="section-head" style="margin-top: 34px;">
-      <h2>文章</h2>
-      <a class="pill-link" href={href("/zh-cn/articles/")}>全部文章</a>
-    </div>
-    <div class="grid">
-      {topicArticles.map((article) => (
-        <a class="card" href={href(`/zh-cn/articles/${article.slug}/`)}>
-          <div><h3>{article.title}</h3><p>{article.description}</p></div>
-          <span class="pill-link">阅读</span>
-        </a>
-      ))}
-    </div>
+    {
+      topicArticles.length > 0 && (
+        <>
+          <div class="section-head" style="margin-top: 34px;">
+            <h2>文章</h2>
+            <a class="pill-link" href={href("/zh-cn/articles/")}>全部文章</a>
+          </div>
+          <div class="grid">
+            {topicArticles.slice(0, 6).map((article) => (
+              <a class="card" href={href(`/zh-cn/articles/${article.slug}/`)}>
+                <div><h3>{article.title}</h3><p>{article.description}</p></div>
+                <span class="pill-link">阅读</span>
+              </a>
+            ))}
+          </div>
+        </>
+      )
+    }
     <QuestionForm lang={lang} />
   </section>
 </BaseLayout>

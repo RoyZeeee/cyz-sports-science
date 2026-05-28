@@ -1,0 +1,153 @@
+---
+import type { Lang } from "../data/content";
+import { localizedEvidenceBySlug } from "../data/content";
+import type { TopicGuide } from "../data/topicGuides";
+import { guideText } from "../data/topicGuides";
+import { href } from "../utils/paths";
+
+const { guide, lang } = Astro.props as { guide: TopicGuide; lang: Lang };
+
+const copy =
+  lang === "en"
+    ? {
+        questions: "Core questions",
+        first: "Start here",
+        mistakes: "Common mistakes",
+        decisions: "Practical decision table",
+        tools: "Useful next steps",
+        evidence: "Related evidence",
+        strength: "Evidence",
+      }
+    : lang === "zh-cn"
+      ? {
+          questions: "核心问题总览",
+          first: "新手先看什么",
+          mistakes: "常见错误",
+          decisions: "实用排序",
+          tools: "下一步工具",
+          evidence: "相关证据",
+          strength: "证据",
+        }
+      : {
+          questions: "核心問題總覽",
+          first: "新手先看什麼",
+          mistakes: "常見錯誤",
+          decisions: "實用排序",
+          tools: "下一步工具",
+          evidence: "相關證據",
+          strength: "證據",
+        };
+
+const localizedToolHref = (item: TopicGuide["toolLinks"][number]) => {
+  const target = lang === "en" ? item.enHref ?? item.href : item.href;
+  return href(`/${lang}${target}`);
+};
+const evidenceItems = guide.evidence.map((slug) => localizedEvidenceBySlug(slug, lang)).filter(Boolean);
+---
+
+<section class="topic-guide-block" aria-labelledby="topic-core-questions">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">{copy.questions}</p>
+      <h2 id="topic-core-questions">{copy.questions}</h2>
+    </div>
+  </div>
+  <div class="guide-question-grid">
+    {guide.coreQuestions.map((question) => <div class="guide-question">{guideText(question, lang)}</div>)}
+  </div>
+</section>
+
+<section class="topic-guide-block">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">{copy.first}</p>
+      <h2>{copy.first}</h2>
+    </div>
+  </div>
+  <div class="detail-grid">
+    {guide.firstSteps.map((step) => (
+      <article class="detail-card">
+        <h3>{lang === "en" ? step.enTitle : guideText({ zh: step.zhTitle, en: step.enTitle }, lang)}</h3>
+        <p>{lang === "en" ? step.enBody : guideText({ zh: step.zhBody, en: step.enBody }, lang)}</p>
+      </article>
+    ))}
+  </div>
+</section>
+
+<section class="topic-guide-block">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">{copy.decisions}</p>
+      <h2>{copy.decisions}</h2>
+    </div>
+  </div>
+  <div class="detail-grid">
+    {guide.decisionCards.map((card) => (
+      <article class="detail-card">
+        <h3>{lang === "en" ? card.enTitle : guideText({ zh: card.zhTitle, en: card.enTitle }, lang)}</h3>
+        <p>{lang === "en" ? card.enBody : guideText({ zh: card.zhBody, en: card.enBody }, lang)}</p>
+        <dl class="metric-list">
+          {card.items.map((item) => (
+            <>
+              <dt>{lang === "en" ? item.enLabel : guideText({ zh: item.zhLabel, en: item.enLabel }, lang)}</dt>
+              <dd>{lang === "en" ? item.enValue : guideText({ zh: item.zhValue, en: item.enValue }, lang)}</dd>
+            </>
+          ))}
+        </dl>
+      </article>
+    ))}
+  </div>
+</section>
+
+<section class="topic-guide-block">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">{copy.mistakes}</p>
+      <h2>{copy.mistakes}</h2>
+    </div>
+  </div>
+  <ul class="guide-checklist">
+    {guide.mistakes.map((item) => <li>{guideText(item, lang)}</li>)}
+  </ul>
+</section>
+
+<section class="topic-guide-block">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">{copy.tools}</p>
+      <h2>{copy.tools}</h2>
+    </div>
+  </div>
+  <div class="grid">
+    {guide.toolLinks.map((item) => (
+      <a class="card guide-link-card" href={localizedToolHref(item)}>
+        <div>
+          <h3>{lang === "en" ? item.enLabel : guideText({ zh: item.zhLabel, en: item.enLabel }, lang)}</h3>
+          <p>{lang === "en" ? item.enBody : guideText({ zh: item.zhBody, en: item.enBody }, lang)}</p>
+        </div>
+        <span class="pill-link">{lang === "en" ? "Open" : lang === "zh-cn" ? "打开" : "打開"}</span>
+      </a>
+    ))}
+  </div>
+</section>
+
+<section class="topic-guide-block">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">{copy.evidence}</p>
+      <h2>{copy.evidence}</h2>
+    </div>
+  </div>
+  <div class="grid">
+    {evidenceItems.map((item) => item && (
+      <a class="card guide-link-card" href={href(`/${lang}/evidence/${item.slug}/`)}>
+        <div>
+          <span class="meta">{copy.strength}: {item.strength}</span>
+          <h3>{item.title}</h3>
+          <p>{item.description}</p>
+        </div>
+        <span class="pill-link">{lang === "en" ? "Evidence" : copy.evidence}</span>
+      </a>
+    ))}
+  </div>
+</section>

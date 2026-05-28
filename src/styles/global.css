@@ -432,63 +432,19 @@ h3 {
   aspect-ratio: 1.4;
 }
 
+.exercise-visual:not(.compact) .semantic-anatomy-svg {
+  aspect-ratio: auto;
+  height: auto;
+}
+
+.exercise-visual.compact .compact-anatomy-svg {
+  aspect-ratio: auto;
+  height: 178px;
+  background: #fbf7ef;
+}
+
 .visual-bg {
   fill: #f6efe5;
-}
-
-.view-label {
-  fill: var(--muted);
-  font-size: 0.72rem;
-  font-weight: 800;
-  text-anchor: middle;
-}
-
-.view-label.selected {
-  fill: var(--ink);
-}
-
-.anatomy-view {
-  opacity: 0.2;
-}
-
-.anatomy-view.preferred {
-  opacity: 1;
-}
-
-.anatomy-silhouette {
-  fill: transparent;
-  stroke: transparent;
-  stroke-width: 0;
-}
-
-.anatomy-photo {
-  opacity: 0.9;
-  filter: saturate(0.82) contrast(1.04);
-}
-
-.muscle-map-lines {
-  display: none;
-}
-
-.anatomy-view.preferred .muscle-map-lines {
-  display: none;
-}
-
-.callout-line {
-  fill: none;
-  stroke: #0f5553;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-}
-
-.callout-text {
-  fill: var(--ink);
-  font-size: 0.75rem;
-  font-weight: 900;
-}
-
-.callout-text.right {
-  text-anchor: end;
 }
 
 .legend-dot.primary {
@@ -544,28 +500,6 @@ h3 {
 
 .exercise-visual.compact figcaption {
   display: none;
-}
-
-.exercise-visual.compact svg {
-  aspect-ratio: 1.78;
-}
-
-.exercise-visual.compact .view-label {
-  display: none;
-}
-
-.exercise-visual.compact .anatomy-silhouette {
-  fill: #fbf6ee;
-  stroke: rgba(54, 50, 45, 0.5);
-}
-
-.exercise-visual.compact .muscle-map-lines {
-  opacity: 0.72;
-  stroke-width: 1;
-}
-
-.exercise-visual.compact .anatomy-photo {
-  opacity: 0.96;
 }
 
 .compact-muscle-labels {
@@ -1034,11 +968,87 @@ h3 {
   margin-bottom: 0;
 }
 
+.topic-guide-block {
+  margin-top: 34px;
+}
+
+.guide-question-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.guide-question {
+  min-height: 84px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 16px;
+  color: var(--ink);
+  font-weight: 800;
+  line-height: 1.45;
+  display: flex;
+  align-items: center;
+}
+
+.guide-checklist {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  list-style: none;
+}
+
+.guide-checklist li {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 14px 16px;
+  color: #3e3a34;
+  line-height: 1.65;
+}
+
+.guide-link-card {
+  min-height: 190px;
+}
+
 .footer-row {
   display: flex;
   justify-content: space-between;
   gap: 20px;
   flex-wrap: wrap;
+}
+
+.footer-brand {
+  display: grid;
+  gap: 8px;
+  max-width: 620px;
+  line-height: 1.5;
+}
+
+.footer-links {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 10px 14px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.footer-links a:hover {
+  color: var(--teal);
+}
+
+.trust-article .lede {
+  max-width: 100%;
+}
+
+.trust-article .question-form {
+  margin-bottom: 0;
 }
 
 @media (max-width: 860px) {
@@ -1076,6 +1086,10 @@ h3 {
   }
 
   .direction-card {
+    grid-template-columns: 1fr;
+  }
+
+  .guide-question-grid {
     grid-template-columns: 1fr;
   }
 

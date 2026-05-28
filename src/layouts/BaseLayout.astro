@@ -70,8 +70,17 @@ const htmlLang = lang === "zh" ? "zh-Hant" : lang === "zh-cn" ? "zh-Hans" : "en"
       </main>
       <footer class="site-footer">
         <div class="container footer-row">
-          <span>{copy.brand} · {copy.tagline}</span>
-          <span>{copy.medical}</span>
+          <div class="footer-brand">
+            <span>{copy.brand} · {copy.tagline}</span>
+            <span>{copy.medical}</span>
+          </div>
+          <nav class="footer-links" aria-label="Footer navigation">
+            <a href={href(`/${lang}/about/`)}>{copy.about}</a>
+            <a href={href(`/${lang}/contact/`)}>{copy.contact}</a>
+            <a href={href(`/${lang}/privacy/`)}>{copy.privacy}</a>
+            <a href={href(`/${lang}/disclaimer/`)}>{copy.disclaimer}</a>
+            <a href={href(`/${lang}/sources/`)}>{copy.sources}</a>
+          </nav>
         </div>
       </footer>
     </div>

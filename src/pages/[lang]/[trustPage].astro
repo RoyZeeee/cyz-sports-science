@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import QuestionForm from "../../components/QuestionForm.astro";
+import type { Lang } from "../../data/content";
+import { getTrustPage, trustPages } from "../../data/trust";
+import { href } from "../../utils/paths";
+
+export function getStaticPaths() {
+  return (["zh", "zh-cn", "en"] as Lang[]).flatMap((lang) =>
+    trustPages.map((page) => ({ params: { lang, trustPage: page.slug } })),
+  );
+}
+
+const lang = Astro.params.lang as Lang;
+const page = getTrustPage(Astro.params.trustPage ?? "");
+if (!page) throw new Error("Trust page not found");
+
+const related = trustPages.filter((item) => item.slug !== page.slug);
+const linkTitle =
+  lang === "en" ? "Trust pages" : lang === "zh-cn" ? "信任页面" : "信任頁面";
+---
+
+<BaseLayout lang={lang} title={page.title[lang]} description={page.description[lang]} path={`/${lang}/${page.slug}/`}>
+  <section class="container content-layout">
+    <article class="article trust-article">
+      <p class="eyebrow">{page.eyebrow[lang]}</p>
+      <h1>{page.title[lang]}</h1>
+      <p class="lede">{page.intro[lang]}</p>
+      {page.sections.map((section) => (
+        <section>
+          <h2>{section.heading[lang]}</h2>
+          {section.body.map((paragraph) => <p>{paragraph[lang]}</p>)}
+        </section>
+      ))}
+      {page.slug === "contact" && <QuestionForm lang={lang} />}
+    </article>
+    <aside class="side-panel">
+      <h2>{linkTitle}</h2>
+      <ul>
+        {related.map((item) => <li><a href={href(`/${lang}/${item.slug}/`)}>{item.title[lang]}</a></li>)}
+      </ul>
+    </aside>
+  </section>
+</BaseLayout>

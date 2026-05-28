@@ -1,8 +1,9 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import QuestionForm from "../../../components/QuestionForm.astro";
-import TopicDeepDive from "../../../components/TopicDeepDive.astro";
+import TopicSeoGuide from "../../../components/TopicSeoGuide.astro";
 import { articles, faqs, topics } from "../../../data/content";
+import { topicGuideBySlug } from "../../../data/topicGuides";
 import { href } from "../../../utils/paths";
 
 export function getStaticPaths() {
@@ -10,40 +11,48 @@ export function getStaticPaths() {
 }
 
 const { topic } = Astro.props;
+const guide = topicGuideBySlug(topic.slug);
+if (!guide) throw new Error("Topic guide not found");
 const topicFaqs = faqs.filter((faq) => faq.lang === "en" && faq.topic === topic.slug);
 const topicArticles = articles.filter((article) => article.lang === "en" && article.topic === topic.slug);
 ---
 
-<BaseLayout lang="en" title={topic.enTitle} description={topic.enDescription} path={`/en/topics/${topic.slug}/`} alternatePath={`/zh/topics/${topic.slug}/`}>
+<BaseLayout lang="en" title={guide.enSeoTitle} description={guide.enDescription} path={`/en/topics/${topic.slug}/`} alternatePath={`/zh/topics/${topic.slug}/`}>
   <section class="container section">
-    <p class="eyebrow">Topic</p>
-    <h1>{topic.enTitle}</h1>
-    <p class="lede">{topic.enDescription}</p>
-    <TopicDeepDive topic={topic} lang="en" />
+    <p class="eyebrow">Complete guide</p>
+    <h1>{guide.enH1}</h1>
+    <p class="lede">{guide.enIntro}</p>
+    <TopicSeoGuide guide={guide} lang="en" />
     <div class="section-head">
       <h2>FAQ</h2>
       <a class="pill-link" href={href("/en/faq/")}>All FAQ</a>
     </div>
     <div class="grid">
-      {topicFaqs.map((faq) => (
+      {topicFaqs.slice(0, 6).map((faq) => (
         <a class="card" href={href(`/en/faq/${faq.slug}/`)}>
           <div><h3>{faq.title}</h3><p>{faq.description}</p></div>
           <span class="pill-link">Answer</span>
         </a>
       ))}
     </div>
-    <div class="section-head" style="margin-top: 34px;">
-      <h2>Articles</h2>
-      <a class="pill-link" href={href("/en/articles/")}>All articles</a>
-    </div>
-    <div class="grid">
-      {topicArticles.map((article) => (
-        <a class="card" href={href(`/en/articles/${article.slug}/`)}>
-          <div><h3>{article.title}</h3><p>{article.description}</p></div>
-          <span class="pill-link">Read</span>
-        </a>
-      ))}
-    </div>
+    {
+      topicArticles.length > 0 && (
+        <>
+          <div class="section-head" style="margin-top: 34px;">
+            <h2>Articles</h2>
+            <a class="pill-link" href={href("/en/articles/")}>All articles</a>
+          </div>
+          <div class="grid">
+            {topicArticles.slice(0, 6).map((article) => (
+              <a class="card" href={href(`/en/articles/${article.slug}/`)}>
+                <div><h3>{article.title}</h3><p>{article.description}</p></div>
+                <span class="pill-link">Read</span>
+              </a>
+            ))}
+          </div>
+        </>
+      )
+    }
     <QuestionForm lang="en" />
   </section>
 </BaseLayout>

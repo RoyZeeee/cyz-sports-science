@@ -1,11 +1,13 @@
 ---
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import type { Exercise } from "../data/tools";
 import { listText, subMuscleLabels, text } from "../data/tools";
 import type { Lang } from "../data/content";
 
 const { exercise, lang, compact = false } = Astro.props as { exercise: Exercise; lang: Lang; compact?: boolean };
+const anatomySvg = readFileSync(fileURLToPath(new URL("../../public/images/muscles-front-back.svg", import.meta.url)), "utf-8");
 const primarySlugs = exercise.subMuscles ?? [];
-const primarySet = new Set(primarySlugs);
 const secondaryText = [...exercise.secondary.flatMap((item) => [item.zh, item.en]), text(exercise.summary, lang)].join(" ").toLowerCase();
 const secondarySet = new Set<string>();
 const addIf = (slug: string, pattern: RegExp) => {
@@ -32,18 +34,9 @@ addIf("calves", /小腿|calf|腓腸|比目魚/);
 addIf("abs", /腹直|abs|core|核心|髖屈/);
 addIf("obliques", /腹斜|oblique/);
 
-const heat = (slug: string) => primarySet.has(slug) ? "primary" : secondarySet.has(slug) ? "secondary" : "";
-const any = (slugs: string[]) => slugs.some((slug) => primarySet.has(slug));
-const frontPrimary = any(["upper-chest", "mid-chest", "lower-chest", "front-delts", "side-delts", "quads", "adductors", "biceps", "forearms", "abs", "obliques"]);
-const backPrimary = any(["lats", "upper-back", "mid-back", "lower-back", "rear-delts", "rotator-cuff", "glute-max", "glute-med", "hamstrings", "calves", "triceps"]);
-const posterior = backPrimary && !frontPrimary;
-const lowerBody = any(["quads", "adductors", "glute-max", "glute-med", "hamstrings", "calves"]);
-
 const primaryLabels = subMuscleLabels(primarySlugs, lang);
 const assistantLabels = listText(exercise.secondary, lang);
-const calloutLabel = primaryLabels.length > 1 ? `${primaryLabels[0]} +${primaryLabels.length - 1}` : primaryLabels[0] ?? text(exercise.primary[0], lang);
 const compactPrimaryLabel = primaryLabels.join(" / ") || listText(exercise.primary, lang).join(" / ");
-const compactAssistantLabel = assistantLabels.slice(0, 2).join(" / ");
 const copy = {
   front: lang === "en" ? "Front" : lang === "zh-cn" ? "前侧" : "前側",
   back: lang === "en" ? "Back" : lang === "zh-cn" ? "后侧" : "後側",
@@ -52,99 +45,148 @@ const copy = {
   target: lang === "en" ? "Muscle map" : lang === "zh-cn" ? "肌肉图" : "肌肉圖",
 };
 
-const svgViewBox = compact ? "0 0 210 180" : "0 0 420 300";
-const compactTransform = lowerBody ? "translate(30 2) scale(0.86)" : "translate(24 0) scale(1.04)";
-const frontTransform = compact ? compactTransform : "translate(34 34)";
-const backTransform = compact ? compactTransform : "translate(206 34)";
-const frontLabelX = compact ? 104 : 111;
-const backLabelX = compact ? 104 : 283;
-const showFront = !posterior;
-const showBack = posterior;
+const anatomyPathMap: Record<string, string[]> = {
+  "upper-chest": ["path861"],
+  "mid-chest": ["path847"],
+  "lower-chest": ["path847"],
+  lats: ["path2085", "path2115", "path2163", "path2024"],
+  "upper-back": ["path1268", "path1919", "path1432"],
+  "mid-back": ["path1268", "path1919"],
+  "lower-back": ["path1919"],
+  "rear-delts": ["path1452", "path1432"],
+  "front-delts": [],
+  "side-delts": [],
+  "rotator-cuff": ["path2085", "path2115", "path2163"],
+  quads: ["path1554", "path1366"],
+  hamstrings: ["path2990", "path2900", "path2931", "path2803"],
+  "glute-max": ["path2744", "path2220"],
+  "glute-med": ["path2744"],
+  adductors: ["path1337"],
+  calves: ["path3254", "path3216", "path3075", "path3022"],
+  biceps: ["path908", "path968", "path881"],
+  triceps: ["path1109", "path1513", "path1486", "path1542"],
+  forearms: ["path1065", "path1080", "path998", "path987", "path991"],
+  abs: ["path1100"],
+  obliques: ["path1100"],
+};
+
+const titleId = `semantic-visual-title-${exercise.slug}`;
+const anatomyTitle = `${text(exercise.name, lang)} - ${primaryLabels.join(" / ")}`;
+const findSvgElementById = (svg: string, id: string) => {
+  const startTag = new RegExp(`<(?<tag>path|rect|use|g)\\b[^>]*\\bid="${id}"[^>]*>`, "m").exec(svg);
+  const selfClosing = new RegExp(`<(?<tag>path|rect|use)\\b[^>]*\\bid="${id}"[^>]*/>`, "m").exec(svg);
+  if (selfClosing) return selfClosing[0];
+  if (!startTag?.groups?.tag) return "";
+  const tag = startTag.groups.tag;
+  const start = startTag.index;
+  if (tag !== "g") {
+    const end = svg.indexOf(`</${tag}>`, start);
+    return end === -1 ? "" : svg.slice(start, end + tag.length + 3);
+  }
+
+  let depth = 0;
+  const tagPattern = /<\/?g\b[^>]*>/g;
+  tagPattern.lastIndex = start;
+  for (const match of svg.matchAll(tagPattern)) {
+    if (match.index < start) continue;
+    depth += match[0].startsWith("</") ? -1 : 1;
+    if (depth === 0) return svg.slice(start, match.index + match[0].length);
+  }
+  return "";
+};
+
+const mirrorReferenceMap = new Map<string, string[]>();
+for (const match of anatomySvg.matchAll(/<use\b[\s\S]*?\/>/g)) {
+  const tag = match[0];
+  const useId = tag.match(/\bid="([^"]+)"/)?.[1];
+  const href = tag.match(/\b(?:xlink:href|href)="#([^"]+)"/)?.[1];
+  if (!useId || !href) continue;
+  const referenced = findSvgElementById(anatomySvg, href);
+  const referencedIds = [...referenced.matchAll(/\bid="([^"]+)"/g)].map((idMatch) => idMatch[1]);
+  for (const referencedId of referencedIds) {
+    mirrorReferenceMap.set(referencedId, [...(mirrorReferenceMap.get(referencedId) ?? []), `${referencedId}__${useId}`]);
+  }
+}
+
+const withMirrors = (ids: string[]) => [...new Set(ids.flatMap((id) => [id, ...(mirrorReferenceMap.get(id) ?? [])]))];
+
+const primaryPathIds = withMirrors(primarySlugs.flatMap((slug) => anatomyPathMap[slug] ?? []));
+const secondaryPathIds = withMirrors([...secondarySet].flatMap((slug) => anatomyPathMap[slug] ?? [])).filter((id) => !primaryPathIds.includes(id));
+
+const expandUseElements = (svg: string) =>
+  svg.replace(/<use\b[\s\S]*?\/>/g, (tag) => {
+    const useId = tag.match(/\bid="([^"]+)"/)?.[1];
+    const href = tag.match(/\b(?:xlink:href|href)="#([^"]+)"/)?.[1];
+    if (!useId || !href) return tag;
+    const referenced = findSvgElementById(svg, href);
+    if (!referenced) return tag;
+    const transform = tag.match(/\btransform="([^"]+)"/)?.[1];
+    const cloneIds = new Set([...referenced.matchAll(/\bid="([^"]+)"/g)].map((idMatch) => idMatch[1]));
+    const cloned = referenced
+      .replace(/\s+x="[^"]*"/g, "")
+      .replace(/\s+y="[^"]*"/g, "")
+      .replace(/\s+width="[^"]*"/g, "")
+      .replace(/\s+height="[^"]*"/g, "")
+      .replace(/\bid="([^"]+)"/g, (_match, id) => `id="${id}__${useId}"`)
+      .replace(/\b(xlink:href|href)="#([^"]+)"/g, (match, attr, id) => (cloneIds.has(id) ? `${attr}="#${id}__${useId}"` : match));
+    return transform ? `<g transform="${transform}">${cloned}</g>` : `<g>${cloned}</g>`;
+  });
+
+const semanticAnatomySvg = (mode: "detail" | "compact") => {
+  const scopeClass = `muscle-scope-${exercise.slug}-${mode}`;
+  const scopedSelector = (ids: string[]) => ids.map((id) => `.${scopeClass} #${id}`).join(", ");
+  const primarySelector = scopedSelector(primaryPathIds);
+  const secondarySelector = scopedSelector(secondaryPathIds);
+  const svgClass = mode === "compact" ? `semantic-anatomy-svg compact-anatomy-svg ${scopeClass}` : `semantic-anatomy-svg ${scopeClass}`;
+  const useSecondary = mode === "detail";
+  const title = `${titleId}-${mode}`;
+  const anatomyStyles = `
+  <style><![CDATA[
+    .semantic-anatomy-svg {
+      background: #fbf7ef;
+    }
+    .semantic-anatomy-svg path,
+    .semantic-anatomy-svg use,
+    .semantic-anatomy-svg rect {
+      transition: fill .16s ease, stroke .16s ease, opacity .16s ease;
+    }
+    ${useSecondary && secondarySelector ? `${secondarySelector} {
+      fill: #e4a178 !important;
+      fill-opacity: 1 !important;
+      stroke: #985431 !important;
+      stroke-width: .85 !important;
+      opacity: 1 !important;
+    }` : ""}
+    ${primarySelector ? `${primarySelector} {
+      fill: #137d78 !important;
+      fill-opacity: 1 !important;
+      stroke: #053c3a !important;
+      stroke-width: 1.05 !important;
+      opacity: 1 !important;
+    }` : ""}
+  ]]></style>
+`;
+  return expandUseElements(anatomySvg)
+    .replace(/<\?xml[^>]*>\s*/i, "")
+    .replace(
+      /<svg\b([^>]*)>/,
+      `<svg$1 class="${svgClass}" role="img" aria-labelledby="${title}">${anatomyStyles}<title id="${title}">${anatomyTitle}</title>`,
+    );
+};
 ---
 
 <figure class:list={["exercise-visual", "anatomy-card", compact && "compact"]} aria-label={`${text(exercise.name, lang)} ${copy.target}`}>
-  <svg viewBox={svgViewBox} role="img" aria-labelledby={`visual-title-${exercise.slug}`}>
-    <title id={`visual-title-${exercise.slug}`}>{text(exercise.name, lang)} - {primaryLabels.join(" / ")}</title>
-    <defs>
-      <clipPath id={`front-crop-${exercise.slug}`}>
-        <rect x="-8" y="-2" width="172" height="292" rx="12"></rect>
-      </clipPath>
-      <clipPath id={`back-crop-${exercise.slug}`}>
-        <rect x="-8" y="-2" width="172" height="292" rx="12"></rect>
-      </clipPath>
-    </defs>
-    <rect class="visual-bg" x="0" y="0" width="420" height="300" rx="10"></rect>
-    {!compact && <text class:list={["view-label", showFront && "selected"]} x={frontLabelX} y="25">{copy.front}</text>}
-    {!compact && <text class:list={["view-label", showBack && "selected"]} x={backLabelX} y="25">{copy.back}</text>}
-
-    {(!compact || showFront) && (
-      <g class:list={["anatomy-view", showFront && "preferred"]} transform={frontTransform}>
-        <image
-          class="anatomy-photo"
-          href="/images/muscles-front-back.svg"
-          x="8"
-          y="-2"
-          width="334"
-          height="291"
-          preserveAspectRatio="xMidYMin slice"
-          clip-path={`url(#front-crop-${exercise.slug})`}
-        ></image>
-        <path class="anatomy-silhouette" d="M78 5c13 0 22 10 22 23 0 10-6 18-14 21l9 14 30 8 28 31 10 62-21 4-12-48-14 45 9 96H96l-18-77-18 77H31l9-96-14-45-12 48-21-4 10-62 28-31 30-8 9-14c-8-3-14-11-14-21C56 15 65 5 78 5z"></path>
-        <g class="muscle-map-lines" aria-hidden="true">
-          <path d="M49 69c15-13 43-13 58 0M47 84c18 2 45 2 62 0M51 108c17 11 37 11 54 0"></path>
-          <path d="M78 68v118M57 120h42M54 138h48M52 156h52M43 119c7 14 9 29 6 49M113 119c-7 14-9 29-6 49"></path>
-          <path d="M27 70c16-20 33-19 43-5M129 70c-16-20-33-19-43-5M17 82c13-15 28-17 40-4M139 82c-13-15-28-17-40-4"></path>
-          <path d="M30 80c-14 22-21 49-25 85M126 80c14 22 21 49 25 85M20 163h25M111 163h25"></path>
-          <path d="M39 168c12 17 20 46 22 91M117 168c-12 17-20 46-22 91M65 174l-10 78M91 174l11 78M25 248h36M95 248h36"></path>
-        </g>
-
-
-        {!compact && showFront && (
-          <g class="callouts">
-            <path class="callout-line" d="M116 94h55"></path>
-            <text class="callout-text" x="178" y="98">{calloutLabel}</text>
-          </g>
-        )}
-      </g>
-    )}
-
-    {(!compact || showBack) && (
-      <g class:list={["anatomy-view", showBack && "preferred"]} transform={backTransform}>
-        <image
-          class="anatomy-photo"
-          href="/images/muscles-front-back.svg"
-          x="-188"
-          y="-2"
-          width="334"
-          height="291"
-          preserveAspectRatio="xMidYMin slice"
-          clip-path={`url(#back-crop-${exercise.slug})`}
-        ></image>
-        <path class="anatomy-silhouette" d="M78 5c13 0 22 10 22 23 0 10-6 18-14 21l9 14 30 8 28 31 10 62-21 4-12-48-14 45 9 96H96l-18-77-18 77H31l9-96-14-45-12 48-21-4 10-62 28-31 30-8 9-14c-8-3-14-11-14-21C56 15 65 5 78 5z"></path>
-        <g class="muscle-map-lines" aria-hidden="true">
-          <path d="M43 64c18-12 52-12 70 0M31 88l47 29 47-29M49 91l29 20 29-20"></path>
-          <path d="M78 52v154M57 145l21 28 21-28M48 182l30 24 30-24"></path>
-          <path d="M42 86c-25 20-36 45-39 82M114 86c25 20 36 45 39 82M57 89c12-8 30-8 42 0"></path>
-          <path d="M27 68c17-16 34-15 45-1M129 68c-17-16-34-15-45-1M30 80c-14 22-21 49-25 85M126 80c14 22 21 49 25 85"></path>
-          <path d="M38 162c10-14 24-15 36-4M118 162c-10-14-24-15-36-4M43 180c15-18 31-16 36 5M113 180c-15-18-31-16-36 5"></path>
-          <path d="M40 210h34M82 210h34M25 248h36M95 248h36"></path>
-        </g>
-
-
-        {!compact && showBack && (
-          <g class="callouts">
-            <path class="callout-line" d="M118 100h50"></path>
-            <text class="callout-text" x="175" y="104">{calloutLabel}</text>
-          </g>
-        )}
-      </g>
-    )}
-  </svg>
+  {
+    compact ? (
+      <Fragment set:html={semanticAnatomySvg("compact")} />
+    ) : (
+      <Fragment set:html={semanticAnatomySvg("detail")} />
+    )
+  }
   {
     compact && (
       <div class="compact-muscle-labels">
         <span class="compact-label primary-label">{copy.main}: {compactPrimaryLabel}</span>
-        {compactAssistantLabel && <span class="compact-label secondary-label">{copy.assist}: {compactAssistantLabel}</span>}
       </div>
     )
   }
