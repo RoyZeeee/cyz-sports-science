@@ -437,10 +437,14 @@ h3 {
   height: auto;
 }
 
-.exercise-visual.compact .compact-anatomy-svg {
+.exercise-visual.compact .compact-anatomy-svg,
+.exercise-visual.compact .compact-anatomy-img {
+  display: block;
+  width: 100%;
   aspect-ratio: auto;
   height: 178px;
   background: #fbf7ef;
+  object-fit: contain;
 }
 
 .visual-bg {

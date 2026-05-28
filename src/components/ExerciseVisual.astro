@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import type { Exercise } from "../data/tools";
 import { listText, subMuscleLabels, text } from "../data/tools";
 import type { Lang } from "../data/content";
+import { href } from "../utils/paths";
 
 const { exercise, lang, compact = false } = Astro.props as { exercise: Exercise; lang: Lang; compact?: boolean };
 const anatomySvg = readFileSync(fileURLToPath(new URL("../../public/images/muscles-front-back.svg", import.meta.url)), "utf-8");
@@ -72,6 +73,8 @@ const anatomyPathMap: Record<string, string[]> = {
 
 const titleId = `semantic-visual-title-${exercise.slug}`;
 const anatomyTitle = `${text(exercise.name, lang)} - ${primaryLabels.join(" / ")}`;
+const compactAnatomySlug = primarySlugs.find((slug) => anatomyPathMap[slug]?.length) ?? "";
+const compactAnatomySrc = compactAnatomySlug ? href(`/images/anatomy-targets/${compactAnatomySlug}.svg`) : href("/images/muscles-front-back.svg");
 const findSvgElementById = (svg: string, id: string) => {
   const startTag = new RegExp(`<(?<tag>path|rect|use|g)\\b[^>]*\\bid="${id}"[^>]*>`, "m").exec(svg);
   const selfClosing = new RegExp(`<(?<tag>path|rect|use)\\b[^>]*\\bid="${id}"[^>]*/>`, "m").exec(svg);
@@ -178,7 +181,7 @@ const semanticAnatomySvg = (mode: "detail" | "compact") => {
 <figure class:list={["exercise-visual", "anatomy-card", compact && "compact"]} aria-label={`${text(exercise.name, lang)} ${copy.target}`}>
   {
     compact ? (
-      <Fragment set:html={semanticAnatomySvg("compact")} />
+      <img class="compact-anatomy-img" src={compactAnatomySrc} alt={anatomyTitle} loading="lazy" />
     ) : (
       <Fragment set:html={semanticAnatomySvg("detail")} />
     )
