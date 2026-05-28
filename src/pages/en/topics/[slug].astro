@@ -3,6 +3,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import QuestionForm from "../../../components/QuestionForm.astro";
 import TopicSeoGuide from "../../../components/TopicSeoGuide.astro";
 import { articles, faqs, topics } from "../../../data/content";
+import { searchGuides, guideText } from "../../../data/searchGuides";
 import { topicGuideBySlug } from "../../../data/topicGuides";
 import { href } from "../../../utils/paths";
 
@@ -15,6 +16,7 @@ const guide = topicGuideBySlug(topic.slug);
 if (!guide) throw new Error("Topic guide not found");
 const topicFaqs = faqs.filter((faq) => faq.lang === "en" && faq.topic === topic.slug);
 const topicArticles = articles.filter((article) => article.lang === "en" && article.topic === topic.slug);
+const topicSearchGuides = searchGuides.filter((item) => item.topic === topic.slug);
 ---
 
 <BaseLayout lang="en" title={guide.enSeoTitle} description={guide.enDescription} path={`/en/topics/${topic.slug}/`} alternatePath={`/zh/topics/${topic.slug}/`}>
@@ -47,6 +49,24 @@ const topicArticles = articles.filter((article) => article.lang === "en" && arti
               <a class="card" href={href(`/en/articles/${article.slug}/`)}>
                 <div><h3>{article.title}</h3><p>{article.description}</p></div>
                 <span class="pill-link">Read</span>
+              </a>
+            ))}
+          </div>
+        </>
+      )
+    }
+    {
+      topicSearchGuides.length > 0 && (
+        <>
+          <div class="section-head" style="margin-top: 34px;">
+            <h2>Related complete guides</h2>
+            <a class="pill-link" href={href("/en/guides/")}>All guides</a>
+          </div>
+          <div class="grid">
+            {topicSearchGuides.map((item) => (
+              <a class="card" href={href(`/en/guides/${item.slug}/`)}>
+                <div><h3>{guideText(item.title, "en")}</h3><p>{guideText(item.description, "en")}</p></div>
+                <span class="pill-link">Read guide</span>
               </a>
             ))}
           </div>

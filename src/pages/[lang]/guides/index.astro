@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { searchGuides, guideText } from "../../../data/searchGuides";
+import type { Lang } from "../../../data/content";
+import { href } from "../../../utils/paths";
+
+export function getStaticPaths() {
+  return (["zh", "zh-cn", "en"] as Lang[]).map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+
+const copy =
+  lang === "en"
+    ? {
+        title: "Complete Guides",
+        description: "Search-focused guides that connect FAQ, exercises, foods, articles, and evidence.",
+        eyebrow: "Guides",
+        h1: "Complete guides for common fitness goals",
+        intro: "Start from the question people actually search, then move into practical decisions, related tools, and evidence.",
+        open: "Open guide",
+        topic: "Topic",
+      }
+    : lang === "zh-cn"
+      ? {
+          title: "完整指南",
+          description: "把常见健身搜索问题连到 FAQ、动作库、食物库、文章与证据。",
+          eyebrow: "完整指南",
+          h1: "从大众会搜索的问题开始解决",
+          intro: "每篇指南都把核心问题、实用排序、常见错误和站内工具串起来，适合当作主题入口页。",
+          open: "打开指南",
+          topic: "主题",
+        }
+      : {
+          title: "完整指南",
+          description: "把常見健身搜尋問題連到 FAQ、動作庫、食物庫、文章與證據。",
+          eyebrow: "完整指南",
+          h1: "從大眾會搜尋的問題開始解決",
+          intro: "每篇指南都把核心問題、實用排序、常見錯誤和站內工具串起來，適合當作主題入口頁。",
+          open: "打開指南",
+          topic: "主題",
+        };
+---
+
+<BaseLayout lang={lang} title={copy.title} description={copy.description} path={`/${lang}/guides/`}>
+  <section class="container section">
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.h1}</h1>
+    <p class="lede">{copy.intro}</p>
+    <div class="grid">
+      {searchGuides.map((guide) => (
+        <a class="card guide-link-card" href={href(`/${lang}/guides/${guide.slug}/`)}>
+          <div>
+            <span class="meta">{copy.topic}: {guide.topic}</span>
+            <h2>{guideText(guide.title, lang)}</h2>
+            <p>{guideText(guide.description, lang)}</p>
+          </div>
+          <span class="pill-link">{copy.open}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

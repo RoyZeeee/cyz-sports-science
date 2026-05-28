@@ -4,12 +4,14 @@ import AdSlot from "../../components/AdSlot.astro";
 import QuestionForm from "../../components/QuestionForm.astro";
 import TopicGrid from "../../components/TopicGrid.astro";
 import { articles, byLang, faqs } from "../../data/content";
+import { searchGuides, guideText } from "../../data/searchGuides";
 import { exercises } from "../../data/tools";
 import { href } from "../../utils/paths";
 
 const lang = "en";
 const featuredFaqs = byLang(faqs, lang).slice(0, 5);
 const featuredArticles = byLang(articles, lang).slice(0, 3);
+const featuredGuides = searchGuides.slice(0, 3);
 ---
 
 <BaseLayout
@@ -50,6 +52,27 @@ const featuredArticles = byLang(articles, lang).slice(0, 3);
       <a class="pill-link" href={href("/en/topics/")}>All topics</a>
     </div>
     <TopicGrid lang={lang} />
+  </section>
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <h2>Complete guides</h2>
+        <p>Search-focused pages that connect common questions to FAQ, exercises, foods, and evidence.</p>
+      </div>
+      <a class="pill-link" href={href("/en/guides/")}>All guides</a>
+    </div>
+    <div class="grid">
+      {featuredGuides.map((guide) => (
+        <a class="card guide-link-card" href={href(`/en/guides/${guide.slug}/`)}>
+          <div>
+            <span class="meta">Complete guide</span>
+            <h3>{guideText(guide.title, lang)}</h3>
+            <p>{guideText(guide.description, lang)}</p>
+          </div>
+          <span class="pill-link">Read guide</span>
+        </a>
+      ))}
+    </div>
   </section>
   <section class="container section">
     <div class="section-head">

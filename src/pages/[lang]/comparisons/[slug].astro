@@ -1,0 +1,104 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
+import type { Lang } from "../../../data/content";
+import { comparisons, comparisonText } from "../../../data/comparisons";
+import { exercises, text } from "../../../data/tools";
+import { href } from "../../../utils/paths";
+
+export function getStaticPaths() {
+  return (["zh", "zh-cn", "en"] as Lang[]).flatMap((lang) =>
+    comparisons.map((comparison) => ({ params: { lang, slug: comparison.slug }, props: { comparison } })),
+  );
+}
+
+const lang = Astro.params.lang as Lang;
+const { comparison } = Astro.props;
+
+const copy =
+  lang === "en"
+    ? {
+        label: "Exercise comparison",
+        summary: "Quick answer",
+        table: "Decision table",
+        decision: "When to choose each",
+        related: "Related exercises",
+        left: "Option A",
+        right: "Option B",
+      }
+    : lang === "zh-cn"
+      ? {
+          label: "动作比较",
+          summary: "快速结论",
+          table: "决策表",
+          decision: "适合情境",
+          related: "相关动作",
+          left: "选择 A",
+          right: "选择 B",
+        }
+      : {
+          label: "動作比較",
+          summary: "快速結論",
+          table: "決策表",
+          decision: "適合情境",
+          related: "相關動作",
+          left: "選擇 A",
+          right: "選擇 B",
+        };
+
+const relatedExercises = comparison.relatedExercises.map((slug) => exercises.find((exercise) => exercise.slug === slug)).filter(Boolean);
+---
+
+<BaseLayout lang={lang} title={comparisonText(comparison.title, lang)} description={comparisonText(comparison.description, lang)} path={`/${lang}/comparisons/${comparison.slug}/`}>
+  <section class="container content-layout">
+    <article class="article">
+      <p class="eyebrow">{copy.label}</p>
+      <h1>{comparisonText(comparison.title, lang)}</h1>
+      <p class="lede">{comparisonText(comparison.description, lang)}</p>
+
+      <section>
+        <h2>{copy.summary}</h2>
+        <p>{comparisonText(comparison.summary, lang)}</p>
+      </section>
+
+      <section>
+        <h2>{copy.table}</h2>
+        <div class="comparison-table-wrap">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>{copy.table}</th>
+                <th>{comparisonText(comparison.left, lang)}</th>
+                <th>{comparisonText(comparison.right, lang)}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comparison.rows.map((row) => (
+                <tr>
+                  <th>{comparisonText(row.label, lang)}</th>
+                  <td>{comparisonText(row.left, lang)}</td>
+                  <td>{comparisonText(row.right, lang)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>{copy.decision}</h2>
+        <ul class="guide-checklist">
+          {comparison.decision.map((item) => <li>{comparisonText(item, lang)}</li>)}
+        </ul>
+      </section>
+    </article>
+
+    <aside class="side-panel">
+      <h2>{copy.related}</h2>
+      <ul>
+        {relatedExercises.map((exercise) => exercise && <li><a href={href(`/${lang}/exercises/${exercise.slug}/`)}>{text(exercise.name, lang)}</a></li>)}
+      </ul>
+    </aside>
+  </section>
+  <div class="container"><QuestionForm lang={lang} /></div>
+</BaseLayout>

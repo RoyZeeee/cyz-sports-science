@@ -1,0 +1,59 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { comparisons, comparisonText } from "../../../data/comparisons";
+import type { Lang } from "../../../data/content";
+import { href } from "../../../utils/paths";
+
+export function getStaticPaths() {
+  return (["zh", "zh-cn", "en"] as Lang[]).map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+
+const copy =
+  lang === "en"
+    ? {
+        title: "Exercise Comparisons",
+        description: "Compare common exercise choices by target, progression, difficulty, and use case.",
+        eyebrow: "Comparisons",
+        h1: "Exercise comparisons for better programming decisions",
+        intro: "Use these pages when the question is not whether an exercise is good, but when it is the better choice.",
+        open: "Compare",
+      }
+    : lang === "zh-cn"
+      ? {
+          title: "动作比较",
+          description: "比较常见动作在目标肌群、进步方式、技术门槛和适合情境上的差异。",
+          eyebrow: "动作比较",
+          h1: "把常见动作选择讲清楚",
+          intro: "很多搜索问题不是单个动作好不好，而是哪一个更适合现在的目标、程度和课表位置。",
+          open: "看比较",
+        }
+      : {
+          title: "動作比較",
+          description: "比較常見動作在目標肌群、進步方式、技術門檻和適合情境上的差異。",
+          eyebrow: "動作比較",
+          h1: "把常見動作選擇講清楚",
+          intro: "很多搜尋問題不是單個動作好不好，而是哪一個更適合現在的目標、程度和課表位置。",
+          open: "看比較",
+        };
+---
+
+<BaseLayout lang={lang} title={copy.title} description={copy.description} path={`/${lang}/comparisons/`}>
+  <section class="container section">
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.h1}</h1>
+    <p class="lede">{copy.intro}</p>
+    <div class="grid">
+      {comparisons.map((comparison) => (
+        <a class="card guide-link-card" href={href(`/${lang}/comparisons/${comparison.slug}/`)}>
+          <div>
+            <h2>{comparisonText(comparison.title, lang)}</h2>
+            <p>{comparisonText(comparison.description, lang)}</p>
+          </div>
+          <span class="pill-link">{copy.open}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

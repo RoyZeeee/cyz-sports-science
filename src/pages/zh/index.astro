@@ -4,12 +4,14 @@ import AdSlot from "../../components/AdSlot.astro";
 import QuestionForm from "../../components/QuestionForm.astro";
 import TopicGrid from "../../components/TopicGrid.astro";
 import { articles, byLang, faqs } from "../../data/content";
+import { searchGuides, guideText } from "../../data/searchGuides";
 import { exercises } from "../../data/tools";
 import { href } from "../../utils/paths";
 
 const lang = "zh";
 const featuredFaqs = byLang(faqs, lang).slice(0, 5);
 const featuredArticles = byLang(articles, lang).slice(0, 3);
+const featuredGuides = searchGuides.slice(0, 3);
 ---
 
 <BaseLayout
@@ -50,6 +52,27 @@ const featuredArticles = byLang(articles, lang).slice(0, 3);
       <a class="pill-link" href={href("/zh/topics/")}>全部主題</a>
     </div>
     <TopicGrid lang={lang} />
+  </section>
+  <section class="container section">
+    <div class="section-head">
+      <div>
+        <h2>完整指南</h2>
+        <p>把搜尋者真正會問的問題整理成主題入口，再連到 FAQ、動作庫、食物庫和證據。</p>
+      </div>
+      <a class="pill-link" href={href("/zh/guides/")}>全部指南</a>
+    </div>
+    <div class="grid">
+      {featuredGuides.map((guide) => (
+        <a class="card guide-link-card" href={href(`/zh/guides/${guide.slug}/`)}>
+          <div>
+            <span class="meta">完整指南</span>
+            <h3>{guideText(guide.title, lang)}</h3>
+            <p>{guideText(guide.description, lang)}</p>
+          </div>
+          <span class="pill-link">閱讀指南</span>
+        </a>
+      ))}
+    </div>
   </section>
   <section class="container section">
     <div class="section-head">

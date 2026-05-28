@@ -1,0 +1,156 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
+import { articles, byLang, faqs, localizedEvidenceBySlug } from "../../../data/content";
+import type { Lang } from "../../../data/content";
+import { searchGuides, guideText } from "../../../data/searchGuides";
+import { exercises, foods, text } from "../../../data/tools";
+import { href } from "../../../utils/paths";
+
+export function getStaticPaths() {
+  return (["zh", "zh-cn", "en"] as Lang[]).flatMap((lang) =>
+    searchGuides.map((guide) => ({ params: { lang, slug: guide.slug }, props: { guide } })),
+  );
+}
+
+const lang = Astro.params.lang as Lang;
+const { guide } = Astro.props;
+
+const copy =
+  lang === "en"
+    ? {
+        guides: "Complete guide",
+        questions: "Core questions",
+        start: "Start here",
+        decisions: "Practical decision table",
+        mistakes: "Common mistakes",
+        related: "Related resources",
+        faq: "FAQ",
+        articles: "Articles",
+        evidence: "Evidence",
+        exercises: "Exercises",
+        foods: "Foods",
+        open: "Open",
+        strength: "Evidence",
+      }
+    : lang === "zh-cn"
+      ? {
+          guides: "完整指南",
+          questions: "核心问题",
+          start: "新手先看",
+          decisions: "实用排序",
+          mistakes: "常见错误",
+          related: "相关资源",
+          faq: "常见问题",
+          articles: "文章",
+          evidence: "证据",
+          exercises: "动作",
+          foods: "食物",
+          open: "打开",
+          strength: "证据",
+        }
+      : {
+          guides: "完整指南",
+          questions: "核心問題",
+          start: "新手先看",
+          decisions: "實用排序",
+          mistakes: "常見錯誤",
+          related: "相關資源",
+          faq: "常見問題",
+          articles: "文章",
+          evidence: "證據",
+          exercises: "動作",
+          foods: "食物",
+          open: "打開",
+          strength: "證據",
+        };
+
+const guideFaqs = byLang(faqs, lang).filter((faq) => guide.relatedFaqs.includes(faq.slug));
+const guideArticles = byLang(articles, lang).filter((article) => guide.relatedArticles.includes(article.slug));
+const guideEvidence = guide.relatedEvidence.map((slug) => localizedEvidenceBySlug(slug, lang)).filter(Boolean);
+const guideExercises = guide.relatedExercises.map((slug) => exercises.find((exercise) => exercise.slug === slug)).filter(Boolean);
+const guideFoods = guide.relatedFoods.map((slug) => foods.find((food) => food.slug === slug)).filter(Boolean);
+---
+
+<BaseLayout lang={lang} title={guideText(guide.title, lang)} description={guideText(guide.description, lang)} path={`/${lang}/guides/${guide.slug}/`}>
+  <section class="container content-layout">
+    <article class="article">
+      <p class="eyebrow">{copy.guides}</p>
+      <h1>{guideText(guide.title, lang)}</h1>
+      <p class="lede">{guideText(guide.intro, lang)}</p>
+
+      <section>
+        <h2>{copy.questions}</h2>
+        <div class="guide-question-grid">
+          {guide.questions.map((question) => <div class="guide-question">{guideText(question, lang)}</div>)}
+        </div>
+      </section>
+
+      <section>
+        <h2>{copy.start}</h2>
+        <div class="detail-grid">
+          {guide.answerBlocks.map((block) => (
+            <article class="detail-card">
+              <h3>{guideText(block.title, lang)}</h3>
+              <p>{guideText(block.body, lang)}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2>{copy.decisions}</h2>
+        <dl class="metric-list guide-decision-list">
+          {guide.decisionRows.map((row) => (
+            <>
+              <dt>{guideText(row.label, lang)}</dt>
+              <dd>{guideText(row.value, lang)}</dd>
+            </>
+          ))}
+        </dl>
+      </section>
+
+      <section>
+        <h2>{copy.mistakes}</h2>
+        <ul class="guide-checklist">
+          {guide.mistakes.map((item) => <li>{guideText(item, lang)}</li>)}
+        </ul>
+      </section>
+    </article>
+
+    <aside class="side-panel">
+      <h2>{copy.related}</h2>
+      {guideFaqs.length > 0 && (
+        <>
+          <h3>{copy.faq}</h3>
+          <ul>{guideFaqs.map((faq) => <li><a href={href(`/${lang}/faq/${faq.slug}/`)}>{faq.title}</a></li>)}</ul>
+        </>
+      )}
+      {guideArticles.length > 0 && (
+        <>
+          <h3>{copy.articles}</h3>
+          <ul>{guideArticles.map((article) => <li><a href={href(`/${lang}/articles/${article.slug}/`)}>{article.title}</a></li>)}</ul>
+        </>
+      )}
+      {guideEvidence.length > 0 && (
+        <>
+          <h3>{copy.evidence}</h3>
+          <ul>{guideEvidence.map((item) => item && <li><a href={href(`/${lang}/evidence/${item.slug}/`)}>{item.title}</a></li>)}</ul>
+        </>
+      )}
+      {guideExercises.length > 0 && (
+        <>
+          <h3>{copy.exercises}</h3>
+          <ul>{guideExercises.map((exercise) => exercise && <li><a href={href(`/${lang}/exercises/${exercise.slug}/`)}>{text(exercise.name, lang)}</a></li>)}</ul>
+        </>
+      )}
+      {guideFoods.length > 0 && (
+        <>
+          <h3>{copy.foods}</h3>
+          <ul>{guideFoods.map((food) => food && <li><a href={href(`/${lang}/foods/`)}>{text(food.name, lang)} · {food.protein}</a></li>)}</ul>
+        </>
+      )}
+    </aside>
+  </section>
+  <div class="container"><QuestionForm lang={lang} /></div>
+</BaseLayout>
