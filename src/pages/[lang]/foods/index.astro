@@ -1,8 +1,10 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import QuestionForm from "../../../components/QuestionForm.astro";
+import { foodGuides, foodGuideText } from "../../../data/foodGuides";
 import { foods, text, toolCopy } from "../../../data/tools";
 import type { Lang } from "../../../data/content";
+import { href } from "../../../utils/paths";
 
 export function getStaticPaths() {
   return (["zh", "zh-cn", "en"] as Lang[]).map((lang) => ({ params: { lang } }));
@@ -26,6 +28,16 @@ const intro =
         <h1>{copy.foods}</h1>
         <p>{intro}</p>
       </div>
+    </div>
+    <div class="grid">
+      {foodGuides.map((guide) => (
+        <a class="card" href={href(`/${lang}/foods/${guide.slug}/`)}>
+          <span class="meta">{lang === "en" ? "Food guide" : lang === "zh-cn" ? "饮食入口" : "飲食入口"}</span>
+          <h3>{foodGuideText(guide.title, lang)}</h3>
+          <p>{foodGuideText(guide.description, lang)}</p>
+          <span class="pill-link">{copy.read}</span>
+        </a>
+      ))}
     </div>
     <div class="nutrition-grid">
       {foods.map((food) => (

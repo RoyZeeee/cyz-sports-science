@@ -1,0 +1,93 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import QuestionForm from "../../../components/QuestionForm.astro";
+import { foodGuides, foodGuideText } from "../../../data/foodGuides";
+import { foods, text, toolCopy } from "../../../data/tools";
+import type { Lang } from "../../../data/content";
+import { href } from "../../../utils/paths";
+
+export function getStaticPaths() {
+  return (["zh", "zh-cn", "en"] as Lang[]).flatMap((lang) =>
+    foodGuides.map((guide) => ({ params: { lang, slug: guide.slug }, props: { guide } })),
+  );
+}
+
+const lang = Astro.params.lang as Lang;
+const { guide } = Astro.props;
+const copy = toolCopy(lang);
+const guideFoods = guide.foodSlugs.map((slug) => foods.find((food) => food.slug === slug)).filter(Boolean);
+const pageCopy =
+  lang === "en"
+    ? { label: "Food guide", quick: "Quick sorting", tips: "How to use this", foods: "Related foods", allFoods: "All foods" }
+    : lang === "zh-cn"
+      ? { label: "饮食入口", quick: "实用排序", tips: "怎么使用", foods: "相关食物", allFoods: "全部食物" }
+      : { label: "飲食入口", quick: "實用排序", tips: "怎麼使用", foods: "相關食物", allFoods: "全部食物" };
+---
+
+<BaseLayout lang={lang} title={foodGuideText(guide.title, lang)} description={foodGuideText(guide.description, lang)} path={`/${lang}/foods/${guide.slug}/`}>
+  <section class="container content-layout">
+    <article class="article">
+      <p class="eyebrow">{pageCopy.label}</p>
+      <h1>{foodGuideText(guide.title, lang)}</h1>
+      <p class="lede">{foodGuideText(guide.intro, lang)}</p>
+
+      <section>
+        <h2>{pageCopy.quick}</h2>
+        <div class="comparison-table-wrap">
+          <table class="comparison-table">
+            <tbody>
+              {guide.rows.map((row) => (
+                <tr>
+                  <th>{foodGuideText(row.label, lang)}</th>
+                  <td>{foodGuideText(row.value, lang)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>{pageCopy.tips}</h2>
+        <ul class="guide-checklist">
+          {guide.tips.map((tip) => <li>{foodGuideText(tip, lang)}</li>)}
+        </ul>
+      </section>
+
+      <section>
+        <h2>{pageCopy.foods}</h2>
+        <div class="nutrition-grid">
+          {guideFoods.map((food) => food && (
+            <article class="nutrition-card">
+              <div>
+                <span class="meta">{text(food.unit, lang)}</span>
+                <h3>{text(food.name, lang)}</h3>
+                <p>{text(food.bestUse, lang)}</p>
+              </div>
+              <dl class="nutrition-facts">
+                <div><dt>{copy.kcal}</dt><dd>{food.kcal}</dd></div>
+                <div><dt>{copy.protein}</dt><dd>{food.protein}</dd></div>
+                <div><dt>{copy.carbs}</dt><dd>{food.carbs}</dd></div>
+                <div><dt>{copy.fat}</dt><dd>{food.fat}</dd></div>
+              </dl>
+              <p class="mini-meta">{text(food.note, lang)}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    </article>
+
+    <aside class="side-panel">
+      <h2>{copy.foods}</h2>
+      <p>{foodGuideText(guide.description, lang)}</p>
+      <a class="pill-link" href={href(`/${lang}/foods/`)}>{pageCopy.allFoods}</a>
+      <h3>{pageCopy.label}</h3>
+      <ul>
+        {foodGuides.filter((item) => item.slug !== guide.slug).map((item) => (
+          <li><a href={href(`/${lang}/foods/${item.slug}/`)}>{foodGuideText(item.title, lang)}</a></li>
+        ))}
+      </ul>
+    </aside>
+  </section>
+  <div class="container"><QuestionForm lang={lang} /></div>
+</BaseLayout>
