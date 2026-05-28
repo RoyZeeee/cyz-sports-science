@@ -17,6 +17,8 @@ const searchText = [
   text(exercise.summary, lang),
   ...listText(exercise.primary, lang),
   ...listText(exercise.secondary, lang),
+  ...listText(exercise.aliases ?? [], lang),
+  ...(exercise.aliases ?? []).flatMap((alias) => [alias.zh, alias.en]),
   ...subLabels,
   text(exercise.equipment, lang),
 ].join(" ");
