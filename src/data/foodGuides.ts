@@ -189,6 +189,57 @@ export const foodGuides: FoodGuide[] = [
     ],
     foodSlugs: ["egg", "tea-egg", "chicken-breast", "tofu", "canned-tuna", "protein-shake"],
   },
+  {
+    slug: "convenience-store-cutting-combos",
+    title: lt("便利商店減脂組合", "Convenience-Store Cutting Combos"),
+    description: lt("把雞胸沙拉、茶葉蛋、無糖豆漿、飯糰、香蕉和蛋白飲組成更好執行的減脂餐。", "Combine chicken salad, tea eggs, unsweetened soy milk, rice balls, bananas, and protein shakes into practical cutting meals."),
+    intro: lt("便利商店減脂不是只能吃沙拉。真正要看的，是這一餐有沒有蛋白質、主食份量是否合理、飲料和醬料有沒有讓熱量失控。", "Convenience-store fat loss is not only salad. The real checks are protein, carb portion, and whether drinks or dressings push calories out of control."),
+    rows: [
+      { label: lt("最穩組合", "Most reliable combo"), value: lt("雞胸沙拉 + 茶葉蛋 + 無糖茶；訓練日可加飯糰", "Chicken salad + tea egg + unsweetened tea; add a rice ball on training days") },
+      { label: lt("趕時間補蛋白", "Fast protein"), value: lt("蛋白飲 + 香蕉，或無糖豆漿 + 茶葉蛋", "Protein shake + banana, or unsweetened soy milk + tea egg") },
+      { label: lt("容易超標", "Easy to overshoot"), value: lt("奶茶、甜麵包、濃醬沙拉、炸物和高熱量零食", "Milk tea, sweet bread, heavy-dressing salads, fried foods, and high-calorie snacks") },
+    ],
+    tips: [
+      lt("飯糰可以吃，但把它當主食，不要再額外配很多甜點。", "Rice balls are fine, but count them as a staple and avoid stacking desserts on top."),
+      lt("雞胸沙拉的醬包可能是熱量關鍵，先用半包就好。", "The dressing in chicken salad can drive calories; half a pack is often enough."),
+      lt("減脂期飲料優先選無糖茶、美式咖啡或無糖豆漿。", "During fat loss, prioritize unsweetened tea, black coffee, or unsweetened soy milk."),
+    ],
+    foodSlugs: ["chicken-salad", "tea-egg", "soy-milk", "protein-shake", "rice-ball", "banana", "sweetened-milk-tea"],
+  },
+  {
+    slug: "oats-vs-toast",
+    title: lt("燕麥 vs 吐司", "Oats vs Toast"),
+    description: lt("比較燕麥和全麥吐司作為早餐、訓練前碳水、增肌補熱量與減脂飽足感的差異。", "Compare oats and whole-wheat toast for breakfast, pre-training carbs, gaining calories, and cutting satiety."),
+    intro: lt("燕麥和吐司都不是神物，也都不是壞食物。差別主要在份量、搭配方式、飽足感和你是否容易把抹醬或配料加太多。", "Oats and toast are neither magic nor bad. The difference is portion, pairing, fullness, and whether spreads or toppings add too much."),
+    rows: [
+      { label: lt("早餐飽足感", "Breakfast fullness"), value: lt("燕麥通常更有纖維和飽足感，但乾重份量容易估錯", "Oats usually bring more fiber and fullness, but dry weight is easy to misjudge") },
+      { label: lt("方便性", "Convenience"), value: lt("吐司更快；燕麥更適合備餐或加牛奶優格", "Toast is faster; oats work well for meal prep with milk or yogurt") },
+      { label: lt("熱量陷阱", "Calorie trap"), value: lt("吐司常爆在抹醬；燕麥常爆在堅果、蜂蜜和大量配料", "Toast often overshoots through spreads; oats through nuts, honey, and heavy toppings") },
+    ],
+    tips: [
+      lt("減脂期先量一次常吃份量，建立熱量直覺。", "During fat loss, weigh your usual serving once to build calorie intuition."),
+      lt("想補蛋白，可以搭配牛奶、無糖豆漿、希臘優格或蛋。", "For protein, pair with milk, soy milk, Greek yogurt, or eggs."),
+      lt("訓練前想快速消化時，吐司或香蕉常比一大碗高纖燕麥更舒服。", "Before training, toast or banana may feel easier than a big high-fiber oat bowl."),
+    ],
+    foodSlugs: ["oats", "whole-wheat-toast", "milk", "low-fat-milk", "soy-milk", "greek-yogurt", "egg", "banana"],
+  },
+  {
+    slug: "training-day-carbs-guide",
+    title: lt("訓練日碳水怎麼選", "How to Choose Carbs on Training Days"),
+    description: lt("比較白飯、飯糰、香蕉、地瓜、燕麥和吐司在訓練前後的使用情境。", "Compare rice, rice balls, banana, sweet potato, oats, and toast around training."),
+    intro: lt("訓練日碳水的任務是支持表現和恢復，不是製造焦慮。選擇時先看距離訓練多久、腸胃舒服度和整天總熱量。", "Training-day carbs exist to support performance and recovery, not anxiety. Choose based on timing, digestion, and total daily calories."),
+    rows: [
+      { label: lt("訓練前 1-2 小時", "1-2 hours pre-workout"), value: lt("白飯、飯糰、吐司、香蕉通常較好消化", "Rice, rice balls, toast, and banana are usually easier to digest") },
+      { label: lt("離訓練較久", "Further from training"), value: lt("燕麥、地瓜、糙米飯適合提高飽足感", "Oats, sweet potato, and brown rice work for fullness") },
+      { label: lt("訓練後", "After training"), value: lt("白飯、飯糰、牛奶或正常正餐都可以，重點是整天總量", "Rice, rice balls, milk, or a normal meal can all work; daily total matters") },
+    ],
+    tips: [
+      lt("高纖食物很好，但太靠近訓練可能讓腸胃不舒服。", "High-fiber foods are useful, but too close to training they may bother digestion."),
+      lt("減脂期不是不能吃碳水，而是要把份量放進總熱量。", "Fat loss does not ban carbs; portions need to fit total calories."),
+      lt("增肌期訓練量高時，碳水太低常會影響總組數和恢復。", "During gaining or high-volume training, very low carbs often hurt total sets and recovery."),
+    ],
+    foodSlugs: ["cooked-rice", "rice-ball", "banana", "sweet-potato", "oats", "whole-wheat-toast", "low-fat-milk"],
+  },
 ];
 
 export function foodGuideBySlug(slug: string) {
