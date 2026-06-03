@@ -7,6 +7,7 @@
     "prebuild": "node scripts/generate-anatomy-targets.mjs",
     "dev": "astro dev",
     "build": "astro build",
+    "postbuild": "node scripts/write-direct-sitemap.mjs",
     "preview": "astro preview"
   },
   "dependencies": {

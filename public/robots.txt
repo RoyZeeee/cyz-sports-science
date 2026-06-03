@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://royzeeee.github.io/cyz-sports-science/sitemap-index.xml
+Sitemap: https://royzeeee.github.io/cyz-sports-science/sitemap.xml
